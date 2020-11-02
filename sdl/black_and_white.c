@@ -2,6 +2,8 @@
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
 #include "pixel_operations.h"
+#include <math.h>
+#include <errno.h>
 
 void init_sdl()
 {
@@ -72,20 +74,24 @@ void wait_for_keypressed()
 void SDL_FreeSurface(SDL_Surface *surface);
 
 
-
-
-int main()
+void filtre_gaussien(SDL_Surface* image_surface)
 {
-    SDL_Surface* image_surface;
-    SDL_Surface* screen_surface;
+    for(int i = 0; i < image_surface->w;i++)
+    {
+	    for(int j = 0; j < image_surface->h; j++)
+	    {
+            Uint32 pixel = get_pixel(image_surface, i, j);
+            Uint8 r, g, b;
+		    SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
+            Uint8 gauss = (1/(2 * M_PI * 0.64)) * exp((i*i + j*j)/1.28);
+            Uint32 pixel2 = SDL_MapRGB(image_surface->format, gauss*r, gauss*g, gauss*b);
+            put_pixel(image_surface, i, j, pixel2);
+        }
+    }
+}
 
-    init_sdl();
-
-    image_surface = load_image("./my_image.png");
-    
-    screen_surface = display_image(image_surface);
-
-    wait_for_keypressed();
+void black_and_white(SDL_Surface* image_surface)
+{
     for(int i = 0; i < image_surface->w;i++)
     {
 	    for(int j = 0; j < image_surface->h; j++)
@@ -96,9 +102,7 @@ int main()
 		    Uint8 average = 0.3*r + 0.59*g + 0.11*b;
 		    Uint32 pixel2;
 
-
-
-            if(average > 122)
+            if(average > 150)
             {
                 pixel2 = SDL_MapRGB(image_surface->format, 255, 255, 255);
             }
@@ -112,10 +116,39 @@ int main()
 		    put_pixel(image_surface, i, j, pixel2);
 	    }
     }
+}
 
-    update_surface(screen_surface, image_surface);
+
+
+
+
+
+int main()
+{
+    SDL_Surface* image_surface;
+    SDL_Surface* screen_surface;
+
+    init_sdl();
+
+    image_surface = load_image("./gaussien.png");
+    
+    screen_surface = display_image(image_surface);
 
     wait_for_keypressed();
+
+
+    //INSERER ICI FONCTIONS ANNEXES
+
+    black_and_white(image_surface);
+
+    update_surface(screen_surface, image_surface);
+    wait_for_keypressed();
+
+    filtre_gaussien(image_surface);
+
+    update_surface(screen_surface, image_surface);
+    wait_for_keypressed();
+
 
     SDL_FreeSurface(image_surface);
     SDL_FreeSurface(screen_surface);
