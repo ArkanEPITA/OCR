@@ -77,22 +77,25 @@ void SDL_FreeSurface(SDL_Surface *surface);
 
 void filtre_gaussien(SDL_Surface* image_surface)
 {
-    double masque[3][3];
-    double sigma = 0.8;
-    double k = 2.0 * sigma * sigma;
-    double S = 0.0;
-    int p;
+    double masque[3][3] = {{1, 2, 1},{2, 4, 2}, {1, 2, 1}};
+    //double sigma = 0.8;
+    //double k = 2.0 * sigma * sigma;
+    double S = 16.0;
+    //int p;
 
+/*
     //calcul du masque
     for(int i = -1; i <= 1; i++)
     {
         for(int j = -1; j <= 1; i++)
         {
             p = -(i*i + j*j);
-            masque[i+1][j+1] = (exp(p/k))/(k*M_PI);
-            S += masque[i+1][j+1];
+            masque[(i+1) * 3 + j+1] = (exp(p/k))/(k*M_PI);
+            S += masque[(i+1) * 3 + j+1];
         }
     }
+
+*/
 
     //normalisation du masque
     for(int i = 0; i < 3; i++)
@@ -101,7 +104,7 @@ void filtre_gaussien(SDL_Surface* image_surface)
         {
             masque[i][j] /= S;
         }
-    }
+    };
 
     //application du masque
     int calcul = 0;
@@ -113,21 +116,23 @@ void filtre_gaussien(SDL_Surface* image_surface)
         {
             for(int k = -1; k <= 1; k++)
             {
-                for(int l = 1; l <= 1; l++)
+                for(int l = -1; l <= 1; l++)
                 {
                     Uint32 pixel = get_pixel(image_surface, k+i, l+j);
-                    calcul += masque[k - i][l - j] * pixel;
+                    calcul += masque[(k - i)][l - j] * pixel;
                 }
             }
-            Uint8 r, g, b;
-            Uint32 pixel = get_pixel(image_surface, i, j);
-		    SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
+
+            //Uint8 r, g, b;
+            //Uint32 pixel = get_pixel(image_surface, i, j);
+		    //SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
             int abs_calcul = abs(calcul);
-            Uint32 pixel2 = SDL_MapRGB(image_surface->format, abs_calcul*r, abs_calcul*g, abs_calcul*b);
-            put_pixel(image_surface, i, j, pixel2);
+            //Uint32 pixel2 = SDL_MapRGB(image_surface->format, abs_calcul*r, abs_calcul*g, abs_calcul*b);
+            put_pixel(image_surface, i, j, abs_calcul);
             calcul = 0;
         }
     }
+    
 }
 
 /*
@@ -161,8 +166,6 @@ int main()
     image_surface = load_image("my_image3.png");
     
     screen_surface = display_image(image_surface);
-
-    printf("%d\n", image_surface->h);
 
     wait_for_keypressed();
 
