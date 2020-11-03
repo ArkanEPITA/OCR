@@ -165,6 +165,96 @@ void filtre_gaussien(SDL_Surface* image_surface)
 
 
 
+
+void dilatation(SDL_Surface* image_surface)
+{
+    double masque[3][3] = {{0, 1, 0},{1, 1, 1}, {0, 1, 0}};
+    //double sigma = 0.8;
+    //double k = 2.0 * sigma * sigma;
+    //double S = 5.0;
+    //int p;
+
+/*
+    //normalisation du masque
+    for(int i = 0; i < 3; i++)
+    {
+        for(int j = 0; j < 3; j++)
+        {
+            masque[i][j] /= S;
+        }
+    }; */
+
+    //application du masque
+    int calcul = 0;
+    int height = image_surface->h;
+    int weight = image_surface->w;
+    for(int i = 1; i < weight-2; i++)
+    {
+        for(int j = 1; j < height-2; j++)
+        {
+            Uint32 pixel = get_pixel(image_surface, i, j);
+            for(int k = -1; k <= 1; k++)
+            {
+                for(int l = -1; l <= 1; l++)
+                {
+                    calcul = fmax(calcul, - pixel + masque[k + 1][l + 1] * get_pixel(image_surface, i+k, j+l));
+                }
+            }
+
+            Uint8 r, g, b;
+		    SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
+            int abs_calcul = abs(calcul);
+            Uint32 pixel2 = SDL_MapRGB(image_surface->format, abs_calcul+r, abs_calcul+g, abs_calcul+b);
+            put_pixel(image_surface, i, j, pixel2);
+            calcul = 0;
+        }
+    }
+}
+
+
+void erosion(SDL_Surface* image_surface)
+{
+    double masque[3][3] = {{0, 1, 0},{1, 1, 1}, {0, 1, 0}};
+
+    //SDL_Surface* image_surface2 = image_surface;
+
+    //application du masque
+    int calcul = 0;
+    int height = image_surface->h;
+    int weight = image_surface->w;
+    for(int i = 1; i < weight-2; i++)
+    {
+        for(int j = 1; j < height-2; j++)
+        {
+            Uint32 pixel = get_pixel(image_surface, i, j);
+            for(int k = -1; k <= 1; k++)
+            {
+                for(int l = -1; l <= 1; l++)
+                {
+                    calcul = fmin(calcul, pixel - masque[k + 1][l + 1] * get_pixel(image_surface, i+k, j+l));
+                }
+            }
+
+            Uint8 r, g, b;
+		    SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
+            int abs_calcul = abs(calcul);
+            Uint32 pixel2 = SDL_MapRGB(image_surface->format, abs_calcul + r, abs_calcul + g, abs_calcul + b);
+            put_pixel(image_surface, i, j, pixel2);
+            calcul = 0;
+        }
+    }
+    //image_surface = image_surface2;
+}
+
+/*
+void trkl(SDL_Surface* image_surface)
+{
+    SDL_Surface = ???
+}
+
+
+*/
+
 int main()
 {
     SDL_Surface* image_surface;
@@ -187,6 +277,11 @@ int main()
     wait_for_keypressed();
 
     filtre_gaussien(image_surface);
+
+    update_surface(screen_surface, image_surface);
+    wait_for_keypressed();
+
+    erosion(image_surface);
 
     update_surface(screen_surface, image_surface);
     wait_for_keypressed();
