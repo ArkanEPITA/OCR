@@ -139,25 +139,25 @@ void filtre_gaussien(SDL_Surface* image_surface)
     int calcul = 0;
     int height = image_surface->h;
     int weight = image_surface->w;
-    for(int i = 1; i < height-1; i++)
+    for(int i = 1; i < weight-2; i++)
     {
-        for(int j = 1; j < weight-1; j++)
+        for(int j = 1; j < height-2; j++)
         {
-            for(int k = -1; k <= 1; k++)
+            for(int k = -1; k <=1; k++)
             {
                 for(int l = -1; l <= 1; l++)
                 {
-                    Uint32 pixel = get_pixel(image_surface, k+i, l+j);
-                    calcul += masque[(k - i)][l - j] * pixel;
+                    Uint32 pixel = get_pixel(image_surface, k + i, l + j);
+                    calcul += masque[(k + 1)][l + 1] * pixel;
                 }
             }
 
-            //Uint8 r, g, b;
-            //Uint32 pixel = get_pixel(image_surface, i, j);
-		    //SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
+            Uint8 r, g, b;
+            Uint32 pixel = get_pixel(image_surface, i, j);
+		    SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
             int abs_calcul = abs(calcul);
-            //Uint32 pixel2 = SDL_MapRGB(image_surface->format, abs_calcul*r, abs_calcul*g, abs_calcul*b);
-            put_pixel(image_surface, i, j, abs_calcul);
+            Uint32 pixel2 = SDL_MapRGB(image_surface->format, abs_calcul*r, abs_calcul*g, abs_calcul*b);
+            put_pixel(image_surface, i, j, pixel2);
             calcul = 0;
         }
     }
@@ -172,7 +172,7 @@ int main()
 
     init_sdl();
 
-    image_surface = load_image("my_image3.png");
+    image_surface = load_image("gaussien.png");
     
     screen_surface = display_image(image_surface);
 
