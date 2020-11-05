@@ -75,7 +75,7 @@ void SDL_FreeSurface(SDL_Surface *surface);
 
 
 
-void black_and_white(SDL_Surface* image_surface)
+void grayscale(SDL_Surface* image_surface)
 {
     for(int i = 0; i < image_surface->w;i++)
     {
@@ -86,18 +86,7 @@ void black_and_white(SDL_Surface* image_surface)
 		    SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
 		    Uint8 average = 0.299*r + 0.587*g + 0.114*b;
 		    Uint32 pixel2;
-            /*
 
-            if(average > 150)
-            {
-                pixel2 = SDL_MapRGB(image_surface->format, 255, 255, 255);
-            }
-            else
-            {
-                pixel2 = SDL_MapRGB(image_surface->format, 0, 0, 0);
-            }
-            
-    */
             pixel2 = SDL_MapRGB(image_surface->format, average , average, average);
 
 		    put_pixel(image_surface, i, j, pixel2);
@@ -174,39 +163,38 @@ void filtre_gaussien(SDL_Surface* image_surface)
 
 void dilatation(SDL_Surface* image_surface)
 {
-    double masque[3][3] = {{0, 0, 0},{1, 1, 1}, {0, 0, 0}};
+    double masque[3] = {1, 1, 1};
     
-
-    int calculr = 0;
-    int calculg = 0;
-    int calculb = 0;
-
     int height = image_surface->h;
     int weight = image_surface->w;
 
-    //int matrix[weight][height];
+
 
     for(int i = 1; i < weight-2; i++)
     {
         for(int j = 1; j < height-2; j++)
         {
-            Uint32 pixel = get_pixel(image_surface, i, j);
+
+            int calculr = 0;
+            int calculg = 0;
+            int calculb = 0;
+
+            Uint32 pixel = get_pixel(image_surface, i+1, j);
             Uint8 r, g, b;
 		    SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
 
             for(int k = -1; k <= 1; k++)
             {
-                for(int l = -1; l <= 1; l++)
-                {
-                    Uint32 pixel_suivant = get_pixel(image_surface, i+k, j+l);
-                    Uint8 r1, g1, b1;
-		            SDL_GetRGB(pixel_suivant, image_surface->format, &r1, &g1, &b1);
+                Uint32 pixel_suivant = get_pixel(image_surface, i+k+1, j);
+                Uint8 r1, g1, b1;
+		        SDL_GetRGB(pixel_suivant, image_surface->format, &r1, &g1, &b1);
 
-                    calculr = fmax(calculr, - r + masque[k + 1][l + 1] * r1);
-                    calculg = fmax(calculg, - g + masque[k + 1][l + 1] * g1);
-                    calculb = fmax(calculb, - b + masque[k + 1][l + 1] * b1);
-                }
+                calculr = fmax(calculr, - r + masque[k+1] * r1);
+                calculg = fmax(calculg, - g + masque[k+1] * g1);
+                calculb = fmax(calculb, - b + masque[k+1] * b1);
             }
+
+            //printf("%d, %d, %d\n", (calculr + r), (calculg + g), (calculb + b));
             
             int rfin = calculr + r;
             int gfin = calculg + g;
@@ -241,10 +229,6 @@ void dilatation(SDL_Surface* image_surface)
 
             Uint32 pixel2 = SDL_MapRGB(image_surface->format, rfin, gfin, bfin);
             put_pixel(image_surface, i, j, pixel2);
-
-            calculr = 0;
-            calculg = 0;
-            calculb = 0;
         }
     }
 }
@@ -252,7 +236,7 @@ void dilatation(SDL_Surface* image_surface)
 
 void erosion(SDL_Surface* image_surface)
 {
-    double masque[3][3] = {{0, 1, 0},{1, 1, 1}, {0, 1, 0}};
+    double masque[3] = {1, 1, 1};
     
     int height = image_surface->h;
     int weight = image_surface->w;
@@ -273,13 +257,13 @@ void erosion(SDL_Surface* image_surface)
             {
                 for(int l = -1; l <= 1; l++)
                 {
-                    Uint32 pixel_suivant = get_pixel(image_surface, i+k+1, j+l+1);
+                    Uint32 pixel_suivant = get_pixel(image_surface, i+k, j);
                     Uint8 r1, g1, b1;
 		            SDL_GetRGB(pixel_suivant, image_surface->format, &r1, &g1, &b1);
 
-                    calculr = fmin(calculr, r - masque[k + 1][l + 1] * r1);
-                    calculg = fmin(calculg, g - masque[k + 1][l + 1] * g1);
-                    calculb = fmin(calculb, b - masque[k + 1][l + 1] * b1);
+                    calculr = fmin(calculr, r - masque[k+1] * r1);
+                    calculg = fmin(calculg, g - masque[k+1] * g1);
+                    calculb = fmin(calculb, b - masque[k+1] * b1);
                 }
             }
 
@@ -327,9 +311,9 @@ void erosion(SDL_Surface* image_surface)
 }
 
 
-void gradient_horizontal(SDL_Surface* image_surface)
+void gradient_vertical(SDL_Surface* image_surface)
 {
-    double masque[3][3] = {{0, 0, 0},{1, 1, 1}, {0, 0, 0}};
+    double masque[3] = {0, 0, 1};
     
     int height = image_surface->h;
     int weight = image_surface->w;
@@ -352,25 +336,29 @@ void gradient_horizontal(SDL_Surface* image_surface)
 
             for(int k = -1; k <= 1; k++)
             {
-                for(int l = -1; l <= 1; l++)
-                {
-                    Uint32 pixel_dilatation = get_pixel(image_surface, i+k+1, j+l+1);
-                    Uint8 r1, g1, b1;
-		            SDL_GetRGB(pixel_dilatation, image_surface->format, &r1, &g1, &b1);
+                Uint32 pixel_dilatation = get_pixel(image_surface, i+k+1, j+1);
+                Uint8 r1, g1, b1;
+                SDL_GetRGB(pixel_dilatation, image_surface->format, &r1, &g1, &b1);
 /*
-                    Uint32 pixel_erosion = get_pixel(image_surface, i+k, j+l);
-                    Uint8 r2, g2, b2;
-		            SDL_GetRGB(pixel_erosion, image_surface->format, &r2, &g2, &b2);
+                Uint32 pixel_erosion = get_pixel(image_surface, i+k, j+l);
+                Uint8 r2, g2, b2;
+		        SDL_GetRGB(pixel_erosion, image_surface->format, &r2, &g2, &b2);
 */
-                    calcul_r_ero = fmin(calcul_r_ero, r - masque[k + 1][l + 1] * r1);
-                    calcul_g_ero = fmin(calcul_g_ero, g - masque[k + 1][l + 1] * g1);
-                    calcul_b_ero = fmin(calcul_b_ero, b - masque[k + 1][l + 1] * b1);
+                calcul_r_ero = fmin(calcul_r_ero, r - masque[k+1] * r1);
+                calcul_g_ero = fmin(calcul_g_ero, g - masque[k+1] * g1);
+                calcul_b_ero = fmin(calcul_b_ero, b - masque[k+1] * b1);
 
-                    calcul_r_dil = fmax(calcul_r_dil, - r + masque[k + 1][l + 1] * r1);
-                    calcul_g_dil = fmax(calcul_g_dil, - g + masque[k + 1][l + 1] * g1);
-                    calcul_b_dil = fmax(calcul_b_dil, - b + masque[k + 1][l + 1] * b1);
-                }
+                calcul_r_dil = fmax(calcul_r_dil, - r + masque[k+1] * r1);
+                calcul_g_dil = fmax(calcul_g_dil, - g + masque[k+1] * g1);
+                calcul_b_dil = fmax(calcul_b_dil, - b + masque[k+1] * b1);
             }
+/*
+            printf("ERO");
+            printf("\nr : %d, g : %d, b : %d\n\n", calcul_r_ero, calcul_g_ero, calcul_b_ero);
+
+            printf("DIL");
+            printf("\nr : %d, g : %d, b : %d\n\n", calcul_r_dil, calcul_g_dil, calcul_b_dil);
+*/
 
             int rfin = calcul_r_dil - calcul_r_ero;
             int gfin = calcul_g_dil - calcul_g_ero;
@@ -429,7 +417,7 @@ void binarisation(SDL_Surface* image_surface)
 		    Uint32 pixel2;
             
 
-            if(average > 128)
+            if(average > 100)
             {
                 pixel2 = SDL_MapRGB(image_surface->format, 255, 255, 255);
             }
@@ -461,7 +449,7 @@ int main()
 
     //INSERER ICI FONCTIONS ANNEXES
 
-    black_and_white(image_surface);
+    grayscale(image_surface);
 
     update_surface(screen_surface, image_surface);
     wait_for_keypressed();
@@ -472,7 +460,7 @@ int main()
     wait_for_keypressed();
 
 
-    gradient_horizontal(image_surface);
+    gradient_vertical(image_surface);
 
     update_surface(screen_surface, image_surface);
     wait_for_keypressed();
