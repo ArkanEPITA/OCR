@@ -18,27 +18,65 @@ double dSigmoid(double z)		//dériver de la fonction d'activation
 
 double init()   //fonction permettant d'initialiser mes poids de manière aléatoire
 {
-
+    double rnd;
+    double a = 1.0;
+    for(int i = 0; i < 2; i++)
+    {
+        rnd = ((double)rand()/(double)(RAND_MAX)) * a;
+    }
+    return rnd;
 }
 
-void init_weight()
+void init_weight(int inputs,int hiddenNodes,int outputs,double hiddenWeights[][],double outputWeights[][])
 {
-
+    for (int input = 0; input < inputs ; ++input)
+    {
+        for (int hidden = 0; hidden < hiddenNodes; ++hidden)
+        {
+            hiddenWeights[input][hidden] = init();
+        }
+    }
+    for (int hidden = 0; hidden < hiddenNodes; ++hidden)
+    {
+        for(int output = 0; output < outputs; ++output)
+        {
+            outputWeights[hidden][output] = init();
+        }
+    }
 }
 
-void init_bias()
+void init_bias(int hiddenNodes, int ouputs, double hiddenLayerBias[], double outputLayerBias[])
 {
-
+    for (int i = 0; i < hiddenNodes; ++i)
+    {
+        //hiddenLayerBias[i] = init();
+        hiddenLayerBias = 1;
+    }
+    for (int i = 0; i < outputs; ++i)
+    {
+        //outputLayerBias[i] = init();
+        outputLayerBias = 1;
+    }
 }
 
-void training()
+void training(int epochs, int numInputs, int numHiddenNodes, int numOutputs,double hiddenLayer[], double outputLayer[], double hiddenLayerBias[], double outputLayerBias[], double hiddenWeights[][], double outputWeights[][], int numTrainingSets, double training_inputs[][], double training_outputs[][])
 {
 
-}
+    for (int e = 0; e < epochs; ++e)
+    {
+        if(e < 10 || e > 9990)
+        {
+            printf("epoch %d, ", e);
+        }
 
-void calcul_error()
-{
-
+        for (int i = 0; i < numTrainingSets; ++i)
+        {
+            hidden_activation(numHiddenNodes, numInputs, hiddenLayerBias, training_inputs[i], hiddenWeights, hiddenLayer);
+            output_activation(numOutputs, numHiddenNodes, outputLayerBias, hiddenLayer, outputWeights, outputLayer);
+            modif_hidden_weight(numHiddenNodes, numOutputs, numInputs, hiddenLayer, outputWeights, hiddenLayerBias, training_inputs[i]);
+            modif_output_weight(numOutputs, numHiddenNodes, training_outputs[i], outputLayer, outputWeights, hiddenLayer);
+        }
+    }
 }
 
 void hidden_activation()
@@ -76,37 +114,16 @@ void modif_output_bias()
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 void main()
 {
-	static const int numInputs = 2;	//nombre d'entré
-	static const int numHiddenNodes = 2;	//nombre de noeud caché
-	static const int numOutputs = 1;	//nombre de sortie
+
+//========================================//
+//                Variables               //
+//========================================//
+
+	int numInputs = 2;	//nombre d'entré
+	int numHiddenNodes = 2;	//nombre de noeud caché
+	int numOutputs = 1;	//nombre de sortie
 
 	double hiddenLayer[numHiddenNodes]; //création des couches caché
 	double outputLayer[numOutputs]; //création des couches de sortie
@@ -118,15 +135,23 @@ void main()
 	double outputWeights[numHiddenNodes][numOutputs]; //poid des couches de sortie
 	
 
-	static const int numTrainingSets = 4; //nombre de cas d'entrées
+	int numTrainingSets = 4; //nombre de cas d'entrées
 
 	double training_inputs[4][2] = {{0.0f, 0.0f}, {1.0f, 0.0f}, {0.0f, 1.0f}, {1.0f, 1.0f}};
 
 	double training_outputs[4][1] = {{0.0f}, {1.0f}, {1.0f}, {0.0f}};
 
-	static const int epochs = 10000; //nombre d'itération des tests
+	int epochs = 10000; //nombre d'itération des tests
 
-	static const double lr = 0.1f; //taux d'apprentissage
+//========================================//
+//                program                 //
+//========================================//
+    srand(time(NULL));
+    init_weight(inputs,hiddenNodes,outputs,hiddenWeights,outputWeights);
+
+    init_bias(hiddenNodes, ouputs, hiddenLayerBias, outputLayerBias);
+
+    training(epochs, numInputs, numHiddenNodes, numOutputs, hiddenLayer, outputLayer, hiddenLayerBias, outputLayerBias, hiddenWeights, outputWeights, numTrainingSets, training_inputs, training_outputs);
 }
 
 
