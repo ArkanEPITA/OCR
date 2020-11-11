@@ -79,40 +79,102 @@ void training(int epochs, int numInputs, int numHiddenNodes, int numOutputs,doub
     }
 }
 
-void hidden_activation()
+void hidden_activation(int numHiddenNodes, int numInputs, double hiddenLayerBias[], double training_inputs[], double hiddenWeights[], double hiddenLayer[])
 {
+	for (int j = 0; j < numHiddenNodes; j++) //calcul de l'activation de la couche caché
+	{
+		double activation = hiddenLayerBias[j];
+  	
+		for (int k = 0; k < numInputs; k++) 
+	   	{
+	   		/*if(n > 9900)
+			{
+				printf("%lf, ", training_inputs[i][k]);
+			}*/
+	   		activation += training_inputs[i][k] * hiddenWeights[k][j];
+	   		//printf("%lf\n", training_inputs[i][k]);
+	   	}
+		hiddenLayer[j] = sigmoid(activation);
 
+	}
 }
 
-void output_activation()
+void output_activation(int numOutputs, int numHiddenNodes, double outputLayerBias[], double hiddenLayer[], double outputWeights[], double outputLayer[])
 {
-
+	for (int j = 0; j < numOutputs; j++) //calcul de l'activation de la couche de sortie
+	{
+		double activation = outputLayerBias[j];
+		
+		for (int k = 0; k < numHiddenNodes; k++) 
+		{
+			activation += hiddenLayer[k] * outputWeights[k][j];
+		}
+				
+		outputLayer[j] = sigmoid(activation);
+		//printf(" %lf\n", outputLayer[j]);
+	}
 }
 
-void modif_hidden_weight()
+void modif_hidden_weight(int numHiddenNodes, int numOutputs, int numInputs, double hiddenLayer[], double outputWeights[][], double hiddenLayerBias[],double hiddenWeights[][],double training_inputs[])
 {
-
+	double deltaHidden[numHiddenNodes];
+	
+	for (int j = 0; j < numHiddenNodes; j++) //calcul des modifications des poids des couches caché
+	{
+		double dError = 0.0f;
+		
+		for(int k = 0; k < numOutputs; k++) 
+		{
+			dError += deltaOutput[k] * outputWeights[j][k];
+		}
+			
+		deltaHidden[j] = dError * dSigmoid(hiddenLayer[j]);
+		//printf("delta hidden: %lf\n", deltaHidden[j]);
+	}
+	for (int j = 0; j < numHiddenNodes; j++) //Appliaction des modifications des poids des couches cachés
+	{
+		hiddenLayerBias[j] += deltaHidden[j] * lr;
+				
+		for(int k = 0; k < numInputs; k++) 
+		{
+			hiddenWeights[k][j] += training_inputs[i][k] * deltaHidden[j];
+		}
+	}
+	
 }
 
-void modif_output_weight()
+void modif_output_weight(int numOutputs, int numHiddenNodes, double training_outputs[], double outputLayer[], double outputWeights[][], double hiddenLayer[])
 {
-
+	double deltaOutput[numOutputs];
+		
+	for (int j = 0; j < numOutputs; j++) //calcul des modifications des poids de sortie
+	{
+		double dError = (training_outputs[j] - outputLayer[j]);
+		deltaOutput[j] = dError * dSigmoid(outputLayer[j]);
+		//printf("delta output: %lf\n", deltaOutput[j]);
+	}
+	
+	for (int j = 0; j < numOutputs; j++) //Appliaction des modifications des poids de sortie
+	{
+		outputLayerBias[j] += deltaOutput[j]*lr;
+	
+		for (int k = 0; k < numHiddenNodes; k++) 
+		{
+			outputWeights[k][j] += hiddenLayer[k] * deltaOutput[j];
+		}
+	}
 }
-
+/*
 void modif_hidden_bias()
 {
-
+	
 }
 
 void modif_output_bias()
 {
 
 }
-
-
-
-
-
+*/
 
 void main()
 {
