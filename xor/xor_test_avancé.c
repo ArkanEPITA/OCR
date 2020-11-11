@@ -61,7 +61,15 @@ void modif_output_weight()
 
 }
 
+void modif_hidden_bias()
+{
 
+}
+
+void modif_output_bias()
+{
+
+}
 
 
 
