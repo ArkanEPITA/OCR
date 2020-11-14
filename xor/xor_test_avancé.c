@@ -5,6 +5,47 @@
 #include "xor_test.h"
 
 
+
+//========================================//
+//                Structures               //
+//========================================//
+
+
+typedef struct Nodes Nodes;
+struct Nodes
+{
+    int numInputs = 2;  //nombre d'entré
+    int numHiddenNodes = 2; //nombre de noeud caché
+    int numOutputs = 1; //nombre de sortie
+
+    double hiddenLayer[numHiddenNodes]; //création des couches caché
+    double outputLayer[numOutputs]; //création des couches de sortie
+    
+    double hiddenLayerBias[numHiddenNodes]; //biais des couches caché
+    double outputLayerBias[numOutputs]; //bias des couches de sortie
+
+    double hiddenWeights[numInputs][numHiddenNodes]; //poid des couches caché
+    double outputWeights[numHiddenNodes][numOutputs]; //poid des couches de sortie
+    double deltaOutput[numOutputs];
+};
+
+typedef struct Training Training;
+struct Training
+{
+    int numTrainingSets = 4; //nombre de cas d'entrées
+
+    double training_inputs[4][2] = {{0.0f, 0.0f}, {1.0f, 0.0f}, {0.0f, 1.0f}, {1.0f, 1.0f}};
+
+    double training_outputs[4][1] = {{0.0f}, {1.0f}, {1.0f}, {0.0f}};
+
+    int epochs = 10000; //nombre d'itération des numTrainingSets
+};
+
+
+//========================================//
+//                Fonctions               //
+//========================================//
+
 double sigmoid(double z)	//fonction d'activation de notre réseau de neurone
 {
 	double res = 1 / (1 + exp(z));
@@ -28,103 +69,103 @@ double init()   //fonction permettant d'initialiser mes poids de manière aléat
     return rnd;
 }
 
-void init_weight(int inputs,int hiddenNodes,int outputs,double hiddenWeights[][2],double outputWeights[][1])
+void init_weight(Nodes* N)
 {
-    for (int input = 0; input < inputs ; ++input)
+    for (int input = 0; input < (*N).inputs ; ++input)
     {
-        for (int hidden = 0; hidden < hiddenNodes; ++hidden)
+        for (int hidden = 0; hidden < (*N).hiddenNodes; ++hidden)
         {
-            hiddenWeights[input][hidden] = init();
+            (*N).hiddenWeights[input][hidden] = init();
         }
     }
-    for (int hidden = 0; hidden < hiddenNodes; ++hidden)
+    for (int hidden = 0; hidden < (*N).hiddenNodes; ++hidden)
     {
-        for(int output = 0; output < outputs; ++output)
+        for(int output = 0; output < (*N).outputs; ++output)
         {
-            outputWeights[hidden][output] = init();
+            (*N).outputWeights[hidden][output] = init();
         }
     }
 }
 
-void init_bias(int hiddenNodes, int outputs, double hiddenLayerBias[], double outputLayerBias[])
+void init_bias(Nodes* N)
 {
-    for (int i = 0; i < hiddenNodes; ++i)
+    for (int i = 0; i < (*N).hiddenNodes; ++i)
     {
         //hiddenLayerBias[i] = init();
-        hiddenLayerBias[i] = 1.0f;
+        (*N).hiddenLayerBias[i] = 1.0f;
     }
-    for (int i = 0; i < outputs; ++i)
+    for (int i = 0; i < (*N).outputs; ++i)
     {
         //outputLayerBias[i] = init();
-        outputLayerBias[i] = 1.0f;
+        (*N).outputLayerBias[i] = 1.0f;
     }
 }
 
-void hidden_activation(int numHiddenNodes, int numInputs, double hiddenLayerBias[], double training_inputs[], double hiddenWeights[][2], double hiddenLayer[])
+void hidden_activation(Nodes* N)
 {
-	for (int j = 0; j < numHiddenNodes; j++) //calcul de l'activation de la couche caché
+	for (int j = 0; j < (*N).numHiddenNodes; j++) //calcul de l'activation de la couche caché
 	{
-		double activation = hiddenLayerBias[j];
+		double activation = (*N).hiddenLayerBias[j];
   	
-		for (int k = 0; k < numInputs; k++) 
+		for (int k = 0; k < (*N).numInputs; k++) 
 	   	{
 	   		/*if(n > 9900)
 			{
 				printf("%lf, ", training_inputs[i][k]);
 			}*/
-	   		activation += training_inputs[k] * hiddenWeights[k][j];
+	   		activation += (*N).training_inputs[k] * (*N).hiddenWeights[k][j];
 	   		//printf("%lf\n", training_inputs[i][k]);
 	   	}
-		hiddenLayer[j] = sigmoid(activation);
+		(*N).hiddenLayer[j] = sigmoid(activation);
 
 	}
 }
 
-void output_activation(int numOutputs, int numHiddenNodes, double outputLayerBias[], double hiddenLayer[], double outputWeights[][1], double outputLayer[])
+void output_activation(Nodes* N)
 {
-	for (int j = 0; j < numOutputs; j++) //calcul de l'activation de la couche de sortie
+	for (int j = 0; j < (*N).numOutputs; j++) //calcul de l'activation de la couche de sortie
 	{
-		double activation = outputLayerBias[j];
+		double activation = (*N).outputLayerBias[j];
 		
-		for (int k = 0; k < numHiddenNodes; k++) 
+		for (int k = 0; k < (*N).numHiddenNodes; k++) 
 		{
-			activation += hiddenLayer[k] * outputWeights[k][j];
+			activation += (*N).hiddenLayer[k] * (*N).outputWeights[k][j];
 		}
 				
-		outputLayer[j] = sigmoid(activation);
+		(*N).outputLayer[j] = sigmoid(activation);
 		//printf(" %lf\n", outputLayer[j]);
 	}
 }
 
-void modif_hidden_weight(int numHiddenNodes, int numOutputs, int numInputs, double hiddenLayer[], double outputWeights[][1], double hiddenLayerBias[], double hiddenWeights[][2], double training_inputs[], double deltaOutput[])
+void modif_hidden_weight(Nodes* N, Training* T)
 {
 	double deltaHidden[numHiddenNodes];
 	
-	for (int j = 0; j < numHiddenNodes; j++) //calcul des modifications des poids des couches caché
+	for (int j = 0; j < (*N).numHiddenNodes; j++) //calcul des modifications des poids des couches caché
 	{
 		double dError = 0.0f;
 		
-		for(int k = 0; k < numOutputs; k++) 
+		for(int k = 0; k < (*N).numOutputs; k++) 
 		{
-			dError += deltaOutput[k] * outputWeights[j][k];
+			dError += (*N).deltaOutput[k] * (*N).outputWeights[j][k];
 		}
 			
-		deltaHidden[j] = dError * dSigmoid(hiddenLayer[j]);
+		(*N).deltaHidden[j] = dError * dSigmoid((*N).hiddenLayer[j]);
 		//printf("delta hidden: %lf\n", deltaHidden[j]);
 	}
-	for (int j = 0; j < numHiddenNodes; j++) //Appliaction des modifications des poids des couches cachés
+	for (int j = 0; j < (*N).numHiddenNodes; j++) //Appliaction des modifications des poids des couches cachés
 	{
-		hiddenLayerBias[j] += deltaHidden[j];
+		(*N).hiddenLayerBias[j] += deltaHidden[j];
 				
-		for(int k = 0; k < numInputs; k++) 
+		for(int k = 0; k < (*N).numInputs; k++) 
 		{
-			hiddenWeights[k][j] += training_inputs[k] * deltaHidden[j];
+			(*N).hiddenWeights[k][j] += (*T).training_inputs[k] * deltaHidden[j];
 		}
 	}
 	
 }
 
-void modif_output_weight(int numOutputs, int numHiddenNodes, double training_outputs[], double outputLayer[], double outputWeights[][1], double hiddenLayer[], double outputLayerBias[], double deltaOutput[])
+void modif_output_weight(Nodes* N, Training* T, double deltaOutput[])
 {
 		
 	for (int j = 0; j < numOutputs; j++) //calcul des modifications des poids de sortie
@@ -136,8 +177,8 @@ void modif_output_weight(int numOutputs, int numHiddenNodes, double training_out
 	
 	for (int j = 0; j < numOutputs; j++) //Appliaction des modifications des poids de sortie
 	{
-		outputLayerBias[j] += deltaOutput[j];
-	
+		//outputLayerBias[j] += deltaOutput[j];
+
 		for (int k = 0; k < numHiddenNodes; k++) 
 		{
 			outputWeights[k][j] += hiddenLayer[k] * deltaOutput[j];
@@ -145,7 +186,7 @@ void modif_output_weight(int numOutputs, int numHiddenNodes, double training_out
 	}
 }
 
-int print_xor(int epoch, int print,double hiddenWeight[][2], double outputWeight[][1], double hiddenLayerBias[], double outputLayerBias[], double training_inputs[], double outputLayer[])
+int print_xor (Nodes* N, Training* T)
 {
 	if(epoch % 1000 == 0)
 	{
@@ -168,7 +209,7 @@ int print_xor(int epoch, int print,double hiddenWeight[][2], double outputWeight
 	return print;
 }
 
-void training(int epochs, int numInputs, int numHiddenNodes, int numOutputs,double hiddenLayer[], double outputLayer[], double hiddenLayerBias[], double outputLayerBias[], double hiddenWeights[][2], double outputWeights[][1], int numTrainingSets, double training_inputs[][2], double training_outputs[][1], double deltaOutput[])
+void training(Nodes* N, Training* T, double deltaOutput[])
 {
 
     for (int e = 0; e < epochs; ++e)
@@ -199,7 +240,26 @@ void modif_output_bias()
 
 
 
+void main(int argc, char *argv[])
+{
 
+//========================================//
+//                Variables               //
+//========================================//
+
+    Nodes N;
+    Training T;
+
+//========================================//
+//                program                 //
+//========================================//
+    srand(time(NULL));
+    init_weight(&N);
+
+    init_bias(&N);
+
+    training(&N, &T);
+}
 
 
 
