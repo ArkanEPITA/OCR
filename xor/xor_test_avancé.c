@@ -19,14 +19,14 @@ struct Nodes
 
     double hiddenLayer[2]; //création des couches caché
     double outputLayer[1]; //création des couches de sortie
-    
+
     double hiddenLayerBias[2]; //biais des couches caché
     double outputLayerBias[1]; //bias des couches de sortie
 
     double hiddenWeights[2][2]; //poid des couches caché
     double outputWeights[2][1]; //poid des couches de sortie
     double deltaOutput[1];
-    
+
     double lr;
 };
 
@@ -267,10 +267,13 @@ void main()
     T.numTrainingSets = 4;
     T.training_inputs[0][0] = 0.0f;
     T.training_inputs[0][1] = 0.0f;
+
     T.training_inputs[1][0] = 1.0f;
     T.training_inputs[1][1] = 0.0f;
+
     T.training_inputs[2][0] = 0.0f;
     T.training_inputs[2][1] = 1.0f;
+    
     T.training_inputs[3][0] = 1.0f;
     T.training_inputs[3][1] = 1.0f;
     
@@ -285,9 +288,8 @@ void main()
 //                program                 //
 //========================================//
     srand(time(NULL));
-    
+   
     init_weight(&N);
-
     init_bias(&N);
 
     training(&N, &T);

@@ -191,10 +191,10 @@ void change_hidden_weight(Nodes* N)
 	{
 		for(int j = 0; j < 2; j++)
 		{
-			(*N).hiddenWeights[i][j] += (*N).deltaHidden[i];
+			(*N).hiddenWeights[i][j] *= (*N).deltaHidden[i];
 		}
 		
-		(*N).hiddenLayerBias[i] += (*N).deltaHidden[i];
+		(*N).hiddenLayerBias[i] *= (*N).deltaHidden[i];
 	}
 	
 }
