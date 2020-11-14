@@ -1,0 +1,15 @@
+CC = gcc
+CFLAGS= -Wall -Wextra -std=c99 -09 -g
+LDFLAGS=
+LDLIBS= -lm
+
+all: xor
+	
+xor: ${OBJ}
+
+-include ${DEP}
+
+clean:
+	rm -f ${OBJ} ${DEP}
+	rm -f xor
+	
