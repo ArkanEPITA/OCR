@@ -18,12 +18,12 @@ void main(int argc, char *argv[])
 //========================================//
 //                program                 //
 //========================================//
-    //srand(time(NULL));
-    //init_weight(inputs,hiddenNodes,outputs,hiddenWeights,outputWeights);
+    srand(time(NULL));
+    init_weight(numInputs, numHiddenNodes, numOutputs, hiddenWeights, outputWeights);
 
-    //init_bias(hiddenNodes, ouputs, hiddenLayerBias, outputLayerBias);
+    init_bias(numHiddenNodes, numOutputs, hiddenLayerBias, outputLayerBias);
 
-    //training(epochs, numInputs, numHiddenNodes, numOutputs, hiddenLayer, outputLayer, hiddenLayerBias, outputLayerBias, hiddenWeights, outputWeights, numTrainingSets, training_inputs, training_outputs);
+    training(epochs, numInputs, numHiddenNodes, numOutputs, hiddenLayer, outputLayer, hiddenLayerBias, outputLayerBias, hiddenWeights, outputWeights, numTrainingSets, training_inputs, training_outputs, deltaOutput);
 
     
 }
