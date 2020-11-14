@@ -30,6 +30,9 @@ double init()   //fonction permettant d'initialiser mes poids de manière aléat
     if(negative % 2 == 0)rnd = -rnd;
     return rnd;
 }
+
+
+
 //=========================================//
 //                Structures               //
 //=========================================//
@@ -42,141 +45,56 @@ struct Neuron
    double biasWeight;
 };
 
-typedef struct Nodes Nodes;
-struct Nodes
+double output(Neuron* hNeuron)
 {
-    double output()
-    {
-        return (sigmoid(weights[0] * inputs[0] + weights[1] * inputs[1] + biasWeight));
-    }
-
-    void adjustWeights()
-    {
-        N.weights[0] += N.error * N.inputs[0];
-        N.weights[1] += N.error * N.inputs[1];
-        N.biasWeight += N.error;
-    }
-
-    void randomizeWeights()
-    {
-        weights[0] = init();
-        weights[1] = init();
-        biasWeight = init();
-    }
-
-};
-
-
-
-
-
-/*
-void hidden_activation(Nodes* N, Training* T)
-{
-    for (int j = 0; j < (*N).numHiddenNodes; j++) //calcul de l'activation de la couche caché
-    {
-        double activation = (*N).hiddenLayerBias[j];
-    
-        for (int k = 0; k < (*N).numInputs; k++) 
-        {
-            activation += (*T).training_inputs[j][k] * (*N).hiddenWeights[k][j];
-        }
-        (*N).hiddenLayer[j] = sigmoid(activation);
-        //printf("%f\n", sigmoid(activation));
-    }
+    return (sigmoid(hNeuron->weights[0] * hNeuron->inputs[0] + hNeuron->weights[1] * hNeuron->inputs[1] + hNeuron->biasWeight));
 }
 
-double output_activation(Nodes* N, int j)
+void adjustWeights(Neuron* hNeuron)
 {
-    double activation = (*N).outputLayerBias[j];
-    
-    for (int k = 0; k < (*N).numHiddenNodes; k++) 
-    {
-        activation += (*N).hiddenLayer[k] * (*N).outputWeights[k][0];
-    }
-    printf("activation :%f\n", activation);
-    return activation;
+    hNeuron->weights[0] += hNeuron->error * hNeuron->inputs[0];
+    hNeuron->weights[1] += hNeuron->error * hNeuron->inputs[1];
+    hNeuron->biasWeight += hNeuron->error;
 }
 
-void hidden_error(Nodes* N, Training* T)
+void randomizeWeights(Neuron* hNeuron)
 {
-    for (int input = 0; input < (*N).numInputs ; ++input)
+    hNeuron->weights[0] = init();
+    hNeuron->weights[1] = init();
+    hNeuron->biasWeight = init();
+}
+
+void training(double epochs, Neuron* hneuron1,Neuron* hneuron2,Neuron* neuron, double inputTraining[][2], double results[4])
+{
+    for (double j = 0; j < epochs; ++j)
     {
-        for (int hidden = 0; hidden < (*N).numHiddenNodes; ++hidden)
+        for (int i = 0; i < 4; ++i)
         {
-            printf("avant : %f\n",(*N).hiddenWeights[input][hidden] );
-            double error = (*N).hiddenLayer[hidden] - (*T).training_outputs[hidden][input];
-            if (error > 0)
-                (*N).hiddenWeights[input][hidden] -= (*N).lr * dSigmoid(error);
-            else
-                (*N).hiddenWeights[input][hidden] += (*N).lr * dSigmoid(error);
-            printf("error : %f\n",error);
-            printf("sig : %f\n",dSigmoid(error));
-            printf("apres : %f\n\n",(*N).hiddenWeights[input][hidden] );
+            //forward propagation (calculates output)
+            hneuron1->inputs[0] = inputTraining[i][0];
+            hneuron1->inputs[1] = inputTraining[i][1];
+            hneuron2->inputs[0] = inputTraining[i][0];
+            hneuron2->inputs[1] = inputTraining[i][1];
+            neuron->inputs[0] = output(hneuron1);
+            neuron->inputs[1] = output(hneuron2);
+
+            printf("%f xor %f = %f\n",inputTraining[i][0],inputTraining[i][1], output(neuron));
+
+            //back propagation (adjusts weights)
+
+            // adjusts the weight of the output neuron, based on its error
+            neuron->error = dSigmoid(output(neuron)) * (results[i] - output(neuron));
+            adjustWeights(neuron);
+            // then adjusts the hidden neurons' weights, based on their errors
+            hneuron1->error = dSigmoid(output(hneuron1)) * neuron->error * neuron->weights[0];
+            hneuron2->error = dSigmoid(output(hneuron2)) * neuron->error * neuron->weights[1];
+
+            adjustWeights(hneuron1);
+            adjustWeights(hneuron2);
         }
     }
 }
 
-void output_error(Nodes* N, Training* T)
-{
-    
-    for (int hidden = 0; hidden < (*N).numHiddenNodes; ++hidden)
-    {
-        printf("avant : %f\n",(*N).hiddenWeights[hidden][0] );
-        double activation = (*N).outputLayerBias[hidden];
-        for (int k = 0; k < (*N).numHiddenNodes; k++) 
-        {
-            activation += (*N).hiddenLayer[k] * (*N).outputWeights[k][0];
-        }
-
-        double error = (*N).hiddenLayer[hidden] - (*T).training_outputs[hidden][0];
-        (*N).hiddenWeights[hidden][0] -= (*N).lr * error * activation;
-        printf("error : %f\n",error);
-        printf("sig : %f\n",dSigmoid(error));
-        printf("apres : %f\n\n",(*N).hiddenWeights[hidden][0] );
-    }
-}
-
-int print_xor(Training* T, Nodes* N, int epoch, int print)
-{
-    if(epoch % 1000 == 0)
-    {
-        if(print == 1)
-        {
-            printf("epoch :%d\n", epoch);
-            printf("weight input 1 :%f\n", (*N).hiddenWeights[0][0]);
-            printf("weight input 2 :%f\n", (*N).hiddenWeights[0][1]);
-            printf("weight hidden 1 :%f\n", (*N).hiddenWeights[1][0]);
-            printf("weight hidden 2 :%f\n", (*N).hiddenWeights[1][1]);
-            printf("weight output 1 :%f\n", (*N).outputWeights[0][0]);
-            //printf("weight output 2 :%f\n", (*N).outputWeights[0][1]);
-            printf("hidden bias 1:%f\n", (*N).hiddenLayerBias[0]);
-            printf("hidden bias 2:%f\n", (*N).hiddenLayerBias[1]);
-            printf("output bias :%f\n\n\n", (*N).outputLayerBias[0]);
-            print += 1;
-        }
-        printf("res(%f,%f) = %f\n\n\n", (*T).training_inputs[(*T).actTraining][0], (*T).training_inputs[(*T).actTraining][1], (*N).outputLayer[0]);
-    }
-    return print;
-}
-/*void training(Nodes* N, Training* T)
-{
-
-    for (int e = 0; e <= (*T).epochs; ++e)
-    {
-        int print = 1;
-        for (int i = 0; i < (*T).numTrainingSets; ++i)
-        {
-            (*T).actTraining = i;
-            hidden_activation(N, T);
-            output_activation(N);
-            modif_output_weight(N, T);
-            modif_hidden_weight(N, T);
-            print = print_xor(T, N, e, print);
-        }
-    }
-}
-*/
 
 void main()
 {
@@ -185,21 +103,21 @@ void main()
 //                Variables               //
 //========================================//
 
-    Neuron hiddenNeuron1, hiddenNeuron2, outpuNeuron;
+    Neuron hiddenNeuron1, hiddenNeuron2, outputNeuron;
     // the input values
-    double inputTraining[4][2] = 
-    {
-        { 0, 0},
-        { 0, 1},
-        { 1, 0},
-        { 1, 1}
-    };
+
     
     double results[4] = { 0, 1, 1, 0 };
     double epochs = 2000;
     
+    double inputTraining[4][2] = 
+    {
+        { 0.0f, 0.0f},
+        { 0.0f, 1.0f},
+        { 1.0f, 0.0f},
+        { 1.0f, 1.0f}
+    };
     
-    hiddenNeuron1.weights[] = randomizeWeights();
 
 
 //========================================//
@@ -207,6 +125,9 @@ void main()
 //========================================//
     srand(time(NULL));
 
-    
+    randomizeWeights(&hiddenNeuron1);
+    randomizeWeights(&hiddenNeuron2);
+    randomizeWeights(&outputNeuron);
+    training(epochs,&hiddenNeuron1,&hiddenNeuron2,&outputNeuron,inputTraining,results);
 
 }
