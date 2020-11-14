@@ -97,7 +97,7 @@ void training(double epochs, Neuron* hneuron1,Neuron* hneuron2,Neuron* neuron, d
 }
 
 
-void main()
+int main()
 {
 
 //========================================//
@@ -115,7 +115,7 @@ void main()
     };
 
     double results[4] = { 0, 1, 1, 0 };	//les différents résultats attendus par rapport à inputTraining
-    double epochs = 20;
+    double epochs = 2000;
 
 
 
@@ -128,5 +128,6 @@ void main()
     randomizeWeights(&hiddenNeuron2);
     randomizeWeights(&outputNeuron);
     training(epochs,&hiddenNeuron1,&hiddenNeuron2,&outputNeuron,inputTraining,results);
+    return 0;
 
 }

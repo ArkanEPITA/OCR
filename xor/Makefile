@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS= -Wall -Wextra -std=c99 -09 -g
+CFLAGS= -Wall -Wextra -std=c99
 LDFLAGS=
 LDLIBS= -lm
 
