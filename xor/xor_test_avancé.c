@@ -165,63 +165,62 @@ void modif_hidden_weight(Nodes* N, Training* T)
 	
 }
 
-void modif_output_weight(Nodes* N, Training* T, double deltaOutput[])
+void modif_output_weight(Nodes* N, Training )
 {
 		
-	for (int j = 0; j < numOutputs; j++) //calcul des modifications des poids de sortie
+	for (int j = 0; j < (*N).numOutputs; j++) //calcul des modifications des poids de sortie
 	{
-		double dError = (training_outputs[j] - outputLayer[j]);
-		deltaOutput[j] = dError * dSigmoid(outputLayer[j]);
+		double dError = ((*T).training_outputs[j] - (*N).outputLayer[j]);
+		(*N).deltaOutput[j] = dError * dSigmoid((*N).outputLayer[j]);
 		//printf("delta output: %lf\n", deltaOutput[j]);
 	}
 	
-	for (int j = 0; j < numOutputs; j++) //Appliaction des modifications des poids de sortie
+	for (int j = 0; j < (*N).numOutputs; j++) //Appliaction des modifications des poids de sortie
 	{
-		//outputLayerBias[j] += deltaOutput[j];
-
-		for (int k = 0; k < numHiddenNodes; k++) 
+	
+		for (int k = 0; k < (*N).numHiddenNodes; k++) 
 		{
-			outputWeights[k][j] += hiddenLayer[k] * deltaOutput[j];
+			(*N).outputWeights[k][j] += (*N).hiddenLayer[k] * (*N).deltaOutput[j];
 		}
 	}
 }
 
-int print_xor (Nodes* N, Training* T)
+int print_xor(Traning* T, Nodes* N)
 {
 	if(epoch % 1000 == 0)
 	{
 		if(print == 1)
 		{
 			printf("epoch :%d\n", epoch);
-			printf("weight input 1 :%f\n", hiddenWeight[0][0]);
-			printf("weight input 2 :%f\n", hiddenWeight[0][1]);
-			printf("weight input 3 :%f\n", hiddenWeight[1][0]);
-			printf("weight input 4 :%f\n", hiddenWeight[1][1]);
-			printf("weight output 1 :%f\n", outputWeight[0][0]);
-			printf("weight output 2 :%f\n", outputWeight[0][1]);
-			printf("hidden bias 1:%f\n", hiddenLayerBias[0]);
-			printf("hidden bias 2:%f\n", hiddenLayerBias[1]);
-			printf("output bias :%f\n\n\n", outputLayerBias[0]);
+			printf("weight input 1 :%f\n", (*N).hiddenWeight[0][0]);
+			printf("weight input 2 :%f\n", (*N).hiddenWeight[0][1]);
+			printf("weight input 3 :%f\n", (*N).hiddenWeight[1][0]);
+			printf("weight input 4 :%f\n", (*N).hiddenWeight[1][1]);
+			printf("weight output 1 :%f\n", (*N).outputWeight[0][0]);
+			printf("weight output 2 :%f\n", (*N).outputWeight[0][1]);
+			printf("hidden bias 1:%f\n", (*N).hiddenLayerBias[0]);
+			printf("hidden bias 2:%f\n", (*N).hiddenLayerBias[1]);
+			printf("output bias :%f\n\n\n", (*N).outputLayerBias[0]);
 			print += 1;
 		}
-		printf("res(%f,%f) = %f\n\n\n", training_inputs[0], training_inputs[1], outputLayer[0]);
+		printf("res(%f,%f) = %f\n\n\n", (*T).training_inputs[0], (*T).training_inputs[1], (*N).outputLayer[0]);
 	}
 	return print;
 }
 
-void training(Nodes* N, Training* T, double deltaOutput[])
+void training(Nodes* N, Traning* T)
 {
 
-    for (int e = 0; e < epochs; ++e)
+    for (int e = 0; e < (*T).epochs; ++e)
     {
     	int print = 1;
-        for (int i = 0; i < numTrainingSets; ++i)
+        for (int i = 0; i < (*T).numTrainingSets; ++i)
         {
-            hidden_activation(numHiddenNodes, numInputs, hiddenLayerBias, training_inputs[i], hiddenWeights, hiddenLayer);
-            output_activation(numOutputs, numHiddenNodes, outputLayerBias, hiddenLayer, outputWeights, outputLayer);
-            modif_output_weight(numOutputs, numHiddenNodes, training_outputs[i], outputLayer, outputWeights, hiddenLayer, outputLayerBias, deltaOutput);
-            modif_hidden_weight(numHiddenNodes, numOutputs, numInputs, hiddenLayer, outputWeights, hiddenLayerBias, hiddenWeights, training_inputs[i], deltaOutput);
-            print = print_xor(e, print, hiddenWeights, outputWeights, hiddenLayerBias, outputLayerBias, training_inputs[i], outputLayer);
+            hidden_activation(N);
+            output_activation(N);
+            modif_output_weight(N, T);
+            modif_hidden_weight(N, T);
+            print = print_xor(N, T);
         }
     }
 }
