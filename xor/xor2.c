@@ -92,6 +92,7 @@ void training(double epochs, Neuron* hneuron1,Neuron* hneuron2,Neuron* neuron, d
             adjustWeights(hneuron1);
             adjustWeights(hneuron2);
         }
+        printf("\n______________________________\n\n");
     }
 }
 
