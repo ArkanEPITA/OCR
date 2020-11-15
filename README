@@ -4,7 +4,7 @@
 
 Pour l'utilisation du réseau de neurones résolvant le problème du xor, vous devrez: 
 	- Vous diriger vers le dossier xor/
-	- Lancer la commande "make" ou "gcc xor.c -o xor -lm"
+	- Lancer la commande "make"
 	- Lancer la commande "./xor"
 
 //===============================//
