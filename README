@@ -1,0 +1,13 @@
+//==========================//
+//====Utilisation du XOR====//
+//==========================//
+
+Pour l'utilisation du du réseau de neurone résolvant le problème du xor, vous devez: 
+	- vous dirigez vers le dossier xor/
+	- lancer la commande make ou gcc xor.c -o xor -lm
+	- lancer la commande ./xor
+
+//==========================//
+//====Utilisation de ...====//
+//==========================//
+
