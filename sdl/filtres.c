@@ -97,16 +97,25 @@ void grayscale(SDL_Surface* image_surface)
 
 void filtre_gaussien(SDL_Surface* image_surface)
 {
-    double masque[3][3] = {{1, 2, 1},{2, 4, 2}, {1, 2, 1}};
+    //double masque[3][3] = {{0.099999, 0.116228, 0.099999},{0.116228, 0.135092, 0.116228}, {0.099999, 0.116228, 0.099999}};
+
+
+    double masque[3][3] = {
+        {1, 2, 1},
+        {2, 4, 2},
+        {1, 2, 1}};
+
+
     //double sigma = 0.8;
     //double k = 2.0 * sigma * sigma;
-    double S = 16.0;
+    
     //int p;
 
 
 
 
-    //normalisation du masque
+    //normalization
+    double S = 16.0;
     for(int i = 0; i < 3; i++)
     {
         for(int j = 0; j < 3; j++)
@@ -115,7 +124,9 @@ void filtre_gaussien(SDL_Surface* image_surface)
         }
     }
 
-    //application du masque
+
+
+    //application
     int calculr = 0;
     int calculg = 0;
     int calculb = 0;
@@ -417,7 +428,7 @@ void binarisation(SDL_Surface* image_surface)
 		    Uint32 pixel2;
             
 
-            if(average > 100)
+            if(average > 120)
             {
                 pixel2 = SDL_MapRGB(image_surface->format, 255, 255, 255);
             }
@@ -433,6 +444,140 @@ void binarisation(SDL_Surface* image_surface)
 
 
 
+void contour_vertical(SDL_Surface* image_surface)
+{
+    for(int i = 0; i < image_surface->w - 1; i++)
+    {
+        for(int j = 0; j < image_surface->h - 1; j++)
+        {
+            Uint32 pixel = get_pixel(image_surface, i, j);
+            //Uint32 pixel2 = get_pixel(image_surface, i, j + 1);
+            Uint32 pixel3 = get_pixel(image_surface, i + 1, j);
+
+            Uint8 r, g, b;
+            SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
+            //Uint8 r2, g2, b2;
+            //SDL_GetRGB(pixel2, image_surface->format, &r2, &g2, &b2);
+            Uint8 r3, g3, b3;
+            SDL_GetRGB(pixel3, image_surface->format, &r3, &g3, &b3);
+
+            Uint8 average = 0.299*r + 0.587*g + 0.114*b;
+            //Uint8 average2 = 0.299*r2 + 0.587*g2 + 0.114*b2;
+            Uint8 average3 = 0.299*r3 + 0.587*g3 + 0.114*b3;
+
+            if( abs(average - average3) > 20)
+            {
+                pixel = SDL_MapRGB(image_surface->format, 255, 255, 255);
+            }
+            else
+            {
+                pixel = SDL_MapRGB(image_surface->format, 0, 0, 0);
+            }
+
+            put_pixel(image_surface, i, j, pixel);
+        }
+    }
+}
+
+
+void fermeture_verticale(SDL_Surface* image_surface, int taille)
+{
+    for(int i = 0; i < image_surface->w; i++)
+    {
+        for(int j = 0; j < image_surface->h - 1; j++)
+        {
+            Uint32 pixel = get_pixel(image_surface, i, j);
+            Uint8 r, g, b;
+            SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
+            if (r == 255)
+            {
+                if(j > image_surface->h - taille)
+                {
+                    taille -= image_surface->h - j;
+                }
+                int pos = 1;
+                int finder = 0;
+
+                while(pos <= taille && finder == 0)
+                {
+                    Uint32 pixel2 = get_pixel(image_surface, i, j+pos);
+                    Uint8 r2, g2, b2;
+                    SDL_GetRGB(pixel2, image_surface->format, &r2, &g2, &b2);
+                    if (r2 == 255)
+                    {
+                        finder = 1;
+                    }
+                    pos++;
+                }
+
+                if(finder == 1)
+                {
+                    for(int k = 1; k < pos; k++)
+                    {
+                        Uint32 pixel3 = get_pixel(image_surface, i, j+k);
+                        Uint8 r3, g3, b3;
+                        SDL_GetRGB(pixel3, image_surface->format, &r3, &g3, &b3);
+                        pixel3 = SDL_MapRGB(image_surface->format, 255, 255, 255);
+                        put_pixel(image_surface, i, j+k, pixel3);
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+void fermeture_horizontale(SDL_Surface* image_surface)
+{
+    for(int j = 0; j < image_surface->h; j++)
+    {
+        for(int i = 0; i < image_surface->w - 1; i++)
+        {
+            Uint32 pixel = get_pixel(image_surface, i, j);
+            Uint8 r, g, b;
+            SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
+            if (r == 255)
+            {
+                int end = 9;
+                if(i > image_surface->w - end)
+                {
+                    end -= image_surface->w - i;
+                }
+                int pos = 1;
+                int finder = 0;
+
+                while(pos <= end && finder == 0)
+                {
+                    Uint32 pixel2 = get_pixel(image_surface, i+pos, j);
+                    Uint8 r2, g2, b2;
+                    SDL_GetRGB(pixel2, image_surface->format, &r2, &g2, &b2);
+                    if (r2 == 255)
+                    {
+                        finder = 1;
+                    }
+                    pos++;
+                }
+
+                if(finder == 1)
+                {
+                    for(int k = 1; k < pos; k++)
+                    {
+                        Uint32 pixel3 = get_pixel(image_surface, i+k, j);
+                        Uint8 r3, g3, b3;
+                        SDL_GetRGB(pixel3, image_surface->format, &r3, &g3, &b3);
+                        pixel3 = SDL_MapRGB(image_surface->format, 255, 255, 255);
+                        put_pixel(image_surface, i+k, j, pixel3);
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
 int main()
 {
     SDL_Surface* image_surface;
@@ -440,14 +585,15 @@ int main()
 
     init_sdl();
 
-    image_surface = load_image("gaussien.png");
+    image_surface = load_image("images/gaussien.png");
     
     screen_surface = display_image(image_surface);
 
     wait_for_keypressed();
 
-
-    //INSERER ICI FONCTIONS ANNEXES
+    //=====================================
+    //              FILTRES
+    //=====================================
 
     grayscale(image_surface);
 
@@ -459,7 +605,6 @@ int main()
     update_surface(screen_surface, image_surface);
     wait_for_keypressed();
 
-
     gradient_vertical(image_surface);
 
     update_surface(screen_surface, image_surface);
@@ -469,7 +614,24 @@ int main()
 
     update_surface(screen_surface, image_surface);
     wait_for_keypressed();
+/*
+    contour_vertical(image_surface);
 
+    update_surface(screen_surface, image_surface);
+    wait_for_keypressed();
+
+    fermeture_verticale(image_surface, 5);
+
+    update_surface(screen_surface, image_surface);
+    wait_for_keypressed();
+
+    fermeture_horizontale(image_surface);
+
+    update_surface(screen_surface, image_surface);
+    wait_for_keypressed();
+
+    fermeture_verticale(image_surface, 4);
+*/
     SDL_FreeSurface(image_surface);
     SDL_FreeSurface(screen_surface);
 
