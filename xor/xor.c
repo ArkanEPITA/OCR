@@ -4,25 +4,25 @@
 #include <time.h>
 
 
-double sigmoid(double z)    //fonction sigmoïde d'activation de notre réseau de neurone
+double sigmoid(double z)    // sigmoid activation function of our neuron network
 {
     double res = 1 / (1 + exp(-z));
     return res;
 }
 
-double dSigmoid(double z)   //dériver de la fonction sigmoïde d'activation
+double dSigmoid(double z)   //derivative of the activating sigmoid function
 {
     double res = z * (1 - z);
     return res;
 }
 
-double init()   //fonction permettant d'initialiser mes poids de manière aléatoire
+double init()   //function to initialize the weights randomly
 {
     double rnd;
     double a = 1.0;
-    for(int i = 0; i < 2; i++)	//permet d'obtenir une valeur avec une variation plus importante pour i = 1 que pour 1 = 0
+    for(int i = 0; i < 2; i++)	//allows to obtain a value with a greater variation for i = 1 than for 1 = 0
     {
-        rnd = ((double)rand()/(double)(RAND_MAX)) * a;	//permet de recuperer une valeur aléatoire comprise entre 0 et 1
+        rnd = ((double)rand()/(double)(RAND_MAX)) * a;	//allows you to retrieve a random value between 0 and 1
     }
     return rnd;
 }
@@ -31,34 +31,34 @@ double init()   //fonction permettant d'initialiser mes poids de manière aléat
 //=========================================//
 //                Structures               //
 //=========================================//
-typedef struct Neuron Neuron; 	//structure de nos neurones 
+typedef struct Neuron Neuron; 	//structure of our neurons
 struct Neuron
 {
-   double inputs[2];	//les deux entrées de notre neurone
-   double weights[2];	//les poids des liens entre les neurones d'entrés et le neurone actuel
-   double error;		//l'erreur de notre neurone
-   double biasWeight;	//le biais de notre neurone
+   double inputs[2];	//the two inputs of our neuron
+   double weights[2];	//the weights of the links between the input neurons and the current neuron
+   double error;		//the error of our neuron
+   double biasWeight;	//through our neuron
 };
 
 
 //========================================//
-//                fonctions               //
+//                functions               //
 //========================================//
 
-double output(Neuron* hNeuron)	//calcule le fonction d'activation d'un neurone grace à la sigmoïde
+double output(Neuron* hNeuron)	//calculates the activation function of a neuron using the sigmoid
 {
     return (sigmoid(hNeuron->weights[0] * hNeuron->inputs[0] + hNeuron->weights[1] * hNeuron->inputs[1] + hNeuron->biasWeight));
 }
 
-void randomizeWeights(Neuron* hNeuron)	//initilse les poids d'un neurone de manière aléatoire grace à "init()"
-{										//initialise le biais de manière aléatoire
+void randomizeWeights(Neuron* hNeuron)	//randomly initializes the weights of a neuron with "init ()"
+{										//randomly initializes the bias
     hNeuron->weights[0] = init();
     hNeuron->weights[1] = init();
     hNeuron->biasWeight = init();
 }
 
-void adjustWeights(Neuron* hNeuron)	//actualise les poids d'un neurone par rapport à l'entrées et l'erreur
-{									//actualise le biais d'un neurone par rapport à l'erreur
+void adjustWeights(Neuron* hNeuron)	//updates the weights of a neuron with respect to the input and the error
+{									//updates through a neuron with respect to the error
     hNeuron->weights[0] += hNeuron->error * hNeuron->inputs[0];
     hNeuron->weights[1] += hNeuron->error * hNeuron->inputs[1];
     hNeuron->biasWeight += hNeuron->error;
@@ -70,7 +70,7 @@ void training(double epochs, Neuron* hneuron1,Neuron* hneuron2,Neuron* neuron, d
     {
         for (int i = 0; i < 4; ++i)
         {
-            //forward propagation -> calcule l'output du neurone de la couche de sortie par rapport aux valeurs d'entrées
+            //forward propagation -> calculates the output of the neuron of the output layer compared to the input values
             hneuron1->inputs[0] = inputTraining[i][0];
             hneuron1->inputs[1] = inputTraining[i][1];
             hneuron2->inputs[0] = inputTraining[i][0];
@@ -80,12 +80,12 @@ void training(double epochs, Neuron* hneuron1,Neuron* hneuron2,Neuron* neuron, d
 
             printf("%f xor %f = %f\n",inputTraining[i][0],inputTraining[i][1], output(neuron));
 
-            //back propagation -> permet d'ajuster les valeurs de poids et de biais en fonction de l'erreur
+            //back propagation -> allows to adjust the weight and bias values according to the error
 
-            // ajuste le poids du neurone de sortie, en fonction de son erreur en utilisant la dérivée de sigmoïde
+            //adjusts the weight of the output neuron, depending on its error using the sigmoid derivative
             neuron->error = dSigmoid(output(neuron)) * (results[i] - output(neuron));
             adjustWeights(neuron);
-            // ajuste le poids des neurones cachés, en fonction de leurs erreurs en utilisant la dérivée de sigmoïde
+            //adjusts the weight of hidden neurons, based on their errors using the sigmoid derivative
             hneuron1->error = dSigmoid(output(hneuron1)) * neuron->error * neuron->weights[0];
             hneuron2->error = dSigmoid(output(hneuron2)) * neuron->error * neuron->weights[1];
 
@@ -104,9 +104,9 @@ int main()
 //                Variables               //
 //========================================//
 
-    Neuron hiddenNeuron1, hiddenNeuron2, outputNeuron;	//création de trois variables de la structure Neuron
+    Neuron hiddenNeuron1, hiddenNeuron2, outputNeuron;	//creation of three variables of the Neuron structure
 
-    double inputTraining[4][2] = 		//défini les valeurs d'entrées possibles
+    double inputTraining[4][2] = 		//set the possible input values
     {
         { 0.0f, 0.0f},
         { 0.0f, 1.0f},
@@ -114,17 +114,17 @@ int main()
         { 1.0f, 1.0f}
     };
 
-    double results[4] = { 0, 1, 1, 0 };	//les différents résultats attendus par rapport à inputTraining
+    double results[4] = { 0, 1, 1, 0 };	//the different expected results compared to inputTraining
     double epochs = 2000;
 
 
 
 //========================================//
-//                program                 //
+//                programs                 //
 //========================================//
-    srand(time(NULL));		//permet d'avoir une valeur aléatoir dans "init()"
+    srand(time(NULL));		//allows to have a random value in "init ()"
 
-    randomizeWeights(&hiddenNeuron1);	//appelle les fonctions avec des pointeurs sur les variables de Neuron
+    randomizeWeights(&hiddenNeuron1);	//calls functions with pointers to Neuron variables
     randomizeWeights(&hiddenNeuron2);
     randomizeWeights(&outputNeuron);
     training(epochs,&hiddenNeuron1,&hiddenNeuron2,&outputNeuron,inputTraining,results);
