@@ -5,6 +5,7 @@
 #include <math.h>
 #include <errno.h>
 
+
 void init_sdl()
 {
     // Init only the video part.
@@ -624,6 +625,177 @@ void fermeture_horizontale(SDL_Surface* image_surface, int end)
 }
 
 
+
+
+void too_small_area(SDL_Surface* image_surface)
+{
+    //Detect too small areas
+    int max_h = image_surface->h;
+    int max_w = image_surface->w;
+    int i = 0;
+    int j = 0;
+    int delete_range = 4;
+
+    //Going through the image
+    while(j < max_w)
+    {
+        while(i < max_h - delete_range)
+        {
+            Uint32 pixel = get_pixel(image_surface, i, j);
+            Uint8 r, g, b;
+            SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
+
+            int search = 1;
+
+            if(r == 255)
+            {
+                while(search <= delete_range)
+                {
+                    Uint32 next_pixel = get_pixel(image_surface, i+search, j);
+                    Uint8 next_r, next_g, next_b;
+                    SDL_GetRGB(next_pixel, image_surface->format, &next_r, &next_g, &next_b);
+                    if(next_r != 255)
+                    {
+                        for(int k = 0; k <= search; k++)
+                        {
+                            Uint32 black_pixel = get_pixel(image_surface, i+k, j);
+                            Uint8 r2, g2, b2;
+                            SDL_GetRGB(black_pixel, image_surface->format, &r2, &g2, &b2);
+                            black_pixel = SDL_MapRGB(image_surface->format, 0, 0, 0);
+                            put_pixel(image_surface, i+k, j, black_pixel);
+                        }
+                    }
+                    search++;
+                }
+                i += search + 1;
+            }
+            else
+            {
+                i++;
+            }
+        }
+        j++;
+    }
+}
+
+
+
+int** rec_count_area(SDL_Surface* image_surface, int i, int j, int *count, int **mask)
+{
+    Uint8 r, g, b;
+
+    count++;
+
+    if( i != image_surface->h - 1)
+    {
+        Uint32 pixel = get_pixel(image_surface, i+1, j);
+        SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
+
+        if(r == 255 && mask[i+1][j] != 1)
+        {
+            mask[i+1][j] = 1;
+            mask = rec_count_area(image_surface, i+1, j, count, mask);
+        }
+    }
+
+    if( i != 0)
+    {
+        Uint32 pixel = get_pixel(image_surface, i-1, j);
+        SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
+        if(r == 255 && mask[i-1][j] != 1)
+        {
+            mask[i-1][j] = 1;
+            mask = rec_count_area(image_surface, i-1, j, count, mask);
+        }
+    }
+
+    if(j != image_surface->w - 1)
+    {
+        Uint32 pixel = get_pixel(image_surface, i, j+1);
+        SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
+        if(r == 255 && mask[i][j+1] != 1)
+        {
+            mask[i][j+1] = 1;
+            mask = rec_count_area(image_surface, i, j+1, count, mask);
+        }
+    }
+
+    if(j != 0)
+    {
+        Uint32 pixel = get_pixel(image_surface, i, j-1);
+        SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
+        if(r == 255 && mask[i][j-1] != 1)
+        {
+            mask[i][j-1] = 1;
+            mask = rec_count_area(image_surface, i, j-1, count, mask);
+        }
+    }
+
+    return mask;
+}
+
+
+
+void too_small_surface(SDL_Surface* image_surface)
+{
+    //creates the mask
+    int **mask = NULL;
+    
+    //allow memory for h int* (array size h of arrays of int)
+    mask = malloc(sizeof(int*) * image_surface->h); 
+
+    
+    for (int i = 0; i < image_surface->h; i++)
+    {
+        //allow memory for w int (array size w of int)
+        mask[i] = malloc(sizeof(int) * image_surface->w);
+    }
+
+    //Going through the image
+    for(int i = 0; i < image_surface->h; i++)
+    {
+        for(int j = 0; j < image_surface->w; j++)
+        {
+            Uint32 pixel = get_pixel(image_surface, i, j);
+            Uint8 r, g, b;
+            SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
+            
+            int count = 0;
+            int **test_mask;
+
+            test_mask = mask;
+
+            if(r == 255)
+            {
+                mask[i][j] = 1;
+                test_mask = rec_count_area(image_surface, i, j, &count, test_mask);
+
+                if(count >= 100)
+                {
+                    mask = test_mask;
+                }
+            }
+        }
+    }
+
+    for(int i = 0; i < image_surface->h; i++)
+    {
+        for(int j = 0; j < image_surface->w; j++)
+        {
+            Uint32 pixel = get_pixel(image_surface, i, j);
+            Uint8 r, g, b;
+            SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
+
+            Uint32 new_pixel = SDL_MapRGB(image_surface->format, mask[i][j] * r, mask[i][j] * g, mask[i][j] * b);
+            put_pixel(image_surface, i, j, new_pixel);
+        }
+    }
+    free(mask);
+}
+
+
+
+
 int main()
 {
     SDL_Surface* image_surface;
@@ -676,6 +848,16 @@ int main()
     wait_for_keypressed();
 
     fermeture_verticale(image_surface, 2);
+
+    update_surface(screen_surface, image_surface);
+    wait_for_keypressed();
+
+    too_small_area(image_surface);
+
+    update_surface(screen_surface, image_surface);
+    wait_for_keypressed();
+
+    too_small_surface(image_surface);
 
     update_surface(screen_surface, image_surface);
     wait_for_keypressed();
