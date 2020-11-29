@@ -624,7 +624,7 @@ void fermeture_horizontale(SDL_Surface* image_surface, int end)
     }
 }
 
-
+/*
 
 
 void too_small_area(SDL_Surface* image_surface)
@@ -680,58 +680,65 @@ void too_small_area(SDL_Surface* image_surface)
 
 
 
-int** rec_count_area(SDL_Surface* image_surface, int i, int j, int *count, int **mask)
+void rec_count_area(SDL_Surface* image_surface, int i, int j, int *count, int **test_mask)
 {
     Uint8 r, g, b;
-
-    count++;
-
-    if( i != image_surface->h - 1)
-    {
+    if(i < image_surface->h - 1 && i >= 0 && j >= 0 && j <= image_surface->w -1)
+    { 
+        
         Uint32 pixel = get_pixel(image_surface, i+1, j);
         SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
 
-        if(r == 255 && mask[i+1][j] != 1)
+        if(r == 255 && test_mask[i+1][j] != 1)
         {
-            mask[i+1][j] = 1;
-            mask = rec_count_area(image_surface, i+1, j, count, mask);
+            printf("i = %d   j = %d\n", i+1, j);
+            (*count)++;
+            test_mask[i+1][j] = 1;
+            rec_count_area(image_surface, i+1, j, count, test_mask);
         }
     }
 
-    if( i != 0)
+    if(i <= image_surface->h - 1 && i > 0 && j >= 0 && j <= image_surface->w -1)
     {
+        
         Uint32 pixel = get_pixel(image_surface, i-1, j);
         SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
-        if(r == 255 && mask[i-1][j] != 1)
+        if(r == 255 && test_mask[i-1][j] != 1)
         {
-            mask[i-1][j] = 1;
-            mask = rec_count_area(image_surface, i-1, j, count, mask);
+            printf("i = %d   j = %d\n", i-1, j);
+            (*count)++;
+            test_mask[i-1][j] = 1;
+            rec_count_area(image_surface, i-1, j, count, test_mask);
         }
     }
 
-    if(j != image_surface->w - 1)
+    if(i <= image_surface->h - 1 && i >= 0 && j >= 0 && j < image_surface->w -1)
     {
+        
         Uint32 pixel = get_pixel(image_surface, i, j+1);
         SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
-        if(r == 255 && mask[i][j+1] != 1)
+        if(r == 255 && test_mask[i][j+1] != 1)
         {
-            mask[i][j+1] = 1;
-            mask = rec_count_area(image_surface, i, j+1, count, mask);
+            printf("i = %d   j = %d\n", i, j+1);
+            (*count)++;
+            test_mask[i][j+1] = 1;
+            rec_count_area(image_surface, i, j+1, count, test_mask);
         }
     }
 
-    if(j != 0)
+    if(i <= image_surface->h - 1 && i >= 0 && j > 0 && j <= image_surface->w -1)
     {
+        
         Uint32 pixel = get_pixel(image_surface, i, j-1);
         SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
-        if(r == 255 && mask[i][j-1] != 1)
+        if(r == 255 && test_mask[i][j-1] != 1)
         {
-            mask[i][j-1] = 1;
-            mask = rec_count_area(image_surface, i, j-1, count, mask);
+            printf("i = %d   j = %d\n", i, j-1);
+            (*count)++;
+            test_mask[i][j-1] = 1;
+            rec_count_area(image_surface, i, j-1, count, test_mask);
         }
     }
-
-    return mask;
 }
 
 
@@ -742,45 +749,71 @@ void too_small_surface(SDL_Surface* image_surface)
     int **mask = NULL;
     
     //allow memory for h int* (array size h of arrays of int)
-    mask = malloc(sizeof(int*) * image_surface->h); 
+    mask = malloc(sizeof(int*) * image_surface->w); 
 
     
-    for (int i = 0; i < image_surface->h; i++)
+    for (int i = 0; i < image_surface->w; i++)
     {
         //allow memory for w int (array size w of int)
-        mask[i] = malloc(sizeof(int) * image_surface->w);
+        mask[i] = malloc(sizeof(int) * image_surface->h);
     }
+    printf("%d\n", image_surface->w);
 
     //Going through the image
-    for(int i = 0; i < image_surface->h; i++)
+    for(int i = 0; i < image_surface->w; i++)
     {
-        for(int j = 0; j < image_surface->w; j++)
+        for(int j = 0; j < image_surface->h; j++)
         {
             Uint32 pixel = get_pixel(image_surface, i, j);
             Uint8 r, g, b;
             SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
+            int count1 = 1;
+            int *count = &count1;
+
             
-            int count = 0;
-            int **test_mask;
+            //creates the mask
+            int **test_mask = NULL;
+            
+            //allow memory for h int* (array size h of arrays of int)
+            test_mask = malloc(sizeof(int*) * image_surface->w); 
 
-            test_mask = mask;
-
-            if(r == 255)
+            
+            for (int i = 0; i < image_surface->w; i++)
             {
-                mask[i][j] = 1;
-                test_mask = rec_count_area(image_surface, i, j, &count, test_mask);
+                //allow memory for w int (array size w of int)
+                test_mask[i] = malloc(sizeof(int) * image_surface->h);
+            }
 
-                if(count >= 100)
+            for(int i = 0; i < image_surface->w; i++)
+            {
+                for(int j = 0; j < image_surface->h; j++)
                 {
-                    mask = test_mask;
+                    test_mask[i][j] = mask[i][j];
                 }
             }
+            if(r == 255 && test_mask[i][j] != 1)
+            {   
+                test_mask[i][j] = 1;
+                rec_count_area(image_surface, i, j, count, test_mask);
+                if(*count >= 100)
+                {
+                    for(int i = 0; i < image_surface->w; i++)
+                    {
+                        for(int j = 0; j < image_surface->h; j++)
+                        {
+                            mask[i][j] = test_mask[i][j];
+                        }
+                    }
+                }
+                
+            }
+            free(test_mask);
         }
     }
 
-    for(int i = 0; i < image_surface->h; i++)
+    for(int i = 0; i < image_surface->w; i++)
     {
-        for(int j = 0; j < image_surface->w; j++)
+        for(int j = 0; j < image_surface->h; j++)
         {
             Uint32 pixel = get_pixel(image_surface, i, j);
             Uint8 r, g, b;
@@ -792,8 +825,58 @@ void too_small_surface(SDL_Surface* image_surface)
     }
     free(mask);
 }
+*/
 
-
+void too_small_surface2(SDL_Surface* image_surface)
+{
+    int j = 0;
+    for(int i = 0; i < image_surface->h-4; i += 4)
+    {
+        while(j < image_surface->w -25)
+        {
+            printf("i = %d    j = %d", i, j);
+            Uint32 pixel = get_pixel(image_surface, i, j);
+            Uint8 r, g, b;
+            SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
+            if (r == 255)
+            {
+                int a = i;
+                int b = j;
+                while (a < i+4 && r == 255)
+                {
+                    while (b < j+25 && r == 255)
+                    {
+                        Uint32 pixel = get_pixel(image_surface, a, b);
+                        Uint8 r, g, b;
+                        SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
+                        b++;
+                    }
+                    a++;
+                }
+                if(a != i + 4 || b != j + 25)
+                {
+                    int a = i;
+                    int b = j;
+                    while (a < i+4)
+                    {
+                        while (b < j+25)
+                        {
+                            Uint32 pixel = get_pixel(image_surface, a, b);
+                            
+                            SDL_GetRGB(pixel, image_surface->format, 0, 0, 0);
+                            b++;
+                        }
+                        a++;
+                    }
+                
+                }
+                j += 25;
+            }
+            j++;
+            
+        }
+    }
+}
 
 
 int main()
@@ -852,12 +935,7 @@ int main()
     update_surface(screen_surface, image_surface);
     wait_for_keypressed();
 
-    too_small_area(image_surface);
-
-    update_surface(screen_surface, image_surface);
-    wait_for_keypressed();
-
-    too_small_surface(image_surface);
+    too_small_surface2(image_surface);
 
     update_surface(screen_surface, image_surface);
     wait_for_keypressed();
