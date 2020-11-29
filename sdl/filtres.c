@@ -827,54 +827,57 @@ void too_small_surface(SDL_Surface* image_surface)
 }
 */
 
-void too_small_surface2(SDL_Surface* image_surface)
+void gniiiiiih(SDL_Surface* image_surface)
 {
-    int j = 0;
-    for(int i = 0; i < image_surface->h-4; i += 4)
+    int i = 0;
+    int maxh = image_surface->h;
+    int maxw = image_surface->w;
+    while(i < maxw - 5)
     {
-        while(j < image_surface->w -25)
+        int j = 0;
+        while(j < maxh - 26)
         {
-            printf("i = %d    j = %d", i, j);
             Uint32 pixel = get_pixel(image_surface, i, j);
             Uint8 r, g, b;
             SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
             if (r == 255)
             {
-                int a = i;
-                int b = j;
-                while (a < i+4 && r == 255)
+                int i1 = i;
+                int j1 = j;
+                while (i1 < i+4 && r == 255)
                 {
-                    while (b < j+25 && r == 255)
+                    while (j1 < j+25 && r == 255)
                     {
-                        Uint32 pixel = get_pixel(image_surface, a, b);
-                        Uint8 r, g, b;
+                        Uint32 pixel = get_pixel(image_surface, i1, j1);
                         SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
-                        b++;
+                        j1++;
                     }
-                    a++;
+                    i1++;
                 }
-                if(a != i + 4 || b != j + 25)
+                if(i1 != i + 4 || j1 != j + 25)
                 {
-                    int a = i;
-                    int b = j;
-                    while (a < i+4)
+                    int i1 = i;
+                    int j1 = j;
+                    while (i1 < i+4)
                     {
-                        while (b < j+25)
+                        while (j1 < j+25)
                         {
-                            Uint32 pixel = get_pixel(image_surface, a, b);
                             
-                            SDL_GetRGB(pixel, image_surface->format, 0, 0, 0);
-                            b++;
+                            Uint32 Titi = SDL_MapRGB(image_surface->format, 0, 0, 0);
+		                    put_pixel(image_surface, i1, j1, Titi);
+                            j1++;
                         }
-                        a++;
+                        i1++;
                     }
-                
                 }
                 j += 25;
             }
-            j++;
-            
+            else
+            {
+                j++;
+            }
         }
+        i+=4;
     }
 }
 
@@ -935,7 +938,7 @@ int main()
     update_surface(screen_surface, image_surface);
     wait_for_keypressed();
 
-    too_small_surface2(image_surface);
+    gniiiiiih(image_surface);
 
     update_surface(screen_surface, image_surface);
     wait_for_keypressed();
