@@ -1,3 +1,7 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <time.h>
 
 struct Neural_Network
 {
@@ -56,6 +60,44 @@ static double dSigmoid(double z)   //derivative of the activating sigmoid functi
 {
     double res = z * (1 - z);
     return res;
+}
+//Save data of the NN in 4 files:
+//WeightIH - WeightHO - BiasH - BiasO
+void SaveData(struct Neural_Network *net)
+{
+	  FILE * weightIH = fopen("zWIH.txt", "w+"); 
+	  for(int i = 0; i < net -> nbInput; ++i)
+	  {
+	    for(int h = 0; h < net -> nbHidden; ++h)
+	    {
+	      	fprintf(weightIH, "%f\n", (double) *(net -> WeightIH+ i+h));
+	    }
+	  }
+	  fclose(weightIH);
+
+	  FILE * weightHO = fopen("zWHO.txt", "w+");
+	  for(int h = 0; h < net -> nbHidden; ++h)
+	  {
+	    for(int o = 0; o < net -> nbOutput; ++o)
+	    {
+	        fprintf(weightHO, "%f\n", (double) *(net -> WeightHO + h+o));
+	    }
+	  }
+	  fclose(weightHO);
+	
+	  FILE * biasH = fopen("zBH.txt", "w+");
+	  for(int h = 0; h < net -> nbHidden; ++h)
+	  {
+	    fprintf(biasH, "%lf\n", (double) *(net -> BiasH + h));
+	  }
+	  fclose(biasH);
+	
+	  FILE * biasO = fopen("zBO.txt", "w+");
+	  for (int o = 0; o < net -> nbOutput; ++o)
+	  {
+	    fprintf(biasO, "%f\n", (double)(net -> BiasO + o));
+	  }
+	  fclose(biasO);
 }
 
 struct Neural_Network InitalizeNetwork()
@@ -215,6 +257,8 @@ void XOR()//called function
       printf("Epoch %-5d => ErrorRate = %f\n\n", epoch, net -> ErrorRate);
     }
   }
+
+  SaveData(net);
   free(net->OutputH);
   free(net->BiasH);
   free(net->WeightHO);
