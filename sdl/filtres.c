@@ -624,61 +624,107 @@ void fermeture_horizontale(SDL_Surface* image_surface, int end)
     }
 }
 
-/*
 
 
-void too_small_area(SDL_Surface* image_surface)
+
+
+
+
+
+void too_short_weight(SDL_Surface* image_surface, int max)
 {
-    //Detect too small areas
-    int max_h = image_surface->h;
-    int max_w = image_surface->w;
-    int i = 0;
-    int j = 0;
-    int delete_range = 4;
-
-    //Going through the image
-    while(j < max_w)
+    int pos;
+    for(int j = 0; j < (image_surface->h); j++)
     {
-        while(i < max_h - delete_range)
+        for(int i = 0; i < (image_surface->w) - max; i+=pos)
         {
-            Uint32 pixel = get_pixel(image_surface, i, j);
-            Uint8 r, g, b;
-            SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
-
-            int search = 1;
-
-            if(r == 255)
+            pos = 0;
+            int delete = 0;
+            while(pos < max && delete == 0)
             {
-                while(search <= delete_range)
+                Uint32 pixel = get_pixel(image_surface, i+pos, j);
+                Uint8 r, g, b;
+                SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
+
+                if(r == 0)
                 {
-                    Uint32 next_pixel = get_pixel(image_surface, i+search, j);
-                    Uint8 next_r, next_g, next_b;
-                    SDL_GetRGB(next_pixel, image_surface->format, &next_r, &next_g, &next_b);
-                    if(next_r != 255)
-                    {
-                        for(int k = 0; k <= search; k++)
-                        {
-                            Uint32 black_pixel = get_pixel(image_surface, i+k, j);
-                            Uint8 r2, g2, b2;
-                            SDL_GetRGB(black_pixel, image_surface->format, &r2, &g2, &b2);
-                            black_pixel = SDL_MapRGB(image_surface->format, 0, 0, 0);
-                            put_pixel(image_surface, i+k, j, black_pixel);
-                        }
-                    }
-                    search++;
+                    delete = 1;
                 }
-                i += search + 1;
+                pos++;
+            }
+
+            if(delete == 1)
+            {
+                for(int k = 0; k < pos; k++)
+                {
+                    Uint32 black_pixel = SDL_MapRGB(image_surface->format, 0, 0, 0);
+                    put_pixel(image_surface, i+k, j, black_pixel);
+                }
             }
             else
             {
-                i++;
+                Uint32 next_pixel = get_pixel(image_surface, i+pos, j);
+                Uint8 nr, ng, nb;
+                SDL_GetRGB(next_pixel, image_surface->format, &nr, &ng, &nb);
+                while(nr == 255)
+                {
+                    pos++;
+                    next_pixel = get_pixel(image_surface, i+pos, j);
+                    SDL_GetRGB(next_pixel, image_surface->format, &nr, &ng, &nb);
+                }
             }
         }
-        j++;
     }
 }
 
+void too_short_height(SDL_Surface* image_surface, int max)
+{
+    int pos;
+    for(int i = 0; i < (image_surface->w); i++)
+    {
+        for(int j = 0; j < (image_surface->h) - max; j+=pos)
+        {
+            pos = 0;
+            int delete = 0;
+            while(pos < max && delete == 0)
+            {
+                Uint32 pixel = get_pixel(image_surface, i, j+pos);
+                Uint8 r, g, b;
+                SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
 
+                if(r == 0)
+                {
+                    delete = 1;
+                }
+                pos++;
+            }
+
+            if(delete == 1)
+            {
+                for(int k = 0; k < pos; k++)
+                {
+                    Uint32 black_pixel = SDL_MapRGB(image_surface->format, 0, 0, 0);
+                    put_pixel(image_surface, i, j+k, black_pixel);
+                }
+            }
+            else
+            {
+                Uint32 next_pixel = get_pixel(image_surface, i, j+pos);
+                Uint8 nr, ng, nb;
+                SDL_GetRGB(next_pixel, image_surface->format, &nr, &ng, &nb);
+                while(nr == 255)
+                {
+                    pos++;
+                    next_pixel = get_pixel(image_surface, i, j+pos);
+                    SDL_GetRGB(next_pixel, image_surface->format, &nr, &ng, &nb);
+                }
+            }
+            
+        }
+    }
+}
+
+/*
 
 void rec_count_area(SDL_Surface* image_surface, int i, int j, int *count, int **test_mask)
 {
@@ -825,17 +871,16 @@ void too_small_surface(SDL_Surface* image_surface)
     }
     free(mask);
 }
-*/
 
 void gniiiiiih(SDL_Surface* image_surface)
 {
     int i = 0;
     int maxh = image_surface->h;
     int maxw = image_surface->w;
-    while(i < maxw - 5)
+    while(i < maxw - 4)
     {
         int j = 0;
-        while(j < maxh - 26)
+        while(j < maxh - 25)
         {
             Uint32 pixel = get_pixel(image_surface, i, j);
             Uint8 r, g, b;
@@ -846,6 +891,7 @@ void gniiiiiih(SDL_Surface* image_surface)
                 int j1 = j;
                 while (i1 < i+4 && r == 255)
                 {
+                    int j1 = j;
                     while (j1 < j+25 && r == 255)
                     {
                         Uint32 pixel = get_pixel(image_surface, i1, j1);
@@ -857,12 +903,11 @@ void gniiiiiih(SDL_Surface* image_surface)
                 if(i1 != i + 4 || j1 != j + 25)
                 {
                     int i1 = i;
-                    int j1 = j;
                     while (i1 < i+4)
                     {
+                        int j1 = j;
                         while (j1 < j+25)
                         {
-                            
                             Uint32 Titi = SDL_MapRGB(image_surface->format, 0, 0, 0);
 		                    put_pixel(image_surface, i1, j1, Titi);
                             j1++;
@@ -881,9 +926,12 @@ void gniiiiiih(SDL_Surface* image_surface)
     }
 }
 
+*/
 
 int main()
 {
+    //weight = barre du haut
+    //height = barre de gauche
     SDL_Surface* image_surface;
     SDL_Surface* screen_surface;
 
@@ -938,7 +986,17 @@ int main()
     update_surface(screen_surface, image_surface);
     wait_for_keypressed();
 
-    gniiiiiih(image_surface);
+    too_short_weight(image_surface, 25);
+
+    update_surface(screen_surface, image_surface);
+    wait_for_keypressed();
+
+    too_short_height(image_surface, 2);
+
+    update_surface(screen_surface, image_surface);
+    wait_for_keypressed();
+
+    too_short_weight(image_surface, 2);
 
     update_surface(screen_surface, image_surface);
     wait_for_keypressed();
