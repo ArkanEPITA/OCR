@@ -41,9 +41,9 @@ void print_matrix(double matrix[], size_t lines, size_t cols);
 
 double* matrixFromFile(char* filename);
 
-//double* wanteedArray(char letter);
+//double* wantedArray(char letter);
 
-//double** wanteedMatrix();
+//double** wantedMatrix();
 
 double** lettersMatrix();
 

@@ -144,7 +144,7 @@ void print_matrix(double matrix[], size_t lines, size_t cols)
 }
 
 //Create & return the double* pixels values from filename
-double* matrixFromFile(char *filename)
+double* matrixFromFile(char* filename)
 {
     double* matrix = malloc(sizeof(double) * 28 * 28);
     FILE* file = fopen(filename, "r");
@@ -171,26 +171,26 @@ double* matrixFromFile(char *filename)
 
 
 /*
-//Create & return the double* wanteed pixels values from filename
-double* wanteddArray(char letter)
+//Create & return the double* wanted pixels values from filename
+double* wantedArray(char letter)
 {
-    double* wantedd = calloc(52, sizeof(double));
+    double* wanted = calloc(52, sizeof(double));
 
     if(letter >= 'A' && letter <= 'Z')
     {
-        wanteed[(int)(letter) - 65] = 1;
+        wanted[(int)(letter) - 65] = 1;
     }
     else if(letter >= 'a' && letter <= 'z')
     {
-        wanteed[((int)(letter) - 97) + 26] = 1;
+        wanted[((int)(letter) - 97) + 26] = 1;
     }
-    return goal;
+    return wanted;
 }
 
-//Create & return all the wanteed matrixes (for all letters)
-double** wanteedMatrix()
+//Create & return all the wanted matrixes (for all letters)
+double** wantedMatrix()
 {
-  double** wanteddMatrix = malloc(sizeof(double*) * 52);
+  double** wantedMatrix = malloc(sizeof(double*) * 52);
   char maj = 'A';
   char min = 'a';
 
@@ -198,16 +198,16 @@ double** wanteedMatrix()
   {
     if(i < 26)
     {
-      wanteedMatrix[i] = wanteedArray(maj);
+      wantedMatrix[i] = wantedArray(maj);
       maj++;
     }
     else
     {
-      wanteedMatrix[i] = wanteedArray(min);
+      wantedMatrix[i] = wantedArray(min);
       min++;
     }
   }
-  return wanteedMatrix;
+  return wantedMatrix;
 }
 */
 
