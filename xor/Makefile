@@ -12,4 +12,4 @@ xor: ${OBJ}
 clean:
 	rm -f ${OBJ} ${DEP}
 	rm -f xor
-	
+	rm -f *.txt
