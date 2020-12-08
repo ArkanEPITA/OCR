@@ -1,4 +1,4 @@
-# include "gtk.h"
+# include "gtku.h"
 
 
 gchar* file = "";
@@ -8,8 +8,8 @@ GtkWidget* parent_window;
 
 void save_text(GtkButton* button, GtkTextBuffer* buffer)
 {
-  //UNUSED(button);
-  //UNUSED(buffer);
+  UNUSED(button);
+  UNUSED(buffer);
 
   GtkWidget* dialog;
   GtkWidget* toplevel = gtk_widget_get_toplevel(GTK_WIDGET(button));
@@ -46,12 +46,12 @@ void openFile(GtkButton* button, GtkLabel* textlabel)
 	gtk_widget_destroy(dialog);
 }
 
-void load_image(GtkButton* button, GtkImage* image)
+void load_image_gtk(GtkButton* button, GtkImage* image)
 {
     if(strcmp(file,"") == 0)
         return;
 
-    //UNUSED(button);
+    UNUSED(button);
 	SDL_Surface* image_surface = IMG_Load((char*)file);
 	if(image_surface->w > 576 && image_surface->h > 460)
 	{
@@ -74,7 +74,7 @@ int launchOCR(GtkButton* button, GtkTextBuffer* buffer)
   {
     return 1;
   }
-	//UNUSED(button);
+	UNUSED(button);
 	SDL_Init(SDL_INIT_VIDEO);
 
 	printf("%s\n ",file);

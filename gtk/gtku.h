@@ -14,3 +14,9 @@ typedef struct
 	gpointer user_data;
 	GtkBuilder* builder;
 } Data;
+
+#define UNUSED(x) (void)(x)
+
+void create_window(int argc, char* argv[]);	
+
+#endif

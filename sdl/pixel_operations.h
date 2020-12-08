@@ -2,8 +2,11 @@
 #define PIXEL_OPERATIONS_H_
 
 #include <stdlib.h>
-#include <SDL/SDL.h>
 #include <err.h>
+#include "SDL/SDL.h"
+#include "SDL/SDL_image.h"
+#include <math.h>
+#include <errno.h>
 
 typedef struct Word Word;
 
@@ -25,13 +28,13 @@ struct Array_word
     int length;
 };
 
-Uint32 getpixel(SDL_Surface *surface, unsigned x, unsigned y);
+Uint32 get_pixel(SDL_Surface *surface, unsigned x, unsigned y);
 
-void putpixel(SDL_Surface *surface, unsigned x, unsigned y, Uint32 pixel);
+void put_pixel(SDL_Surface *surface, unsigned x, unsigned y, Uint32 pixel);
 
 void wait_for_keypressed(void);
 
-SDL_Surface* display_image(SDL_Surface* image)_surface;
+SDL_Surface* display_image(SDL_Surface* image_surface);
 
 SDL_Surface* copy_image(SDL_Surface* image_surface);
 
@@ -48,5 +51,12 @@ double* matrixFromFile(char* filename);
 double** lettersMatrix();
 
 double* create_matrix(SDL_Surface* image_surface);
+
+void greyscale(SDL_Surface* image_surface);
+
+SDL_Surface* Resize(SDL_Surface *image_surface);
+
+void binarisation(SDL_Surface* image_surface);
+
 
 #endif

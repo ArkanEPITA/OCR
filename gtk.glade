@@ -15,7 +15,7 @@ And have fun !</property>
     <property name="window_position">center</property>
     <property name="default_width">480</property>
     <property name="default_height">40</property>
-    <property name="icon">logo.png</property>
+    <property name="icon">logo.jpg</property>
     <signal name="destroy" handler="gtk_main_quit" swapped="no"/>
     <child>
       <object class="GtkBox" id="box1">
@@ -159,7 +159,7 @@ And have fun !</property>
               <object class="GtkImage" id="image">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="pixbuf">logo.png</property>
+                <property name="pixbuf">logo.jpg</property>
               </object>
               <packing>
                 <property name="expand">False</property>
