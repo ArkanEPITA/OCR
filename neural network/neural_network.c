@@ -3,6 +3,7 @@
 #include <math.h>
 #include <time.h>
 
+#include "../sdl/pixel_operations.h"
 struct Neural_Network
 {
     int nbInput;
@@ -70,7 +71,7 @@ void SaveData(struct Neural_Network *net)
         fprintf(file, "%f ", (double) *(net -> WeightHO + k + l ));
       }
       //printf("output\n");
-      fprintf(file, "%lf\n", (double) *net -> BiasO + k));
+      fprintf(file, "%lf\n", (double) *net -> BiasO + k);
     }
   }
   fclose(file);
@@ -143,6 +144,16 @@ void InitalizeValue(struct Neural_Network *net)
 {
 
   // il faut initialiser les valeur d'input
+  double** lettersMatrix = LetterMatrix();
+  int letter = 0;
+  for (int i = 0; i < net->nbInput; i+= 785)
+  {
+    for (int j = 0; j < 784; j++)
+    {
+      net-> InputValue[i+j] = lettersMatrix[letter][j];
+    }
+    letter++;
+  }
 
   for (int h = 0; h < net->nbHidden; h++)
   {
@@ -187,10 +198,10 @@ struct Neural_Network InitalizeNetwork()
   struct Neural_Network net;
   net.nbInput = 784;
   net.nbHidden = 64;
-  net.nbOutput = 56;
+  net.nbOutput = 52;
   
-  net.InputValue = malloc(sizeof(double) * 56 * 784);
-  net.Goal = malloc(sizeof(double) * 56 * 56);
+  net.InputValue = malloc(sizeof(double) * 52 * 784);
+  net.Goal = malloc(sizeof(double) * 52 * 52);
   
   net.WeightIH = malloc(sizeof(double) * net.nbInput * net.nbHidden);
   net.WeightHO = malloc(sizeof(double) * net.nbHidden * net.nbOutput);
@@ -351,10 +362,10 @@ void OCR()
 {
   srand(time(NULL));
 
-  int NbPattern = 56;
+  int NbPattern = 52;
   int NbEpoch = 500;
 
-  struct Neural_Network net_1 = InitalizeNetwork(); // LUC EXPLIQUE MOI CE QUE TU AS FAIT ICI POURQUOI CRÉER 2 MATRICES ? WTF
+  struct Neural_Network net_1 = InitalizeNetwork();
   struct Neural_Network *net = &net_1;
 
   LoadData(net);

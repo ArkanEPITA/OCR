@@ -31,8 +31,8 @@ double init()   //function to initialize the weights randomly
 //=========================================//
 //                Structures               //
 //=========================================//
-typedef struct Neuron Neuron; 	//structure of our neurons
-struct Neuron
+typedef struct Neurons Neuron; 	//structure of our neurons
+struct Neurons
 {
    double inputs[2];	//the two inputs of our neuron
    double weights[2];	//the weights of the links between the input neurons and the current neuron
