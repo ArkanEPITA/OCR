@@ -857,6 +857,21 @@ void gniiiiiih(SDL_Surface* image_surface)
 
 */
 
+char* final(SDL_Surface* image_surface)
+{
+    int number_lines = 3;
+    char str[] = "";
+
+    for(int i = 0; i < number_lines; i++)
+    {
+        str = print_line(image_surface);
+        str = "\n";
+    }
+
+
+    return str;
+}
+
 /*
 
 int main()

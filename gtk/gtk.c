@@ -96,7 +96,7 @@ int launchOCR(GtkButton* button, GtkTextBuffer* buffer)
 	//isolateLine(image_cut,net);
 	//printf("Isolate Line Done \n");
 
-  	//gtk_text_buffer_set_text (buffer, network->str, strlen(network->str));
+  	//gtk_text_buffer_set_text(buffer, network->str, strlen(network->str));
 
   	//sentence = net->str;
 	printf("Finish Treatment\n");

@@ -17,7 +17,7 @@ struct Word
     int maxi_word;
     int mini_word;
     int maxj_word;
-    int minj_word;
+    int minj_word;  
 };
 
 typedef struct Array_word Array_word;
@@ -36,7 +36,7 @@ void wait_for_keypressed(void);
 
 SDL_Surface* display_image(SDL_Surface* image_surface);
 
-SDL_Surface* copy_image(SDL_Surface* image_surface);
+SDL_Surface* copy_image(SDL_Surface* image_surface, int imin, int imax, int jmin, int jmax);
 
 void create_matrix_file_txt(SDL_Surface* image_surface, char* filename);
 
@@ -58,5 +58,22 @@ SDL_Surface* Resize(SDL_Surface *image_surface);
 
 void binarisation(SDL_Surface* image_surface);
 
+void init_sdl();
+
+SDL_Surface* load_image(char *path);
+
+SDL_Surface* display_image(SDL_Surface *img);
+
+void wait_for_keypressed();
+
+void SDL_FreeSurface(SDL_Surface *surface);
+
+void update_surface(SDL_Surface* screen, SDL_Surface* image);
+
+SDL_Surface* Resize_letter(SDL_Surface *image_surface);
+
+double* create_matrix_letter(SDL_Surface *image_surface);
+
+char* print_line(SDL_Surface* image_surface);
 
 #endif
