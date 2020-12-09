@@ -144,30 +144,35 @@ void InitalizeValue(struct Neural_Network *net)
 
   // il faut initialiser les valeur d'input
 
-  for (int i = 0;i< net -> nbInput; i++)
+  for (int h = 0; h < net->nbHidden; h++)
   {
-    for (int h = 0; h < net -> nbHidden; ++h)
+    for (int i = 0; i < net->nbInput; i++)
     {
-      *(net -> WeightIH + (h + i * net -> nbHidden)) = Random();
-      *(net -> dWeightIH + (h + i * net -> nbHidden)) = 0.0;
+      net->WeightIH[h + i] = Random();
+      net->dWeightIH[h + i] = 0.0;
     }
+    net->BiasH[h] = Random();
+    net->dBiasH[h] = 0.0;
   }
   
-  for (int h = 0; h < net -> nbHidden; ++h)
+  
+  for(int o = 0; o < net->nbOutput; o++)
   {
-    *(net -> WeightHO + h) = Random();
-    *(net -> dWeightHO + h) = 0.0;
-    *(net -> BiasH + h) = Random();
-    *(net -> dBiasH + h) = 0.0;
+    for(int h  = 0; h < net->nbHidden; h++)
+    {
+      net->WeightHO[h + o] = Random();
+      net->dWeightHO[h + o] = 0.0;
+    }
+    net->BiasO[o] = Random();
+    net->dBiasO[o] = 0.0;
   }
-  net -> dBiasO= 0.0;
 }
 
 
 // Fonction sigmoid servant de fonction d'activation
 static double sigmoid(double x)
 {
-  return(1.0/(1.0+exp(-x)));
+  return(1.0 / (1.0 + exp(-x)));
 }
 
 // Fonction dérivé de la sigmoid pour propager vers l'arrière notre erreur
@@ -188,7 +193,7 @@ struct Neural_Network InitalizeNetwork()
   net.Goal = malloc(sizeof(double) * 56 * 56);
   
   net.WeightIH = malloc(sizeof(double) * net.nbInput * net.nbHidden);
-  net.WeightHO = malloc(sizeof(double) * net.nbHidden);
+  net.WeightHO = malloc(sizeof(double) * net.nbHidden * net.nbOutput);
   net.BiasH = malloc(sizeof(double) * net.nbHidden);
   net.BiasO = malloc(sizeof(double) * net.nbOutput);
   net.OutputH = malloc(sizeof(double) * net.nbHidden);
@@ -198,8 +203,8 @@ struct Neural_Network InitalizeNetwork()
   net.dBiasO = malloc(sizeof(double) * net.nbOutput);
   net.dWeightIH = malloc(sizeof(double) * net.nbInput * net.nbHidden);
   net.dWeightHO = malloc(sizeof(double) * net.nbHidden * net.nbOutput);
-  net.dOutputO = malloc(sizeof(double) * net.nbOutput * net.nbHidden); 
-  net.dHidden = malloc(sizeof(double) * net.nbHidden * net.nbOutput);
+  net.dOutputO = malloc(sizeof(double) * net.nbOutput); 
+  net.dHidden = malloc(sizeof(double) * net.nbHidden);
   
   net.ErrorRate = 0.0;
   net.eta = 0.5;
