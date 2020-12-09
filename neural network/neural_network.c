@@ -146,13 +146,28 @@ void InitalizeValue(struct Neural_Network *net)
   // il faut initialiser les valeur d'input
   double** lettersMatrix = LetterMatrix();
   int letter = 0;
-  for (int i = 0; i < net->nbInput; i+= 785)
+  for (int i = 0; i < (net->nbInput * net->nbOutput); i+= 785)
   {
     for (int j = 0; j < 784; j++)
     {
       net-> InputValue[i+j] = lettersMatrix[letter][j];
     }
     letter++;
+  }
+  
+  for(int i = 0; i < net->nbOutput; i++)
+  {
+    for(int j = 0; j < net->nbOutput; j++)
+    {
+      if(i != j)
+      {
+        Goal[i + j] = 0;
+      }
+      else
+      {
+        Goal[i + j] = 1;
+      }
+    }
   }
 
   for (int h = 0; h < net->nbHidden; h++)
@@ -253,7 +268,31 @@ void ForwardPass(struct Neural_Network *net, int p, int epoch)
 
   // Il faut calculer le taux d'erreur
 
-  //                              TODO
+  for(int o = 0; o < net->nbOutput; o++)
+  {
+    net->ErrorRate += 0.5 * ((net->Goal[p + o] - net->OutputO[o]) * (net->Goal[p + o] - net->OutputO[o]));
+  }
+  
+  double max = 0.0;
+  int lmax = 0;
+  for(int o = 0; o < net->nbOutput; o++)
+  {
+    double act = net->OutputO[o];
+    if(act > max)
+    {
+      lmax = o;
+      max = act;
+    }
+  }
+  net->act = (char) act + 65;
+
+  if(epoch % 100 == 0)
+  {
+    printf("#########################\n");
+    printf("Essai n°%d\n\n\n", epoch);
+    printf("La réponse du réseau est : %c\n\n", net-> act);
+    printf("La réponse attendu est : %c\n\n\n", (char) p + 65);
+  }
 
   /*
   for (int h = 0; h <  net -> nbHidden; ++h)
@@ -376,8 +415,8 @@ void OCR()
     net -> ErrorRate = 0.0;
     for (int p = 0; p < NbPattern; ++p)
     {
-      ForwardPass(net,p,epoch);
-      BackwardPass(net,p);
+      ForwardPass(net, p, epoch);
+      BackwardPass(net, p);
     }
     // TODO print
   }
