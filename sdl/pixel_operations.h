@@ -54,7 +54,7 @@ double* create_matrix(SDL_Surface* image_surface);
 
 void greyscale(SDL_Surface* image_surface);
 
-SDL_Surface* Resize(SDL_Surface *image_surface);
+SDL_Surface* Resize(SDL_Surface *image_surface, size_t l, size_t c);
 
 void binarisation(SDL_Surface* image_surface);
 

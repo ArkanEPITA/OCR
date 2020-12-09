@@ -1,5 +1,5 @@
-# ifndef GTK_H_
-# define GTK_H_
+# ifndef GTKU_H_
+# define GTKU_H_
 
 # include <stdlib.h>
 # include <stdio.h>
@@ -8,6 +8,7 @@
 # include <SDL/SDL_image.h>
 # include <gtk/gtk.h>
 # include "../sdl/pixel_operations.h"
+
 
 typedef struct
 {
@@ -18,5 +19,6 @@ typedef struct
 #define UNUSED(x) (void)(x)
 
 void create_window(int argc, char* argv[]);	
+
 
 #endif

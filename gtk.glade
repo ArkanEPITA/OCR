@@ -34,62 +34,88 @@ And have fun !</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="orientation">vertical</property>
-                <child>
-                  <object class="GtkBox">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <child>
-                      <object class="GtkButton" id="open_img">
-                        <property name="label" translatable="yes">Open Image</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
-                        <signal name="clicked" handler="openFile" object="filename" swapped="no"/>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel" id="filename">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="halign">baseline</property>
-                        <property name="valign">baseline</property>
-                        <property name="margin_top">7</property>
-                        <property name="margin_bottom">5</property>
-                        <property name="label" translatable="yes">No file choose</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">False</property>
-                        <property name="padding">5</property>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkButton" id="NN_train">
-                    <property name="label" translatable="yes">Launch Neural Network Training !</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <signal name="clicked" handler="trainNN" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
+                  <child>
+                    <object class="GtkBox" id="box_10">
+                      <property name="visible">True</property>
+                      <property name="can_focus">False</property>
+                      <property name="orientation">vertical</property>
+                      <child>
+                        <object class="GtkBox">
+                          <property name="visible">True</property>
+                          <property name="can_focus">False</property>
+                          <child>
+                            <object class="GtkButton" id="open_img">
+                              <property name="label" translatable="yes">Open Image</property>
+                              <property name="visible">True</property>
+                              <property name="can_focus">True</property>
+                              <property name="receives_default">True</property>
+                              <signal name="clicked" handler="openFile" object="filename" swapped="no"/>
+                            </object>
+                            <packing>
+                              <property name="expand">False</property>
+                              <property name="fill">True</property>
+                              <property name="position">0</property>
+                            </packing>
+                          </child>
+                          <child>
+                            <object class="GtkLabel" id="filename">
+                              <property name="visible">True</property>
+                              <property name="can_focus">False</property>
+                              <property name="halign">baseline</property>
+                              <property name="valign">baseline</property>
+                              <property name="margin_top">7</property>
+                              <property name="margin_bottom">5</property>
+                              <property name="label" translatable="yes">No file choose</property>
+                            </object>
+                            <packing>
+                              <property name="expand">False</property>
+                              <property name="fill">False</property>
+                              <property name="padding">5</property>
+                              <property name="position">1</property>
+                            </packing>
+                          </child>
+                        </object>
+                        <packing>
+                          <property name="expand">False</property>
+                          <property name="fill">True</property>
+                          <property name="position">0</property>
+                        </packing>
+                      </child>
+                      <child>
+                        <object class="GtkButton" id="rotation_angles">
+                          <property name="label" translatable="yes">Launch rotation image ! After that reload the image !</property>
+                          <property name="visible">True</property>
+                          <property name="can_focus">True</property>
+                          <property name="receives_default">True</property>
+                          <signal name="clicked" handler="rotation_angles" swapped="no"/>
+                        </object>
+                        <packing>
+                          <property name="expand">False</property>
+                          <property name="fill">True</property>
+                          <property name="position">1</property>
+                        </packing>
+                      </child>
+                      <child>
+                        <object class="GtkButton" id="NN_train">
+                          <property name="label" translatable="yes">Launch Neural Network Training !</property>
+                          <property name="visible">True</property>
+                          <property name="can_focus">True</property>
+                          <property name="receives_default">True</property>
+                          <signal name="clicked" handler="trainNN" swapped="no"/>
+                        </object>
+                        <packing>
+                          <property name="expand">False</property>
+                          <property name="fill">True</property>
+                          <property name="position">1</property>
+                        </packing>
+                      </child>
+                    </object>
+                    <packing>
+                      <property name="expand">False</property>
+                      <property name="fill">True</property>
+                      <property name="position">0</property>
+                    </packing>
+                  </child>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -115,7 +141,7 @@ And have fun !</property>
                     <property name="receives_default">True</property>
                     <property name="valign">start</property>
                     <property name="margin_right">13</property>
-                    <signal name="clicked" handler="load_image" object="image" swapped="no"/>
+                    <signal name="clicked" handler="loading_image" object="image" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>

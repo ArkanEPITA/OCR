@@ -864,8 +864,8 @@ char* final(SDL_Surface* image_surface)
 
     for(int i = 0; i < number_lines; i++)
     {
-        str = print_line(image_surface);
-        str = "\n";
+        strcat(str, print_line(image_surface));
+        strcat(str, "\n");
     }
 
 

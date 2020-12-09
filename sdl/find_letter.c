@@ -14,7 +14,7 @@
 Array_word find_letters(SDL_Surface* image_surface)
 {
     int weigth = 0;
-    int first_black = 0;
+    int first_black2 = 0;
     for(int i = 0; i < image_surface->w; i++)
     {
         int white = 0;
@@ -26,11 +26,11 @@ Array_word find_letters(SDL_Surface* image_surface)
             if (r == 0)
             {
                 white = 1;
-                first_black = 1;
+                first_black2 = 1;
             }
-            if(white == 0 && first_black == 1)
+            if(white == 0 && first_black2 == 1)
             {
-                first_black = 0;
+                first_black2 = 0;
                 weigth += 1;
             }
         }
@@ -103,13 +103,13 @@ Array_word find_letters(SDL_Surface* image_surface)
 char* print_line(SDL_Surface* image_surface)
 {
     Array_word Word = find_letters(image_surface);
-    int nb_letters = word.length;
+    int nb_letters = Word.length;
     //Uint32 green = SDL_MapRGB(image_surface->format, 0, 255, 0);
     printf("letter = %d\n", nb_letters);
     SDL_Surface* image2;
     SDL_Surface* image3;
     double* matrix_letter = NULL;
-    char str[nb_letters*2] = "";
+    char str[] = "";
 
     int jmaxref = Word.word[0].maxj_word;
     int jminref = Word.word[0].minj_word;
@@ -151,7 +151,7 @@ char* print_line(SDL_Surface* image_surface)
 
         if(space == max_space)
         {
-            str += " ";
+            strcat(str, " ");
         }
 
         image2 = copy_image(image_surface, imin, imax, jmin, jmax);
