@@ -55,7 +55,7 @@ double* matrixFromFile(char* filename)
         printf("File is NULL \n");
     }
 
-    for(int i = 0; i <= 28; i++)
+    for(int i = 0; i < 28; i++)
     {
         for(int j = 0; j <= 28; j++)
         {
@@ -311,8 +311,8 @@ struct Neural_Network InitalizeNetwork()
   net.nbHidden = 64;
   net.nbOutput = 52;
   
-  net.InputValue = malloc(sizeof(double) * 52 * 784);
-  net.Goal = malloc(sizeof(double) * 52 * 52);
+  net.InputValue = malloc(sizeof(double) * net.nbOutput * net.nbInput);
+  net.Goal = malloc(sizeof(double) * net.nbOutput * net.nbOutput);
   
   net.WeightIH = malloc(sizeof(double) * net.nbInput * net.nbHidden);
   net.WeightHO = malloc(sizeof(double) * net.nbHidden * net.nbOutput);
@@ -344,7 +344,7 @@ void ForwardPass(struct Neural_Network *net, int p, int epoch)
     for(int i = 0; i < net->nbInput; i++)
     {
       // on calcule la somme des poids * les inputs d'un neurone
-      sum_input_hidden += net->WeightIH[(h * net->nbHidden) + i] * net->InputValue[(h * net->nbHidden) + i];
+      sum_input_hidden += net->WeightIH[(h * net->nbInput) + i] * net->InputValue[(h * net->nbInput) + i];
     }
     // on calcule la fonction d'activation de notre réseau
     net->OutputH[h] = sigmoid(sum_input_hidden + net->BiasH[h]);
@@ -357,7 +357,7 @@ void ForwardPass(struct Neural_Network *net, int p, int epoch)
     for(int h = 0; h < net->nbHidden; h++)
     {
       // on calcule la somme des poids * les inputs d'un neurone
-      sum_hidden_output += net->WeightHO[(o * net->nbOutput) + h] * net->OutputH[(o * net->nbOutput) + h];
+      sum_hidden_output += net->WeightHO[(o * net->nbHidden) + h] * net->OutputH[(o * net->nbHidden) + h];
     }
     net->OutputO[o] = sigmoid(sum_hidden_output + net->BiasO[o]);
   }
@@ -413,11 +413,11 @@ void BackwardPass(struct Neural_Network *net,int p) //backpropagation
   for(int o = 0; o < net->nbOutput; o++)
   {
     // cacul de l'erreur de sortie
-    net->dOutputO[o] = (net->Goal[(p * net->nbOutput) + o] - net->OutputO[o]) * dSigmoid(net->OutputO[o]);
+    net->dOutputO[o] = (net->Goal[(p * net->nbInput) + o] - net->OutputO[o]) * dSigmoid(net->OutputO[o]);
     for(int h = 0; h < net->nbHidden; h++)
     {
-      double dSumOutput = net->WeightHO[(o * net->nbOutput) + h] * net->dOutputO[(o * net->nbOutput) + h];
-      net->dHidden[h + (o * net->nbOutput)] = dSumOutput * dSigmoid(*(net -> OutputH+h));
+      double dSumOutput = net->WeightHO[(o * net->nbHidden) + h] * net->dOutputO[(o * net->nbHidden) + h];
+      net->dHidden[h + (o * net->nbHidden)] = dSumOutput * dSigmoid(net->OutputH[h]);
     }
   }
 
@@ -429,8 +429,8 @@ void BackwardPass(struct Neural_Network *net,int p) //backpropagation
     for (int i = 0; i < net->nbInput; ++i)
     {
       //update WeightIH
-      net->dWeightIH[(h * net->nbHidden) + i] = net->eta * net->InputValue[i + (p * net->nbOutput)] * net->dHidden[h] + net->alpha * net->dWeightIH[(h * net->nbHidden) + i];
-      net->WeightIH[(h * net->nbHidden) + i] += net->dWeightIH[(h * net->nbHidden) + i];
+      net->dWeightIH[(h * net->nbInput) + i] = net->eta * net->InputValue[i + (p * net->nbInput)] * net->dHidden[h] + net->alpha * net->dWeightIH[(h * net->nbInput) + i];
+      net->WeightIH[(h * net->nbInput) + i] += net->dWeightIH[(h * net->nbInput) + i];
     }
   }
 
@@ -442,8 +442,8 @@ void BackwardPass(struct Neural_Network *net,int p) //backpropagation
     for (int h = 0; h < net -> nbHidden; ++h)
     {
       //update WeightsHO
-      net->dWeightHO[(o * net->nbOutput) + h] = net->eta * net->OutputH[h] * net->dOutputO[o] + net->alpha * net->dWeightHO[(o * net->nbOutput) + h];
-      net->WeightHO[(o * net->nbOutput) + h] += net->dWeightHO[(o * net->nbOutput) + h];
+      net->dWeightHO[(o * net->nbHidden) + h] = net->eta * net->OutputH[h] * net->dOutputO[o] + net->alpha * net->dWeightHO[(o * net->nbHidden) + h];
+      net->WeightHO[(o * net->nbHidden) + h] += net->dWeightHO[(o * net->nbHidden) + h];
     }
   }
   //printf("ok 2\n");
