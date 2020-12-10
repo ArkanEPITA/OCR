@@ -4,6 +4,7 @@
 #include "pixel_operations.h"
 #include <math.h>
 #include <errno.h>
+#include <string.h>
 
 //=============================
 //          Filters
@@ -653,220 +654,227 @@ void too_short_height(SDL_Surface* image_surface, int max)
     }
 }
 
-/*
 
-void rec_count_area(SDL_Surface* image_surface, int i, int j, int *count, int **test_mask)
+
+
+
+
+
+int RectangularityFactor(SDL_Surface* image_surface, int rect_left, int rect_right, int rect_up, int rect_down)
 {
-    Uint8 r, g, b;
-    if(i < image_surface->h - 1 && i >= 0 && j >= 0 && j <= image_surface->w -1)
-    { 
-        
-        Uint32 pixel = get_pixel(image_surface, i+1, j);
-        SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
-
-        if(r == 255 && test_mask[i+1][j] != 1)
-        {
-            printf("i = %d   j = %d\n", i+1, j);
-            (*count)++;
-            test_mask[i+1][j] = 1;
-            rec_count_area(image_surface, i+1, j, count, test_mask);
-        }
-    }
-
-    if(i <= image_surface->h - 1 && i > 0 && j >= 0 && j <= image_surface->w -1)
+    int great = 0;
+    double rectangularity_factor = 0.7;
+    int nb_pixel = 0;
+    int nb_white_pixel = 0;
+    for (int i = rect_left; i <= rect_right+1; i++)
     {
-        
-        Uint32 pixel = get_pixel(image_surface, i-1, j);
-        SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
-        if(r == 255 && test_mask[i-1][j] != 1)
+        for (int j = rect_up; j <= rect_down+1; j++)
         {
-            printf("i = %d   j = %d\n", i-1, j);
-            (*count)++;
-            test_mask[i-1][j] = 1;
-            rec_count_area(image_surface, i-1, j, count, test_mask);
+            nb_pixel += 1;
+            Uint32 pixel = get_pixel(image_surface, i, j);
+            Uint8 r, g, b;
+            SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
+            if(r == 255)
+            {
+                nb_white_pixel++;
+            }
         }
     }
-
-    if(i <= image_surface->h - 1 && i >= 0 && j >= 0 && j < image_surface->w -1)
+    double isRectagularityFactor = (double)nb_white_pixel/(double)nb_pixel;
+    if(isRectagularityFactor < rectangularity_factor || nb_white_pixel < 100)
     {
-        
-        Uint32 pixel = get_pixel(image_surface, i, j+1);
-        SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
-        if(r == 255 && test_mask[i][j+1] != 1)
+        for (int i = rect_left; i <= rect_right; i++)
         {
-            printf("i = %d   j = %d\n", i, j+1);
-            (*count)++;
-            test_mask[i][j+1] = 1;
-            rec_count_area(image_surface, i, j+1, count, test_mask);
+            for (int j = rect_up; j <= rect_down; j++)
+            {
+                Uint32 white_pixel = SDL_MapRGB(image_surface->format, 0, 0, 0);
+                put_pixel(image_surface, i, j, white_pixel);
+            }
         }
     }
 
-    if(i <= image_surface->h - 1 && i >= 0 && j > 0 && j <= image_surface->w -1)
+    else
     {
-        
-        Uint32 pixel = get_pixel(image_surface, i, j-1);
-        SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
-        if(r == 255 && test_mask[i][j-1] != 1)
+        great = 1;
+        for (int i = rect_left; i <= rect_right; i++)
         {
-            printf("i = %d   j = %d\n", i, j-1);
-            (*count)++;
-            test_mask[i][j-1] = 1;
-            rec_count_area(image_surface, i, j-1, count, test_mask);
+            for (int j = rect_up; j <= rect_down; j++)
+            {
+                Uint32 white_pixel = SDL_MapRGB(image_surface->format, 255, 255, 255);
+                put_pixel(image_surface, i, j, white_pixel);
+            }
         }
     }
-}
-
-
-
-void too_small_surface(SDL_Surface* image_surface)
-{
-    //creates the mask
-    int **mask = NULL;
     
-    //allow memory for h int* (array size h of arrays of int)
-    mask = malloc(sizeof(int*) * image_surface->w); 
-
     
-    for (int i = 0; i < image_surface->w; i++)
-    {
-        //allow memory for w int (array size w of int)
-        mask[i] = malloc(sizeof(int) * image_surface->h);
-    }
-    printf("%d\n", image_surface->w);
+    SDL_Surface* screen_surface = display_image(image_surface);
+    update_surface(screen_surface, image_surface);
+    wait_for_keypressed();
+    
 
-    //Going through the image
-    for(int i = 0; i < image_surface->w; i++)
-    {
-        for(int j = 0; j < image_surface->h; j++)
-        {
-            Uint32 pixel = get_pixel(image_surface, i, j);
-            Uint8 r, g, b;
-            SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
-            int count1 = 1;
-            int *count = &count1;
-
-            
-            //creates the mask
-            int **test_mask = NULL;
-            
-            //allow memory for h int* (array size h of arrays of int)
-            test_mask = malloc(sizeof(int*) * image_surface->w); 
-
-            
-            for (int i = 0; i < image_surface->w; i++)
-            {
-                //allow memory for w int (array size w of int)
-                test_mask[i] = malloc(sizeof(int) * image_surface->h);
-            }
-
-            for(int i = 0; i < image_surface->w; i++)
-            {
-                for(int j = 0; j < image_surface->h; j++)
-                {
-                    test_mask[i][j] = mask[i][j];
-                }
-            }
-            if(r == 255 && test_mask[i][j] != 1)
-            {   
-                test_mask[i][j] = 1;
-                rec_count_area(image_surface, i, j, count, test_mask);
-                if(*count >= 100)
-                {
-                    for(int i = 0; i < image_surface->w; i++)
-                    {
-                        for(int j = 0; j < image_surface->h; j++)
-                        {
-                            mask[i][j] = test_mask[i][j];
-                        }
-                    }
-                }
-                
-            }
-            free(test_mask);
-        }
-    }
-
-    for(int i = 0; i < image_surface->w; i++)
-    {
-        for(int j = 0; j < image_surface->h; j++)
-        {
-            Uint32 pixel = get_pixel(image_surface, i, j);
-            Uint8 r, g, b;
-            SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
-
-            Uint32 new_pixel = SDL_MapRGB(image_surface->format, mask[i][j] * r, mask[i][j] * g, mask[i][j] * b);
-            put_pixel(image_surface, i, j, new_pixel);
-        }
-    }
-    free(mask);
+   return great;
 }
 
-void gniiiiiih(SDL_Surface* image_surface)
+
+
+
+
+
+
+
+void IsRectangle(SDL_Surface* image_surface, SDL_Surface* true_surface, Block *blocks, int jmin, int jmax, int i)
 {
-    int i = 0;
-    int maxh = image_surface->h;
-    int maxw = image_surface->w;
-    while(i < maxw - 4)
+    int rect_left = -1;
+    int rect_right = -1;
+    int rect_up = -1;
+    int rect_down = -1;
+    int rectangle_begin = 0;
+    int full_black = 1;
+
+    while(i <= image_surface->w)
     {
-        int j = 0;
-        while(j < maxh - 25)
+        if (full_black == 1 && rectangle_begin == 1)
+        {
+            if(RectangularityFactor(image_surface, rect_left, rect_right, rect_up, rect_down) == 1)
+            {
+                SDL_Surface* square = copy_image(true_surface, rect_up, rect_down, rect_left, rect_right);
+                blocks->image[blocks->nb_block] = square;
+                blocks->nb_block += 1;
+            }
+            rect_left = -1;
+            rect_right = -1;
+            rect_up = -1;
+            rect_down = -1;
+            rectangle_begin = 0;
+        }
+
+        full_black = 1;
+        for(int j = jmin; j <= jmax; j++)
         {
             Uint32 pixel = get_pixel(image_surface, i, j);
             Uint8 r, g, b;
             SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
-            if (r == 255)
+
+
+            if(r == 255)
             {
-                int i1 = i;
-                int j1 = j;
-                while (i1 < i+4 && r == 255)
+                full_black = 0;
+                if(rectangle_begin == 0)
                 {
-                    int j1 = j;
-                    while (j1 < j+25 && r == 255)
-                    {
-                        Uint32 pixel = get_pixel(image_surface, i1, j1);
-                        SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
-                        j1++;
-                    }
-                    i1++;
+                    rectangle_begin = 1;
+                    rect_left = i;
+                    rect_up = j;
                 }
-                if(i1 != i + 4 || j1 != j + 25)
+                else
                 {
-                    int i1 = i;
-                    while (i1 < i+4)
+                    if(i > rect_right)
                     {
-                        int j1 = j;
-                        while (j1 < j+25)
-                        {
-                            Uint32 Titi = SDL_MapRGB(image_surface->format, 0, 0, 0);
-		                    put_pixel(image_surface, i1, j1, Titi);
-                            j1++;
-                        }
-                        i1++;
+                        rect_right = i;
+                    }
+                    if(j > rect_down)
+                    {
+                        rect_down = j;
+                    }
+                    else if(j < rect_up)
+                    {
+                        rect_up = j;
                     }
                 }
-                j += 25;
-            }
-            else
-            {
-                j++;
             }
         }
-        i+=4;
+        i++;
     }
 }
 
-*/
 
-char* final(SDL_Surface* image_surface)
+
+
+
+
+void enveloppe_convexe(SDL_Surface* image_surface, SDL_Surface* true_surface, Block *blocks)
 {
-    int number_lines = 3;
-    char str[] = "";
+    int jmin = -1;
+    int j = 0;
+
+    while(j <= image_surface->h)
+    {
+        int i = 0;
+        int found_jmin = 0;
+        while(i <= image_surface->w && found_jmin == 0)
+        {
+            Uint32 pixel = get_pixel(image_surface, i, j);
+            Uint8 r, g, b;
+            SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
+
+            if(r == 255)
+            {
+                if(jmin == -1)
+                {
+                    jmin = j;
+                }
+                found_jmin = 1;
+            }            
+            i++;
+        }
+
+        if(found_jmin == 0)
+        {
+            if(jmin != -1)
+            {
+                IsRectangle(image_surface, true_surface, blocks, jmin, j+1, 0);
+                jmin = -1;
+            }
+        }
+        j++;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+char* final(SDL_Surface* image_surface, SDL_Surface* true_surface)
+{
+    char *str = malloc((sizeof(char) * 2));
+    str = ":)";
+
+    Block *blocks = NULL;
+    blocks = malloc(sizeof(Block) * 1);
+    blocks->image = malloc(sizeof(SDL_Surface) * image_surface->h);
+
+    for (int i = 0; i < image_surface->h; i++)
+    {
+        blocks->image[i] = NULL;
+    }
+    blocks->nb_block = 0;
+
+
+    greyscale(image_surface);
+    filtre_gaussien(image_surface);
+    contour_vertical(image_surface);
+    fermeture_verticale(image_surface, 4);
+    fermeture_horizontale(image_surface, 9);
+    fermeture_verticale(image_surface, 4);
+    too_short_weight(image_surface, 25);
+    too_short_height(image_surface, 4);
+    enveloppe_convexe(image_surface, true_surface, blocks);
+
+
+    int number_lines = blocks->nb_block;
+
+
 
     for(int i = 0; i < number_lines; i++)
     {
         strcat(str, print_line(image_surface));
         strcat(str, "\n");
     }
+
 
 
     return str;

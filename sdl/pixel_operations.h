@@ -7,6 +7,7 @@
 #include "SDL/SDL_image.h"
 #include <math.h>
 #include <errno.h>
+#include <string.h>
 
 typedef struct Word Word;
 
@@ -26,6 +27,13 @@ struct Array_word
 {
     Word* word;
     int length;
+};
+
+typedef struct Block Block;
+
+struct Block{
+    SDL_Surface ** image;
+    int nb_block;
 };
 
 Uint32 get_pixel(SDL_Surface *surface, unsigned x, unsigned y);
@@ -75,5 +83,7 @@ SDL_Surface* Resize_letter(SDL_Surface *image_surface);
 double* create_matrix_letter(SDL_Surface *image_surface);
 
 char* print_line(SDL_Surface* image_surface);
+
+char* final(SDL_Surface* image_surface, SDL_Surface* true_surface);
 
 #endif
