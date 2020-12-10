@@ -840,8 +840,7 @@ void enveloppe_convexe(SDL_Surface* image_surface, SDL_Surface* true_surface, Bl
 
 char* final(SDL_Surface* image_surface, SDL_Surface* true_surface)
 {
-    char *str = malloc((sizeof(char) * 2));
-    str = ":)";
+    char str[4095] = "";
 
     Block *blocks = NULL;
     blocks = malloc(sizeof(Block) * 1);
@@ -874,8 +873,6 @@ char* final(SDL_Surface* image_surface, SDL_Surface* true_surface)
         strcat(str, print_line(image_surface));
         strcat(str, "\n");
     }
-
-
 
     return str;
 }

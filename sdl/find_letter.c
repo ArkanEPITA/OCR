@@ -93,12 +93,13 @@ Array_word find_letters(SDL_Surface* image_surface)
     Array_word varialbe;
     varialbe.word = Word;
     varialbe.length = letter;
+    varialbe.weigth = weigth;
     return varialbe;
 }
 
 
 
-char* print_line(SDL_Surface* image_surface)
+char* print_line(SDL_Surface* image_surface, int alinea, int begin)
 {
     Array_word Word = find_letters(image_surface);
     int nb_letters = Word.length;
@@ -106,21 +107,33 @@ char* print_line(SDL_Surface* image_surface)
     SDL_Surface* image2;
     SDL_Surface* image3;
     double* matrix_letter = NULL;
-    char str[] = "";
+    char* str = malloc((sizeof(char)) * Word.weigth);
 
     int jmaxref = Word.word[0].maxj_word;
     int jminref = Word.word[0].minj_word;
     int max_space = 0;
+    int one_word = 0;
 
     for (int i = 1; i < nb_letters; i++)
     {
         jminref = Word.word[i].minj_word;
-        if(max_space < jminref - jmaxref)   
+        if(max_space < jminref - jmaxref)
         {
             max_space = jminref - jmaxref;
         }
+        if(max_space != jminref - jmaxref)
+        {
+            one_word = 1;
+        }
         jmaxref = Word.word[i].maxj_word;
     }
+
+    while (alinea >= begin + max_space)
+    {
+        alinea = alinea - max_space;
+        strcat(str, " ");
+    }
+    
 
     int space = 0;
     int imax = Word.word[0].maxi_word;
@@ -146,7 +159,7 @@ char* print_line(SDL_Surface* image_surface)
         jmax = Word.word[i].maxj_word;
         imin = Word.word[i].mini_word;
 
-        if(space-3 < max_space && space+3 > max_space)
+        if(space-3 < max_space && space+3 > max_space && one_word == 1)
         {
             strcat(str, " ");
         }

@@ -38,7 +38,7 @@ void loading_image(GtkButton* button, GtkImage* image)
 	
 }
 
-SDL_Surface* show_image(SDL_Surface *img, double angle)
+SDL_Surface* show_image(SDL_Surface *image_surface, double angle)
 {
     // Return the frame buffer surface after rotation
 
@@ -58,16 +58,15 @@ SDL_Surface* show_image(SDL_Surface *img, double angle)
  
     // destination image size calculation //
     // (smallest integer value of image width and high) //
-    wdest = ceil(img->w * fabs(tcos) + img->h * fabs(tsin));
-    hdest = ceil(img->w * fabs(tsin) + img->h * fabs(tcos));
+    wdest = ceil(image_surface->w * fabs(tcos) + image_surface->h * fabs(tsin));
+    hdest = ceil(image_surface->w * fabs(tsin) + image_surface->h * fabs(tcos));
 
     // Set the window to the new size
     screen = SDL_SetVideoMode(wdest, hdest, 32, SDL_HWSURFACE);
     if (screen == NULL)
     {
         // error management
-        errx(1, "Couldn't set %dx%d video mode: %s\n",
-                img->w, img->h, SDL_GetError());
+        errx(1, "Couldn't set %dx%d video mode: %s\n", image_surface->w, image_surface->h, SDL_GetError());
     }
 
     // return the screen surface for further uses
@@ -76,10 +75,8 @@ SDL_Surface* show_image(SDL_Surface *img, double angle)
 
 
 
-int rotation_angles(GtkButton* button, GtkImage* image2)
+int rotation_angles()
 {
-	UNUSED(button);
-
     SDL_Surface *screen = NULL, *image = NULL, *rotation = NULL;
     
     SDL_Rect rect;	//we put at the origin
@@ -95,30 +92,28 @@ int rotation_angles(GtkButton* button, GtkImage* image2)
 	     printf("Failed to read integer.\n");
 	}
  
-    int continuer = 1;
+    int not_finish = 1;
     SDL_Init(SDL_INIT_VIDEO);
     //image = loading("rotation.png");
 	image = IMG_Load((char*)file);
     screen = show_image(image, angle);
-	size_t l = image->h;
-	size_t c = image->w;
+
     //makes the background of the image white
-    //SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 255, 255, 255));
+    SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 255, 255, 255));
     // do the rotation with a zoom of 1  and image smoothing
 	
     rotation = rotozoomSurface(image, angle, 1.0, 1);
     // Blit onto the screen surface after rotation
 
-	//rotation = Resize(rotation, l, c);
 	SDL_BlitSurface(rotation , NULL, screen, &rect);
 	SDL_Flip(screen); //updates all screen settings
-	while(continuer) //while we do not close the screen
+	while(not_finish) //while we do not close the screen
 	{
 		SDL_WaitEvent(&event);
 		switch(event.type) //we close the screen
 		{
 			case SDL_QUIT:
-				continuer = 0;
+				not_finish = 0;
 				break;
 		}
 	}
@@ -128,7 +123,6 @@ int rotation_angles(GtkButton* button, GtkImage* image2)
 	rotation = Resize(rotation, 576, 460);
 	SDL_SaveBMP(rotation, "save_image/out.bmp");
 	goal += 1;
-	
 	
     return EXIT_SUCCESS;
 }
@@ -164,6 +158,7 @@ void openFile(GtkButton* button, GtkLabel* textlabel)
 	{
 		case GTK_RESPONSE_ACCEPT:
 		{
+			goal = 0;
 			file = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER(dialog));
       		gtk_label_set_text(GTK_LABEL(label), file);
 			break;

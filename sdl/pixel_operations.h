@@ -27,6 +27,7 @@ struct Array_word
 {
     Word* word;
     int length;
+    int weigth;
 };
 
 typedef struct Block Block;
