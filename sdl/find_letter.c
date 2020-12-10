@@ -41,13 +41,11 @@ Array_word find_letters(SDL_Surface* image_surface)
    
     int letter = 0;
     int first_black = 0;
-    printf("h = %d et %d\n", image_surface->h, image_surface->w);
     for(int i = 0; i < image_surface->w; i++)
     {
         int white = 0;
         for(int j = 0; j < image_surface->h; j++)
         {
-            printf("i = %d  j = %d\n", i, j);
             Uint32 pixel = get_pixel(image_surface, i, j);
             Uint8 r, g, b;
             SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
@@ -105,7 +103,6 @@ char* print_line(SDL_Surface* image_surface)
     Array_word Word = find_letters(image_surface);
     int nb_letters = Word.length;
     //Uint32 green = SDL_MapRGB(image_surface->format, 0, 255, 0);
-    printf("letter = %d\n", nb_letters);
     SDL_Surface* image2;
     SDL_Surface* image3;
     double* matrix_letter = NULL;
@@ -118,9 +115,9 @@ char* print_line(SDL_Surface* image_surface)
     for (int i = 1; i < nb_letters; i++)
     {
         jminref = Word.word[i].minj_word;
-        if(max_space < jmaxref - jminref)
+        if(max_space < jminref - jmaxref)   
         {
-            max_space = jmaxref - jminref;
+            max_space = jminref - jmaxref;
         }
         jmaxref = Word.word[i].maxj_word;
     }
@@ -144,12 +141,12 @@ char* print_line(SDL_Surface* image_surface)
     for (int i = 1; i < nb_letters; i++)
     {
         jmin = Word.word[i].minj_word;
-        space = jmax - jmin;        
+        space = jmin - jmax;        
         imax = Word.word[i].maxi_word;
-        imin = Word.word[i].mini_word;
         jmax = Word.word[i].maxj_word;
+        imin = Word.word[i].mini_word;
 
-        if(space == max_space)
+        if(space-3 < max_space && space+3 > max_space)
         {
             strcat(str, " ");
         }
@@ -176,7 +173,7 @@ int main()
 
     init_sdl();
 
-    image_surface = load_image("images/phrase.png");
+    image_surface = load_image("images/test_line.PNG");
     
     screen_surface = display_image(image_surface);
 
