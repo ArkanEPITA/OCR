@@ -13,6 +13,7 @@
 
 Array_word find_letters(SDL_Surface* image_surface)
 {
+    printf("la\n");
     int weigth = 0;
     int first_black2 = 0;
     for(int i = 0; i < image_surface->w; i++)
@@ -101,12 +102,15 @@ Array_word find_letters(SDL_Surface* image_surface)
 
 char* print_line(SDL_Surface* image_surface, int alinea, int begin)
 {
+    printf("ici\n");
     Array_word Word = find_letters(image_surface);
+    printf("bien\n");
     int nb_letters = Word.length;
+    printf("tas \n");
     //Uint32 green = SDL_MapRGB(image_surface->format, 0, 255, 0);
-    SDL_Surface* image2;
-    SDL_Surface* image3;
-    double* matrix_letter = NULL;
+    //SDL_Surface* image2;
+    //SDL_Surface* image3;
+    //double* matrix_letter = NULL;
     char* str = malloc((sizeof(char)) * Word.weigth);
 
     int jmaxref = Word.word[0].maxj_word;
@@ -128,12 +132,13 @@ char* print_line(SDL_Surface* image_surface, int alinea, int begin)
         jmaxref = Word.word[i].maxj_word;
     }
 
+    printf("vue \n");
     while (alinea >= begin + max_space)
     {
         alinea = alinea - max_space;
         strcat(str, " ");
     }
-    
+    printf("dile\n");
 
     int space = 0;
     int imax = Word.word[0].maxi_word;
@@ -141,18 +146,20 @@ char* print_line(SDL_Surface* image_surface, int alinea, int begin)
     int jmax = Word.word[0].maxj_word;
     int jmin = Word.word[0].minj_word;
 
-    image2 = copy_image(image_surface, imin, imax, jmin, jmax);
+    //image2 = copy_image(image_surface, imin, imax, jmin, jmax);
 
-    image3 = Resize_letter(image2);
+    //image3 = Resize_letter(image2);
 
-    matrix_letter = create_matrix_letter(image3);
+    //matrix_letter = create_matrix_letter(image3);
 
     //machin de leno
 
     //concaténer str
+    printf("lettre ahahah = %d\n", nb_letters);
 
     for (int i = 1; i < nb_letters; i++)
     {
+        printf("i = %d\n", i);
         jmin = Word.word[i].minj_word;
         space = jmin - jmax;        
         imax = Word.word[i].maxi_word;
@@ -162,13 +169,17 @@ char* print_line(SDL_Surface* image_surface, int alinea, int begin)
         if(space-3 < max_space && space+3 > max_space && one_word == 1)
         {
             strcat(str, " ");
+            printf("par ici \n");
         }
+        printf("croro \n");
 
-        image2 = copy_image(image_surface, imin, imax, jmin, jmax);
+        //image2 = copy_image(image_surface, imin, imax, jmin, jmax);
 
-        image3 = Resize_letter(image2);
+        //image3 = Resize_letter(image2);
 
-        matrix_letter = create_matrix_letter(image3);
+        //matrix_letter = create_matrix_letter(image3);
+
+        strcat(str, "G");
 
         //machin de leno
 

@@ -42,33 +42,33 @@ SDL_Surface* show_image(SDL_Surface *image_surface, double angle)
 {
     // Return the frame buffer surface after rotation
 
-    float angle_rad;
-    float tcos;
-    float tsin;
-    double wdest;
-    double hdest;
+    float angle_radial;
+    float cosinus;
+    float sinus;
+    double wsize;
+    double hsize;
     SDL_Surface *screen;
   
     // convert angle from degrees to radians //
-    angle_rad = -angle * M_PI / 180.0;
+    angle_radial = -angle * M_PI / 180.0;
  
     // memorize the sine and cosine values ​​of the angle //
-    tcos = cos(angle_rad);
-    tsin = sin(angle_rad);
+    cosinus = cos(angle_radial);
+    sinus = sin(angle_radial);
  
     // destination image size calculation //
     // (smallest integer value of image width and high) //
-    wdest = ceil(image_surface->w * fabs(tcos) + image_surface->h * fabs(tsin));
-    hdest = ceil(image_surface->w * fabs(tsin) + image_surface->h * fabs(tcos));
+    wsize = ceil(image_surface->w * fabs(cosinus) + image_surface->h * fabs(sinus));
+    hsize = ceil(image_surface->w * fabs(sinus) + image_surface->h * fabs(cosinus));
 
     // Set the window to the new size
-    screen = SDL_SetVideoMode(wdest, hdest, 32, SDL_HWSURFACE);
+    screen = SDL_SetVideoMode(wdest, hsize, 32, SDL_HWSURFACE);
     if (screen == NULL)
     {
         // error management
         errx(1, "Couldn't set %dx%d video mode: %s\n", image_surface->w, image_surface->h, SDL_GetError());
     }
-
+	
     // return the screen surface for further uses
     return screen;
 }
@@ -122,6 +122,7 @@ int rotation_angles()
 	// Création d'une copie du pixbuf modifié
 	rotation = Resize(rotation, 576, 460);
 	SDL_SaveBMP(rotation, "save_image/out.bmp");
+	file = "save_image/out.bmp";
 	goal += 1;
 	
     return EXIT_SUCCESS;

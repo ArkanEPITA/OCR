@@ -84,8 +84,8 @@ SDL_Surface* Resize_letter(SDL_Surface *image_surface);
 
 double* create_matrix_letter(SDL_Surface *image_surface);
 
-char* print_line(SDL_Surface* image_surface);
-
 char* final(SDL_Surface* image_surface, SDL_Surface* true_surface);
+
+char* print_line(SDL_Surface* image_surface, int alinea, int begin);
 
 #endif
