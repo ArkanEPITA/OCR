@@ -215,8 +215,11 @@ void InitalizeValue(struct Neural_Network *net)
   {
     for (int j = 0; j < net->nbInput; j++)
     {
-      net-> InputValue[(i * net->nbOutput) + j] = Matrix[letter][j];
+      printf("%d\n",j);
+        net-> InputValue[(i * net->nbInput) + j] = Matrix[letter][j];
     }
+    printf("%d\n",i);
+    printf("%d\n",letter);
     letter++;
   }
   
@@ -356,7 +359,7 @@ void ForwardPass(struct Neural_Network *net, int p, int epoch)
     printf("#########################\n");
     printf("Essai n°%d\n\n\n", epoch);
     printf("La réponse du réseau est : %c\n\n", net-> act);
-    printf("La réponse attendu est : %c\n\n\n", (char) p + 65);
+    printf("La réponse attendu est : %c\n\n\n", (char) (p + 65));
   }
 
   /*
@@ -467,12 +470,12 @@ void OCR()
   srand(time(NULL));
 
   int NbPattern = 52;
-  int NbEpoch = 500;
+  int NbEpoch = 100;
 
   struct Neural_Network net_1 = InitalizeNetwork();
   struct Neural_Network *net = &net_1;
 
-  LoadData(net);
+  //LoadData(net);
 
   //InitalizeValue(net);
   for (int epoch = 0; epoch <= NbEpoch; ++epoch)
