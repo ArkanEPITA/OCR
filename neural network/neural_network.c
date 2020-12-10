@@ -3,7 +3,8 @@
 #include <math.h>
 #include <time.h>
 
-#include "../sdl/pixel_operations.h"
+//#include "../sdl/pixel_operations.h"
+
 struct Neural_Network
 {
     int nbInput;
@@ -42,6 +43,68 @@ struct Neural_Network
     double eta;
     double alpha;
 };
+
+//Create & return the double* pixels values from filename
+double* matrixFromFile(char* filename)
+{
+    double* matrix = malloc(sizeof(double) * 28 * 28);
+    FILE* file = fopen(filename, "r");
+
+    if(file == NULL)
+    {
+        printf("File is NULL \n");
+    }
+
+    for(int i = 0; i <= 28; i++)
+    {
+        for(int j = 0; j <= 28; j++)
+        {
+            int c = fgetc(file);
+            if(c == 49)
+            matrix[j+i*28] = 1;
+            if(c == 48)
+            matrix[j+i*28] = 0;
+        }
+    }
+    fclose(file);
+    return matrix;
+}
+
+double** lettersMatrix()
+{
+  //Variables
+  char uppercase_path[19] = "uppercase/0/00.txt\0";
+  char lowercase_path[19] = "lowercase/0/00.txt\0";
+  double** lettersMatrix = malloc(sizeof(double *) * 52);
+  char uppercase = 'A';
+  char lowercase = 'a';
+  char count = '4';
+
+  for(int i = 0; i < 52; i++)
+  {
+
+    if(i < 26)
+    {
+      uppercase_path[10] = uppercase;
+      uppercase_path[12] = uppercase;
+      uppercase_path[13] = count;
+      lettersMatrix[i] = matrixFromFile(uppercase_path);
+      uppercase++;
+
+    }
+    else if(i >= 26)
+    {
+      count = '3';
+      lowercase_path[10] = lowercase;
+      lowercase_path[12] = lowercase;
+      lowercase_path[13] = count;
+      lettersMatrix[i] = matrixFromFile(lowercase_path);
+      lowercase++;
+
+    }
+  }
+  return lettersMatrix;
+}
 
 // Fonction qui va créer un fichier en enregistrant dedans tout les poids et les biais, ils vont avoir le forme suivante : 
 // les poids suivit d'un espace pour les séparer et a la fin les biais
@@ -82,6 +145,7 @@ void LoadData(struct Neural_Network *net)
 {
   FILE* file = fopen("network.txt", "r");
 
+  int idc;
   if(file == NULL)
   {
     printf("Erreur dans le chargement");
@@ -92,21 +156,22 @@ void LoadData(struct Neural_Network *net)
     {
       for(int j = 0; j < net->nbInput; j++)
       {
-        fscanf(file, "%lf ", (net -> WeightIH + (i * net->nbHidden) + j ));
+        idc = fscanf(file, "%lf ", (net -> WeightIH + (i * net->nbHidden) + j ));
       }
       printf("hidden\n");
-      fscanf(file, "%lf\n", (net -> BiasH + i));
+      idc = fscanf(file, "%lf\n", (net -> BiasH + i));
     }
     for(int k = 0; k < net->nbOutput; k++)
     {
       for(int l = 0; l < net->nbHidden; l++)
       {
-        fscanf(file, "%lf ", (net -> WeightHO + (k * net->nbOutput) + l ));
+        idc = fscanf(file, "%lf ", (net -> WeightHO + (k * net->nbOutput) + l ));
       }
       printf("output\n");
-      fscanf(file, "%lf\n", (net -> BiasO + k));
+      idc = fscanf(file, "%lf\n", (net -> BiasO + k));
     }
   }
+  idc++;
   fclose(file);
 }
 
@@ -144,13 +209,13 @@ void InitalizeValue(struct Neural_Network *net)
 {
 
   // il faut initialiser les valeur d'input
-  double** lettersMatrix = LetterMatrix();
+  double** Matrix = lettersMatrix();
   int letter = 0;
   for (int i = 0; i < net->nbOutput; i++)
   {
     for (int j = 0; j < net->nbInput; j++)
     {
-      net-> InputValue[(i * net->nbOutput) + j] = lettersMatrix[letter][j];
+      net-> InputValue[(i * net->nbOutput) + j] = Matrix[letter][j];
     }
     letter++;
   }
@@ -161,11 +226,11 @@ void InitalizeValue(struct Neural_Network *net)
     {
       if(i != j)
       {
-        Goal[(i * net->nbOutput) + j] = 0;
+        net->Goal[(i * net->nbOutput) + j] = 0;
       }
       else
       {
-        Goal[(i * net->nbOutput) + j] = 1;
+        net->Goal[(i * net->nbOutput) + j] = 1;
       }
     }
   }
@@ -244,7 +309,7 @@ void ForwardPass(struct Neural_Network *net, int p, int epoch)
   for(int h = 0; h < net->nbHidden; h++)
   {
     double sum_input_hidden = 0.0;
-    for(int i = 0; i < nbInput; i++)
+    for(int i = 0; i < net->nbInput; i++)
     {
       // on calcule la somme des poids * les inputs d'un neurone
       sum_input_hidden += net->WeightIH[(h * net->nbHidden) + i] * net->InputValue[(h * net->nbHidden) + i];
@@ -262,7 +327,7 @@ void ForwardPass(struct Neural_Network *net, int p, int epoch)
       // on calcule la somme des poids * les inputs d'un neurone
       sum_hidden_output += net->WeightHO[(o * net->nbOutput) + h] * net->OutputH[(o * net->nbOutput) + h];
     }
-    net->OutputO[o] = sigmoid(sum_hidden_output + net->BiasO[o]):
+    net->OutputO[o] = sigmoid(sum_hidden_output + net->BiasO[o]);
   }
 
 
@@ -284,7 +349,7 @@ void ForwardPass(struct Neural_Network *net, int p, int epoch)
       max = act;
     }
   }
-  net->act = (char) act + 65;
+  net->act = (char) net->OutputO[lmax] + 65;
 
   if(epoch % 100 == 0)
   {
@@ -334,7 +399,7 @@ void BackwardPass(struct Neural_Network *net,int p) //backpropagation
     for(int h = 0; h < net->nbHidden; h++)
     {
       double dSumOutput = net->WeightHO[(o * net->nbOutput) + h] * net->dOutputO[(o * net->nbOutput) + h];
-      net->dHidden[h + (o * net->nbOutput)]
+      net->dHidden[h + (o * net->nbOutput)] = dSumOutput * dSigmoid(*(net -> OutputH+h));
     }
   }
 
