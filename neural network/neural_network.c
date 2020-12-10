@@ -364,48 +364,44 @@ void ForwardPass(struct Neural_Network *net, int p, int epoch)
 
   //printf("ok 3\n");
 
-  // Il faut calculer le taux d'erreur
+	// Il faut calculer le taux d'erreur
+	for(int o = 0; o < net->nbOutput; o++)
+	{
+		net->ErrorRate += 0.5 * ((net->Goal[(p * net->nbOutput) + o] - net->OutputO[o]) * (net->Goal[(p * net->nbOutput) + o] - net->OutputO[o]));
+	}
 
-  for(int o = 0; o < net->nbOutput; o++)
-  {
-    net->ErrorRate += 0.5 * ((net->Goal[(p * net->nbOutput) + o] - net->OutputO[o]) * (net->Goal[(p * net->nbOutput) + o] - net->OutputO[o]));
-  }
-  
-  //printf("ok 4\n");
+	double max = 0.0;
+	int lmax = 0;
+	for(int o = 0; o < net->nbOutput; o++)
+	{
+		double act = net->OutputO[o];
+		if(act > max)
+		{
+			lmax = o;
+			max = act;
+		}
+	}
 
-  double max = 0.0;
-  int lmax = 0;
-  for(int o = 0; o < net->nbOutput; o++)
-  {
-    double act = net->OutputO[o];
-    if(act > max)
-    {
-      lmax = o;
-      max = act;
-    }
-  }
-  
-  char goal;
+	char goal;
+	if(p < 26)
+	{
+		net->act = (char) net->OutputO[lmax] + (int) 'A';
+		goal = (char) (p + (int) 'A');
+	}
+	else
+	{
+		net->act = (char) net->OutputO[lmax] + (int) 'a';
+		goal = (char) (p + (int) 'a' - 26);
+	}
 
-  if(p < 26)
-  {
-    net->act = (char) net->OutputO[lmax] + (int) 'A';
-    goal = (char) (p + (int) 'A');
-  }
-  else
-  {
-    net->act = (char) net->OutputO[lmax] + (int) 'a';
-    goal = (char) (p + (int) 'a' - 26);
-  }
-  
-  //printf("ok 5\n");
-  if(epoch % 100 == 0)
-  {
-    printf("#########################\n");
-    printf("Essai n°%d\n\n\n", epoch);
-    printf("La réponse du réseau est : %c\n\n", net-> act);
-    printf("La réponse attendu est : %c\n\n\n", goal);
-  }
+	//printf("ok 5\n");
+	if(epoch % 100 == 0)
+	{
+		printf("#########################\n");
+		printf("Essai n°%d\n\n\n", epoch);
+		printf("La réponse du réseau est : %c\n\n", net-> act);
+		printf("La réponse attendu est : %c\n\n\n", goal);
+	}
 }
 
 void BackwardPass(struct Neural_Network *net,int p) //backpropagation
