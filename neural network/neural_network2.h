@@ -14,11 +14,11 @@ struct Neural_Network
     int nbOutput;
 
     //Arrays
-    double InputValue[784];
-    double Goal[52];
+    double InputValue[52][784];
+    double Goal[52][52];
     //Weight Arrays
-    double WeightIH[784][64];
-    double WeightHO[64][52];
+    double WeightIH[64][784];
+    double WeightHO[52][64];
     //Bias Array
     double BiasH[64];
     //Bias output
@@ -32,8 +32,8 @@ struct Neural_Network
     //delta bias for output
     double dBiasO[52];
     //delta weight
-    double dWeightIH[784][64];
-    double dWeightHO[64][52];
+    double dWeightIH[64][784];
+    double dWeightHO[52][64];
     //delta of output
     double dOutputO[52];
     //delta of hidden
@@ -66,7 +66,7 @@ void InitalizeValue(struct Neural_Network *net);
 
 void ForwardPass(struct Neural_Network *net, int p, int epoch);
 
-void BackwardPass(struct Neural_Network *net);
+void BackwardPass(struct Neural_Network *net, int p);
 
 void OCR();
 
