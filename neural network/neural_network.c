@@ -73,8 +73,8 @@ double* matrixFromFile(char* filename)
 double** lettersMatrix()
 {
   //Variables
-  char uppercase_path[19] = "uppercase/0/00.txt\0";
-  char lowercase_path[19] = "lowercase/0/00.txt\0";
+  char uppercase_path[22] = "../uppercase/0/00.txt\0";
+  char lowercase_path[22] = "../lowercase/0/00.txt\0";
   double** lettersMatrix = malloc(sizeof(double *) * 52);
   char uppercase = 'A';
   char lowercase = 'a';
@@ -85,9 +85,9 @@ double** lettersMatrix()
 
     if(i < 26)
     {
-      uppercase_path[10] = uppercase;
-      uppercase_path[12] = uppercase;
-      uppercase_path[13] = count;
+      uppercase_path[13] = uppercase;
+      uppercase_path[15] = uppercase;
+      uppercase_path[16] = count;
       lettersMatrix[i] = matrixFromFile(uppercase_path);
       uppercase++;
 
@@ -95,9 +95,9 @@ double** lettersMatrix()
     else if(i >= 26)
     {
       count = '3';
-      lowercase_path[10] = lowercase;
-      lowercase_path[12] = lowercase;
-      lowercase_path[13] = count;
+      lowercase_path[13] = lowercase;
+      lowercase_path[15] = lowercase;
+      lowercase_path[16] = count;
       lettersMatrix[i] = matrixFromFile(lowercase_path);
       lowercase++;
 
@@ -122,19 +122,19 @@ void SaveData(struct Neural_Network *net)
     {
       for(int j = 0; j < net->nbInput; j++)
       {
-        fprintf(file, "%f ", (double) *(net -> WeightIH + (i * net->nbHidden) + j ));
+        fprintf(file, "%f ", (double) *(net->WeightIH + (i * net->nbInput) + j ));
       }
       //printf("hidden\n");
-      fprintf(file, "%lf\n", (double) *(net -> BiasH + i));
+      fprintf(file, "%lf\n", (double) *(net->BiasH + i));
     }
     for(int k = 0; k < net->nbOutput; k++)
     {
       for(int l = 0; l < net->nbHidden; l++)
       {
-        fprintf(file, "%f ", (double) *(net -> WeightHO + (k * net->nbOutput) + l ));
+        fprintf(file, "%f ", (double) *(net->WeightHO + (k * net->nbHidden) + l ));
       }
       //printf("output\n");
-      fprintf(file, "%lf\n", (double) *net -> BiasO + k);
+      fprintf(file, "%lf\n", (double) *(net->BiasO + k));
     }
   }
   fclose(file);
@@ -158,7 +158,7 @@ void LoadData(struct Neural_Network *net)
       {
         idc = fscanf(file, "%lf ", (net -> WeightIH + (i * net->nbHidden) + j ));
       }
-      printf("hidden\n");
+      //printf("hidden\n");
       idc = fscanf(file, "%lf\n", (net -> BiasH + i));
     }
     for(int k = 0; k < net->nbOutput; k++)
@@ -167,7 +167,7 @@ void LoadData(struct Neural_Network *net)
       {
         idc = fscanf(file, "%lf ", (net -> WeightHO + (k * net->nbOutput) + l ));
       }
-      printf("output\n");
+      //printf("output\n");
       idc = fscanf(file, "%lf\n", (net -> BiasO + k));
     }
   }
@@ -177,20 +177,48 @@ void LoadData(struct Neural_Network *net)
 
 void free_array(struct Neural_Network *net)
 {
+  printf("test tes\n");
   free(net->InputValue);
+  printf("1 ok\n");
+
   free(net->Goal);
+  printf("2 ok\n");
+
   free(net->WeightIH);
+  printf("3 ok\n");
+
   free(net->WeightHO);
+  printf("4 ok\n");
+
   free(net->BiasH);
+  printf("5 ok\n");
+
   free(net->BiasO);
+  printf("6 ok\n");
+
   free(net->OutputO);
+  printf("7 ok\n");
+
   free(net->OutputH);
+  printf("8 ok\n");
+
   free(net->dBiasH);
+  printf("9 ok\n");
+
   free(net->dBiasO);
+  printf("10 ok\n");
+
   free(net->dWeightIH);
+  printf("11 ok\n");
+
   free(net->dWeightHO);
+  printf("12 ok\n");
+
   free(net->dOutputO);
+  printf("13 ok\n");
+
   free(net->dHidden);
+  printf("14 ok\n");
 }
 
 // Fonction random permettant de générer un chifre au hasard
@@ -215,11 +243,11 @@ void InitalizeValue(struct Neural_Network *net)
   {
     for (int j = 0; j < net->nbInput; j++)
     {
-      printf("%d\n",j);
+      //printf("%d\n",j);
         net-> InputValue[(i * net->nbInput) + j] = Matrix[letter][j];
     }
-    printf("%d\n",i);
-    printf("%d\n",letter);
+    //printf("%d\n",i);
+    //printf("%d\n",letter);
     letter++;
   }
   
@@ -309,6 +337,7 @@ struct Neural_Network InitalizeNetwork()
 
 void ForwardPass(struct Neural_Network *net, int p, int epoch)
 {
+  //printf("ok 1\n");
   for(int h = 0; h < net->nbHidden; h++)
   {
     double sum_input_hidden = 0.0;
@@ -320,7 +349,7 @@ void ForwardPass(struct Neural_Network *net, int p, int epoch)
     // on calcule la fonction d'activation de notre réseau
     net->OutputH[h] = sigmoid(sum_input_hidden + net->BiasH[h]);
   }
-
+  //printf("ok 2\n");
 
   for(int o = 0; o < net->nbOutput; o++)
   {
@@ -333,6 +362,7 @@ void ForwardPass(struct Neural_Network *net, int p, int epoch)
     net->OutputO[o] = sigmoid(sum_hidden_output + net->BiasO[o]);
   }
 
+  //printf("ok 3\n");
 
   // Il faut calculer le taux d'erreur
 
@@ -341,6 +371,8 @@ void ForwardPass(struct Neural_Network *net, int p, int epoch)
     net->ErrorRate += 0.5 * ((net->Goal[(p * net->nbOutput) + o] - net->OutputO[o]) * (net->Goal[(p * net->nbOutput) + o] - net->OutputO[o]));
   }
   
+  //printf("ok 4\n");
+
   double max = 0.0;
   int lmax = 0;
   for(int o = 0; o < net->nbOutput; o++)
@@ -352,45 +384,28 @@ void ForwardPass(struct Neural_Network *net, int p, int epoch)
       max = act;
     }
   }
-  net->act = (char) net->OutputO[lmax] + 65;
+  
+  char goal;
 
+  if(p < 26)
+  {
+    net->act = (char) net->OutputO[lmax] + (int) 'A';
+    goal = (char) (p + (int) 'A');
+  }
+  else
+  {
+    net->act = (char) net->OutputO[lmax] + (int) 'a';
+    goal = (char) (p + (int) 'a' - 26);
+  }
+  
+  //printf("ok 5\n");
   if(epoch % 100 == 0)
   {
     printf("#########################\n");
     printf("Essai n°%d\n\n\n", epoch);
     printf("La réponse du réseau est : %c\n\n", net-> act);
-    printf("La réponse attendu est : %c\n\n\n", (char) (p + 65));
+    printf("La réponse attendu est : %c\n\n\n", goal);
   }
-
-  /*
-  for (int h = 0; h <  net -> nbHidden; ++h)
-  {
-    double SumIH = 0.0;
-    for (int i = 0; i < net -> nbInput; ++i)
-    {
-      SumIH += *(net -> WeightIH+(h+i*net -> nbHidden)) * 
-                *(net -> InputValue+(i+p*net -> nbInput));
-    }
-    *(net -> OutputH +h) = sigmoid(SumIH +  *(net -> BiasH + h));
-  }
-  double SumHO = 0;
-  for (int h = 0; h < net -> nbHidden; ++h)
-  {
-    SumHO += *(net -> WeightHO + h) * *(net -> OutputH +h);
-  }
-  net -> OutputO = sigmoid(SumHO + net -> BiasO);
-
-  //Squared error function
-  net -> ErrorRate += 0.5 * ( *(net -> Goal+p) - net -> OutputO) * 
-                      (*(net -> Goal + p) - net -> OutputO);
-  if (epoch % 1000 == 0)
-  {
-    printf("Pattern n°: %d | Input 1 : %f | Input 2 : %f | => Output: %f \n"
-                    , p 
-                    ,*(net -> InputValue + p*2 )
-                    ,*(net -> InputValue + p*2 +1)
-                    , net -> OutputO);
-  }*/
 }
 
 void BackwardPass(struct Neural_Network *net,int p) //backpropagation
@@ -431,37 +446,7 @@ void BackwardPass(struct Neural_Network *net,int p) //backpropagation
       net->WeightHO[(o * net->nbOutput) + h] += net->dWeightHO[(o * net->nbOutput) + h];
     }
   }
-
-  /*
-  net -> dOutputO = (*(net -> Goal+p) - net -> OutputO) * dSigmoid(net -> OutputO); //derivation sigmoid
-  for (int h = 0; h < net -> nbHidden; ++h)
-  {
-    double dSumOutput = *(net -> WeightHO + h) * net -> dOutputO ;
-    *(net -> dHidden +h) = dSumOutput * dSigmoid(*(net -> OutputH+h)); //derivation sigmoid
-  }
-  //update weights & bias between Input and Hidden layers
-  for (int h = 0; h < net -> nbHidden; ++h)
-  {
-    //update BiasH
-    *(net -> dBiasH + h) = net -> eta *  *(net -> dHidden +h);
-    *(net -> BiasH +h) += *(net -> dBiasH +h) ;
-    for (int i = 0; i < net -> nbInput; ++i)
-    {
-      //update WeightIH
-      *(net -> dWeightIH+(h+i*net -> nbHidden)) = net -> eta * *(net -> InputValue + (i+p*net -> nbInput)) * *(net -> dHidden +h) + net -> alpha * *(net -> dWeightIH + (h+i*net -> nbHidden));
-      *(net -> WeightIH + (h+i*net -> nbHidden)) += *(net -> dWeightIH + (h+i*net -> nbHidden));
-    }
-  }
-    //update weights & bias between Hidden and Ouput layers
-  //update BiasO
-  net -> dBiasO = net -> eta * net -> dOutputO;
-  net -> BiasO  += net -> dBiasO ;
-  for (int h = 0; h < net -> nbHidden; ++h)
-  {
-    //update WeightsHO
-    *(net -> dWeightHO + h) = net -> eta * *(net -> OutputH + h) * net -> dOutputO + net -> alpha * *(net -> dWeightHO + h);
-    *(net -> WeightHO + h) += *(net -> dWeightHO + h) ;
-  }*/
+  //printf("ok 2\n");
 }
 
 
@@ -477,20 +462,26 @@ void OCR()
 
   //LoadData(net);
 
-  //InitalizeValue(net);
+  InitalizeValue(net);
   for (int epoch = 0; epoch <= NbEpoch; ++epoch)
   {
     net -> ErrorRate = 0.0;
     for (int p = 0; p < NbPattern; ++p)
     {
+      //printf("1\n");
       ForwardPass(net, p, epoch);
+      //printf("2\n");
       BackwardPass(net, p);
+      //printf("3\n");
     }
-    // TODO print
+    
   }
 
+  printf("Fail here\n");
   SaveData(net);
+  printf("No here\n");
   free_array(net);
+  printf("No here\n");
 }
 
 int main()
