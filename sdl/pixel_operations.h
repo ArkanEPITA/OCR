@@ -33,7 +33,8 @@ struct Array_word
 typedef struct Block Block;
 
 struct Block{
-    SDL_Surface ** image;
+    SDL_Surface ** images;
+    int* left;
     int nb_block;
 };
 

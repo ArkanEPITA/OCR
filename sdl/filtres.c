@@ -39,21 +39,11 @@ void filtre_gaussien(SDL_Surface* image_surface)
     //Reduce noise by bluring the image
 
 
-    //double mask[3][3] = {{0.099999, 0.116228, 0.099999},{0.116228, 0.135092, 0.116228}, {0.099999, 0.116228, 0.099999}};
-
     //Initialization of the mask to apply
     double mask[3][3] = {
         {1, 2, 1},
         {2, 4, 2},
         {1, 2, 1}};
-
-
-    //double sigma = 0.8;
-    //double k = 2.0 * sigma * sigma;
-    
-    //int p;
-
-
 
 
     //normalization of the mask
@@ -738,7 +728,8 @@ void IsRectangle(SDL_Surface* image_surface, SDL_Surface* true_surface, Block *b
             if(RectangularityFactor(image_surface, rect_left, rect_right, rect_up, rect_down) == 1)
             {
                 SDL_Surface* square = copy_image(true_surface, rect_up, rect_down, rect_left, rect_right);
-                blocks->image[blocks->nb_block] = square;
+                blocks->images[blocks->nb_block] = square;
+                blocks->left[blocks->nb_block] = rect_left;
                 blocks->nb_block += 1;
             }
             rect_left = -1;
@@ -844,11 +835,12 @@ char* final(SDL_Surface* image_surface, SDL_Surface* true_surface)
 
     Block *blocks = NULL;
     blocks = malloc(sizeof(Block) * 1);
-    blocks->image = malloc(sizeof(SDL_Surface) * image_surface->h);
+    blocks->images = malloc(sizeof(SDL_Surface) * image_surface->h);
+    blocks->images = malloc(sizeof(int) * image_surface->h);
 
     for (int i = 0; i < image_surface->h; i++)
     {
-        blocks->image[i] = NULL;
+        blocks->images[i] = NULL;
     }
     blocks->nb_block = 0;
 
@@ -876,86 +868,3 @@ char* final(SDL_Surface* image_surface, SDL_Surface* true_surface)
 
     return str;
 }
-
-/*
-
-int main()
-{
-    //weight = barre du haut
-    //height = barre de gauche
-    SDL_Surface* image_surface;
-    SDL_Surface* screen_surface;
-
-    init_sdl();
-
-    image_surface = load_image("images/gaussien.png");
-    
-    screen_surface = display_image(image_surface);
-
-    wait_for_keypressed();
-
-    //=====================================
-    //              FILTRES
-    //=====================================
-
-    grayscale(image_surface);
-
-    update_surface(screen_surface, image_surface);
-    wait_for_keypressed();
-
-    filtre_gaussien(image_surface);
-
-    update_surface(screen_surface, image_surface);
-    wait_for_keypressed();
-
-    contour_vertical(image_surface);
-
-
-    gradient_vertical(image_surface);
-
-    update_surface(screen_surface, image_surface);
-    wait_for_keypressed();
-
-    binarisation(image_surface);
-
-
-    update_surface(screen_surface, image_surface);
-    wait_for_keypressed();
-
-    fermeture_verticale(image_surface, 4);
-
-    update_surface(screen_surface, image_surface);
-    wait_for_keypressed();
-
-    fermeture_horizontale(image_surface, 9);
-
-    update_surface(screen_surface, image_surface);
-    wait_for_keypressed();
-
-    fermeture_verticale(image_surface, 2);
-
-    update_surface(screen_surface, image_surface);
-    wait_for_keypressed();
-
-    too_short_weight(image_surface, 25);
-
-    update_surface(screen_surface, image_surface);
-    wait_for_keypressed();
-
-    too_short_height(image_surface, 2);
-
-    update_surface(screen_surface, image_surface);
-    wait_for_keypressed();
-
-    too_short_weight(image_surface, 2);
-
-    update_surface(screen_surface, image_surface);
-    wait_for_keypressed();
-
-    SDL_FreeSurface(image_surface);
-    SDL_FreeSurface(screen_surface);
-
-    return 0;
-}
-
-*/
