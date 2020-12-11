@@ -311,7 +311,7 @@ void ForwardPass(struct Neural_Network *net, int p, int epoch)
   }
   else
   {
-    net->act = (char) lmax + (int) 'a' - 27;
+    net->act = (char) lmax + (int) 'a' - 26;
     //printf("%d\n", lmax);
   }
 
@@ -385,7 +385,7 @@ void OCR()
   srand(time(NULL));
 
   int NbPattern = 52;
-  int NbEpoch = 100;
+  int NbEpoch = 5000;
 
   struct Neural_Network *net = InitalizeNetwork();
 
