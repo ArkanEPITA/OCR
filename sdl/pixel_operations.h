@@ -35,6 +35,8 @@ typedef struct Block Block;
 struct Block{
     SDL_Surface ** images;
     int* left;
+    int* up;
+    int* down;
     int nb_block;
 };
 
@@ -84,7 +86,7 @@ SDL_Surface* Resize_letter(SDL_Surface *image_surface);
 
 double* create_matrix_letter(SDL_Surface *image_surface);
 
-char* final(SDL_Surface* image_surface, SDL_Surface* true_surface);
+char* final(SDL_Surface* image_surface, SDL_Surface* true_surface, SDL_Surface* screen_surface);
 
 char* print_line(SDL_Surface* image_surface, int alinea, int begin);
 
