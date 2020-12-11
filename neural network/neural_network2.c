@@ -220,10 +220,10 @@ void InitalizeValue(struct Neural_Network *net)
   {
     for (int i = 0; i < net->nbInput; i++)
     {
-      net->WeightIH[h][i] = Random();
+      net->WeightIH[h][i] = Random() / 1000;
       net->dWeightIH[h][i] = 0.0;
     }
-    net->BiasH[h] = Random();
+    net->BiasH[h] = Random() / 1000;
     net->dBiasH[h] = 0.0;
   }
   
@@ -232,10 +232,10 @@ void InitalizeValue(struct Neural_Network *net)
   {
     for(int h  = 0; h < net->nbHidden; h++)
     {
-      net->WeightHO[o][h] = Random();
+      net->WeightHO[o][h] = Random() / 1000;
       net->dWeightHO[o][h] = 0.0;
     }
-    net->BiasO[o] = Random();
+    net->BiasO[o] = Random() / 1000;
     net->dBiasO[o] = 0.0;
   }
 }
@@ -244,7 +244,10 @@ void InitalizeValue(struct Neural_Network *net)
 // Fonction sigmoid servant de fonction d'activation
 double sigmoid(double x)
 {
-  return(1.0 / (1.0 + exp(-x)));
+  double res = (1.0 / (1.0 + exp(-x)));
+  //printf("%lf\n", x);
+  //printf("%lf\n", res);
+  return res;
 }
 
 // Fonction dérivé de la sigmoid pour propager vers l'arrière notre erreur
@@ -300,14 +303,24 @@ void ForwardPass(struct Neural_Network *net, int p, int epoch)
   }
 
   char goal;
+  //rintf("%d\n", lmax);
+  if(lmax < 26)
+  {
+    //printf("%d\n", lmax);
+    net->act = (char) lmax + (int) 'A';
+  }
+  else
+  {
+    net->act = (char) lmax + (int) 'a' - 27;
+    //printf("%d\n", lmax);
+  }
+
   if(p < 26)
   {
-    net->act = (char) net->OutputO[lmax] + (int) 'A';
     goal = (char) (p + (int) 'A');
   }
   else
   {
-    net->act = (char) net->OutputO[lmax] + (int) 'a';
     goal = (char) (p + (int) 'a' - 26);
   }
 
@@ -315,7 +328,7 @@ void ForwardPass(struct Neural_Network *net, int p, int epoch)
   if(epoch % 100 == 0)
   {
     printf("La réponse du réseau est : %c\n", net-> act);
-    printf("La réponse attendu est :   %c\n", goal);
+    printf("La réponse attendu est :   %c\n\n", goal);
   }
 }
 //backpropagation
