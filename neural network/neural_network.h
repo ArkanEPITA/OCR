@@ -1,5 +1,5 @@
-# ifndef NEURAL_NETWORK2_H_
-# define NEURAL_NETWORK2_H_
+# ifndef NEURAL_NETWORK_H_
+# define NEURAL_NETWORK_H_
 
 # include <stdlib.h>
 # include <stdio.h>
