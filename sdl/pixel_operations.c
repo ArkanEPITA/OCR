@@ -1,3 +1,4 @@
+
 // Simple get/put pixel for SDL
 // Inspired by code from SDL documentation
 // (http://www.libsdl.org/release/SDL-1.2.15/docs/html/guidevideo.html)

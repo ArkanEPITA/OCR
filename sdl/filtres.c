@@ -566,6 +566,10 @@ void fermeture_horizontale(SDL_Surface* image_surface, int end)
 void too_short_weight(SDL_Surface* image_surface, int max)
 {
     int pos;
+    if(max == 0)
+    {
+        max = 1;
+    }
     for(int j = 0; j < (image_surface->h); j++)
     {
         for(int i = 0; i < (image_surface->w); i+=pos)
@@ -622,6 +626,10 @@ void too_short_weight(SDL_Surface* image_surface, int max)
 void too_short_height(SDL_Surface* image_surface, int max)
 {
     int pos;
+    if(max == 0)
+    {
+        max = 1;
+    }
     for(int i = 0; i < (image_surface->w); i++)
     {
         for(int j = 0; j < (image_surface->h); j+=pos)
@@ -675,10 +683,9 @@ void too_short_height(SDL_Surface* image_surface, int max)
 
 
 
-int savoirSiCUnBonRectDucul(SDL_Surface* image_surface, int rect_left, int rect_right, int rect_up, int rect_down)
+int RectangularityFactor(SDL_Surface* image_surface, int rect_left, int rect_right, int rect_up, int rect_down, int rectangularity_factor)
 {
     int great = 0;
-    double rectangularity_factor = 0.65;
     int nb_pixel = 0;
     int nb_white_pixel = 0;
     for (int i = rect_left; i <= rect_right+1; i++)
@@ -736,7 +743,7 @@ int savoirSiCUnBonRectDucul(SDL_Surface* image_surface, int rect_left, int rect_
 
 
 
-void rectangle_decul(SDL_Surface* image_surface, SDL_Surface* true_surface, Block *blocks, int jmin, int jmax, int i)
+void RectangleCoordinates(SDL_Surface* image_surface, SDL_Surface* true_surface, Block *blocks, int jmin, int jmax, int i, int rectangularity_factor)
 {
 
     /*
@@ -758,14 +765,16 @@ void rectangle_decul(SDL_Surface* image_surface, SDL_Surface* true_surface, Bloc
 
     while(i <= image_surface->w)
     {
-        if (full_black == 1 && rectangle_begin == 1)
+        if ((full_black == 1 || i == image_surface->w-1) && rectangle_begin == 1)
         {
             //printf("l = %d, r = %d, u = %d, d = %d\n", rect_left, rect_right, rect_up, rect_down);
-            if(savoirSiCUnBonRectDucul(image_surface, rect_left, rect_right, rect_up, rect_down) == 1)
+            if(RectangularityFactor(image_surface, rect_left, rect_right, rect_up, rect_down, rectangularity_factor) == 1)
             {
                 SDL_Surface* square = copy_image(true_surface, rect_up, rect_down, rect_left, rect_right);
                 blocks->images[blocks->nb_block] = square;
                 blocks->left[blocks->nb_block] = rect_left;
+                blocks->up[blocks->nb_block] = rect_up;
+                blocks->down[blocks->nb_block] = rect_down;
                 blocks->nb_block += 1;
 
 /*
@@ -827,7 +836,7 @@ void rectangle_decul(SDL_Surface* image_surface, SDL_Surface* true_surface, Bloc
     /*
     if (full_black == 1 && rectangle_begin == 1)
     {
-        nb_carres += savoirSiCUnBonRectDucul(image_surface, rect_left, rect_right, rect_up, rect_down);
+        nb_carres += RectangularityFactor(image_surface, rect_left, rect_right, rect_up, rect_down);
     }
 
     return list;
@@ -839,7 +848,7 @@ void rectangle_decul(SDL_Surface* image_surface, SDL_Surface* true_surface, Bloc
 
 
 
-void enveloppe_convexe(SDL_Surface* image_surface, SDL_Surface* true_surface, Block *blocks)
+void enveloppe_convexe(SDL_Surface* image_surface, SDL_Surface* true_surface, Block *blocks, int rectangularity_factor)
 {
     int jmin = -1;
     int j = 0;
@@ -875,12 +884,12 @@ void enveloppe_convexe(SDL_Surface* image_surface, SDL_Surface* true_surface, Bl
             i++;
         }
 
-        if(found_jmin == 0)
+        if(found_jmin == 0 || j == image_surface->h-1)
         {
             if(jmin != -1)
             {
                 
-                rectangle_decul(image_surface, true_surface, blocks, jmin, j+1, 0);
+                RectangleCoordinates(image_surface, true_surface, blocks, jmin, j+1, 0, rectangularity_factor);
                 /*
                 for(int k = 0; list2[k] != NULL; k++)
                 {
@@ -912,16 +921,95 @@ void enveloppe_convexe(SDL_Surface* image_surface, SDL_Surface* true_surface, Bl
 }
 
 
+/*
 
-char* final(SDL_Surface* image_surface, SDL_Surface* true_surface)
+void printLine(SDL_Surface* image_surface, int i)
+{
+    int j = 0;
+    for(; j < image_surface->w-1; j++)
+    {
+        Uint32 white_pixel = SDL_MapRGB(image_surface->format, 0, 0, 255);
+        put_pixel(image_surface, j, i, white_pixel);
+    }
+}
+
+*/
+
+
+int LetterSize(SDL_Surface* image_surface)
+{
+    int begin_letter = -1;
+    int end_letter = -1;
+    int i = 0;
+    while(i < image_surface->h-1 && end_letter == -1)
+    {
+        int white_pixel = 0;
+        int j = 0;
+        while(j < image_surface->w-1 && white_pixel == 0)
+        {
+            Uint32 pixel = get_pixel(image_surface, j, i);
+            Uint8 r, g, b;
+            SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
+
+            if(r == 255)
+            {
+                white_pixel = 1;
+                if(begin_letter == -1)
+                {
+                    begin_letter = i;
+
+                }
+            }
+            j++;
+        }
+        if(white_pixel == 0 && begin_letter != -1)
+        {
+            end_letter = i;
+        }
+        i++;
+    }
+
+    return end_letter - begin_letter;
+}
+
+
+
+char* final(SDL_Surface* image_surface, SDL_Surface* true_surface, SDL_Surface* screen_surface)
 {
     char* s = malloc((sizeof(char)) * 4095);
     strcat(s, "");
+
+
+    int h = image_surface->h/100; // Barre de gauche
+    int w = image_surface->w/100; // Barre du haut
+
+    screen_surface = display_image(image_surface);
+
+    greyscale(true_surface);
+    greyscale(image_surface);
+    filtre_gaussien(image_surface);
+    contour_vertical(image_surface);
+
+/*
+    int resize = LetterSize(image_surface)/15;
+
+    printf("resize = %d\n", resize);
+
+    image_surface = Resize(image_surface, image_surface->w/(2*resize), image_surface->h/(2*resize));
+*/
+
+
+
+
+
+
 
     Block *blocks = NULL;
     blocks = malloc(sizeof(Block) * 1);
     blocks->images = malloc(sizeof(SDL_Surface) * image_surface->h);
     blocks->left = malloc(sizeof(int) * image_surface->h);
+    blocks->up = malloc(sizeof(int) * image_surface->h);
+    blocks->down = malloc(sizeof(int) * image_surface->h);
 
     for (int i = 0; i < image_surface->h; i++)
     {
@@ -929,25 +1017,19 @@ char* final(SDL_Surface* image_surface, SDL_Surface* true_surface)
     }
     blocks->nb_block = 0;
      
-    greyscale(true_surface);
-    greyscale(image_surface);
-    filtre_gaussien(image_surface);
-    contour_vertical(image_surface);
-    fermeture_verticale(image_surface, 4*2);
-    
-    fermeture_horizontale(image_surface, 12*2);
-    
-    fermeture_verticale(image_surface, 4*2);
-    
-    too_short_weight(image_surface, 25*2);
-    
-    too_short_height(image_surface, 2);
-    
-    enveloppe_convexe(image_surface, true_surface, blocks);
+    fermeture_verticale(image_surface, h);
+    fermeture_horizontale(image_surface, w*3);
+    fermeture_verticale(image_surface, h/2);
+    too_short_weight(image_surface, w*4);
 
+    too_short_height(image_surface, h/2);
+    enveloppe_convexe(image_surface, true_surface, blocks, 0.65);
 
+    update_surface(screen_surface, image_surface);
+    wait_for_keypressed();
 
     
+
     int number_lines = blocks->nb_block;
     int begin = blocks->left[0];
     for(int i = 0; i < number_lines; i++)
@@ -967,6 +1049,10 @@ char* final(SDL_Surface* image_surface, SDL_Surface* true_surface)
         strcat(s, "\n");
     }
 
+    free(image_surface);
+    free(screen_surface);
+    free(true_surface);
+
     return s;
 }
 
@@ -981,9 +1067,10 @@ int main()
     char* s = malloc((sizeof(char))* 4095);
     strcat(s, "");
     
+    char path[] = "images/algo.png";
 
-    image_surface = load_image("images/algo.png");
-    True_surface = load_image("images/algo.png");
+    image_surface = load_image(path);
+    True_surface = load_image(path);
 
     //image_surface = Resize(image_surface, 700, 600);
     //True_surface = Resize(True_surface, 700, 600);
@@ -997,16 +1084,34 @@ int main()
     //              FILTRES
     //=====================================
 
-    s = final(image_surface, True_surface);
+    s = final(image_surface, True_surface, screen_surface);
+
+    char* caca = malloc((sizeof(char)) * 4095);
+    strcat(caca, "");
+
     int i = 0;
-    while (i < 7 && s[i] != "\n")
+    int j = 0;
+    while(s[i] != 'G')
     {
-        s[i] = "";
+        i++;
+    }
+
+    for(; s[i] != '\0'; i++, j++)
+    {
+        caca[j] = s[i];
+    }
+
+    free(s);
+
+    /*
+    while (i < 7 && s[i] != '\n')
+    {
+        s[i] = '!';
         i += 1;
     }
-    
+    */
 
-    printf("%s", s);
+    printf("%s", caca);
 
     return 0;
 }
