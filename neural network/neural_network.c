@@ -265,11 +265,6 @@ void ForwardPass(struct Neural_Network *net, int p, int epoch)
     }
     net -> OutputO[o] = sigmoid(sum + net->BiasO[o]);
   }
-  // Il faut calculer le taux d'erreur
-  for(int o = 0; o < net->nbOutput; o++)
-  {
-    net->ErrorRate += 0.5 * ((net->Goal[p][o] - net->OutputO[o]) * ((net->Goal[p][o] - net->OutputO[o])));
-  }
 
   double max = 0.0;
   int lmax = 0;
@@ -360,8 +355,7 @@ void BackwardPass(struct Neural_Network *net, int p)
     }
 }
 
-
-void OCR()
+void train()
 {
   srand(time(NULL));
 
@@ -371,21 +365,10 @@ void OCR()
   struct Neural_Network *net = InitalizeNetwork();
 
   InitalizeValue(net);
-
-  //printf("test\n");
-
-  LoadData(net);
-
   
   for (int epoch = 0; epoch <= NbEpoch; ++epoch)
   {
-    if(epoch % 100 == 0)
-    {
-      printf("%d\n",epoch);
-      printf("#########################\n");
-      printf("Essai n°%d\n\n", epoch);
-    }
-    net -> ErrorRate = 0.0;
+
     for (int p = 0; p < NbPattern; ++p)
     {
       //printf("1\n");
@@ -403,9 +386,48 @@ void OCR()
   //printf("No here\n");
 }
 
+char run(double letter[][28])
+{
+  struct Neural_Network *net = InitalizeNetwork();
 
+  for(int i = 0; i < 28; i++)
+  {
+    for(int j = 0; j < 28; j++)
+    {
+      net->InputValue[0][i * 28 + j] = letter[i][j];
+    }
+  }
+
+  LoadData(net);
+
+  ForwardPass(net,0 , 5);
+
+  char res = net->act;
+
+  free_array(net);
+
+  return res;
+}
+
+char OCR(int train, double letter[28][28])
+{
+  char out = '';
+  
+  if(train == 1)
+  {
+    train();
+  }
+  else
+  {
+    out = run(letter);
+  }
+
+  return out;
+}
+
+/*
 int main()
 {
   OCR();
   return 1;
-}
+}*/
