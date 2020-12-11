@@ -974,7 +974,7 @@ int LetterSize(SDL_Surface* image_surface)
 
 
 
-char* final(SDL_Surface* image_surface, SDL_Surface* true_surface, SDL_Surface* screen_surface)
+char* final(SDL_Surface* image_surface, SDL_Surface* true_surface)
 {
     char* s = malloc((sizeof(char)) * 4095);
     strcat(s, "");
@@ -983,13 +983,9 @@ char* final(SDL_Surface* image_surface, SDL_Surface* true_surface, SDL_Surface* 
     int h = image_surface->h/100; // Barre de gauche
     int w = image_surface->w/100; // Barre du haut
 
-    screen_surface = display_image(image_surface);
-
     greyscale(true_surface);
     binarisation(true_surface);
     greyscale(image_surface);
-    update_surface(screen_surface, image_surface);
-    wait_for_keypressed();
     filtre_gaussien(image_surface);
     contour_vertical(image_surface);
     binarisation(image_surface);
@@ -1001,11 +997,6 @@ char* final(SDL_Surface* image_surface, SDL_Surface* true_surface, SDL_Surface* 
 
     image_surface = Resize(image_surface, image_surface->w/(2*resize), image_surface->h/(2*resize));
 */
-
-
-
-
-
 
 
     Block *blocks = NULL;
@@ -1028,9 +1019,6 @@ char* final(SDL_Surface* image_surface, SDL_Surface* true_surface, SDL_Surface* 
 
     too_short_height(image_surface, h/4);
     enveloppe_convexe(image_surface, true_surface, blocks, 0.65);
-
-    update_surface(screen_surface, image_surface);
-    wait_for_keypressed();
 
     int number_lines = blocks->nb_block;
     int begin = blocks->left[0];
@@ -1089,13 +1077,12 @@ char* final(SDL_Surface* image_surface, SDL_Surface* true_surface, SDL_Surface* 
     }
 
     free(image_surface);
-    free(screen_surface);
     free(true_surface);
 
     return s;
 }
 
-
+/*
 
 int main()
 {
@@ -1131,3 +1118,4 @@ int main()
 
     return 0;
 }
+*/

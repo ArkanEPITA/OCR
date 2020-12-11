@@ -62,7 +62,7 @@ SDL_Surface* show_image(SDL_Surface *image_surface, double angle)
     hsize = ceil(image_surface->w * fabs(sinus) + image_surface->h * fabs(cosinus));
 
     // Set the window to the new size
-    screen = SDL_SetVideoMode(wdest, hsize, 32, SDL_HWSURFACE);
+    screen = SDL_SetVideoMode(wsize, hsize, 32, SDL_HWSURFACE);
     if (screen == NULL)
     {
         // error management
@@ -170,6 +170,13 @@ void openFile(GtkButton* button, GtkLabel* textlabel)
 	gtk_widget_destroy(dialog);
 }
 
+int traiNN()
+{
+	double** matrix_letter = NULL;
+	OCR(1, matrix_letter);
+	return EXIT_SUCCESS;
+}
+
 
 
 int launchOCR(GtkButton* button, GtkTextBuffer* buffer)
@@ -184,24 +191,23 @@ int launchOCR(GtkButton* button, GtkTextBuffer* buffer)
 
 	printf("%s\n ",file);
 	SDL_Surface* image = IMG_Load((char*)file);
+	SDL_Surface* true_image = IMG_Load((char*)file);
+
 	
-	greyscale(image);
-	printf("Greyscale ! \n");
-	
-	binarisation(image);
-	printf("Binarization ! \n");
+
+	sentence = final(image, true_image);
 	
 	//SDL_Surface* image_cut = lineCut(img);
-	//printf("Line Cuts\n");
+	printf("Line Cuts\n");
 	
-	//printf("Character cuts\n");
+	printf("Character cuts\n");
   	//struct Neural_Network* network = ExtractData();
-	//printf("Extract Data Done \n");
+	printf("Extract Data Done \n");
 
 	//isolateLine(image_cut,net);
-	//printf("Isolate Line Done \n");
+	printf("Isolate Line Done \n");
 
-  	//gtk_text_buffer_set_text(buffer, network->str, strlen(network->str));
+  	gtk_text_buffer_set_text(buffer, sentence, strlen(sentence));
 
   	//sentence = net->str;
 	printf("Finish Treatment\n");

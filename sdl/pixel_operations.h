@@ -8,6 +8,7 @@
 #include <math.h>
 #include <errno.h>
 #include <string.h>
+#include "../neural_network/neural_network.h"
 
 typedef struct Word Word;
 
@@ -86,7 +87,7 @@ SDL_Surface* Resize_letter(SDL_Surface *image_surface);
 
 double* create_matrix_letter(SDL_Surface *image_surface);
 
-char* final(SDL_Surface* image_surface, SDL_Surface* true_surface, SDL_Surface* screen_surface);
+char* final(SDL_Surface* image_surface, SDL_Surface* true_surface);
 
 char* print_line(SDL_Surface* image_surface, int alinea, int begin);
 

@@ -4,6 +4,7 @@
 #include "pixel_operations.h"
 #include <math.h>
 #include <errno.h>
+#include "../neural_network/neural_network.c"
 
 
 //=============================
@@ -104,9 +105,9 @@ char* print_line(SDL_Surface* image_surface, int alinea, int begin)
     Array_word Word = find_letters(image_surface);
     int nb_letters = Word.length;
     //Uint32 green = SDL_MapRGB(image_surface->format, 0, 255, 0);
-    //SDL_Surface* image2;
-    //SDL_Surface* image3;
-    //double* matrix_letter = NULL;
+    SDL_Surface* image2;
+    SDL_Surface* image3;
+    double* matrix_letter = NULL;
     char* str = malloc((sizeof(char)) * Word.weigth*4);
     strcat(str, "");
 
@@ -161,12 +162,15 @@ char* print_line(SDL_Surface* image_surface, int alinea, int begin)
 
 
     strcat(str, "G");
-    //image2 = copy_image(image_surface, imin, imax, jmin, jmax);
+    image2 = copy_image(image_surface, imin, imax, jmin, jmax);
 
-    //image3 = Resize_letter(image2);
+    image3 = Resize_letter(image2);
 
-    //matrix_letter = create_matrix_letter(image3);
+    matrix_letter = create_matrix_letter(image3);
 
+    char letter[1] = OCR(0, matrix_letter);
+
+    strcat(str, letter);
     //machin de leno
 
     //concaténer str
@@ -183,13 +187,15 @@ char* print_line(SDL_Surface* image_surface, int alinea, int begin)
             strcat(str, " ");
         }
 
-        //image2 = copy_image(image_surface, imin, imax, jmin, jmax);
+        image2 = copy_image(image_surface, imin, imax, jmin, jmax);
 
-        //image3 = Resize_letter(image2);
+        image3 = Resize_letter(image2);
 
-        //matrix_letter = create_matrix_letter(image3);
+        matrix_letter = create_matrix_letter(image3);
 
-        strcat(str, "G");
+        char letter[1] = OCR(0, matrix_letter);
+
+        strcat(str, letter);
 
         //machin de leno
 
