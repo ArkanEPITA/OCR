@@ -370,7 +370,7 @@ void OCR()
   srand(time(NULL));
 
   int NbPattern = 52;
-  int NbEpoch = 5000;
+  int NbEpoch = 20000;
 
   struct Neural_Network *net = InitalizeNetwork();
 
