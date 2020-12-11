@@ -109,12 +109,12 @@ char* print_line(SDL_Surface* image_surface, int alinea, int begin)
     //double* matrix_letter = NULL;
     char* str = malloc((sizeof(char)) * Word.weigth*4);
     strcat(str, "");
+
     int jmaxref = Word.word[0].maxj_word;
     int jminref = Word.word[0].minj_word;
     int max_space = 0;
     int one_word = 0;
     int max_space_avant = 0;
-
     for (int i = 1; i < nb_letters; i++)
     {
         jminref = Word.word[i].minj_word;
@@ -122,7 +122,7 @@ char* print_line(SDL_Surface* image_surface, int alinea, int begin)
         {
             max_space = jminref - jmaxref;
         }
-        if((max_space_avant < max_space-2 || max_space_avant > max_space +2) && i != 1)
+        if((max_space_avant < max_space-5 && max_space_avant > max_space +5) && i != 1)
         {
             one_word = 1;
         }
@@ -130,10 +130,26 @@ char* print_line(SDL_Surface* image_surface, int alinea, int begin)
         jmaxref = Word.word[i].maxj_word;
     }
 
-    while (alinea >= begin + max_space)
+    if(nb_letters != 0)
     {
-        alinea = alinea - max_space;
-        strcat(str, " ");
+        if(one_word == 1)
+        {
+            while (alinea > begin + jmaxref - jminref + 20)
+            {
+                //printf("la\n");
+                alinea = alinea - (jmaxref - jminref);
+                strcat(str, " ");
+            }
+        }
+        else
+        {
+            while (alinea > begin + max_space + 20)
+            {
+                //printf("ici\n");
+                alinea = alinea - max_space;
+                strcat(str, " ");
+            }
+        }
     }
 
     int space = 0;
@@ -162,7 +178,7 @@ char* print_line(SDL_Surface* image_surface, int alinea, int begin)
         jmax = Word.word[i].maxj_word;
         imin = Word.word[i].mini_word;
 
-        if(space-5 < max_space && space+5 > max_space && one_word == 1)
+        if(space-7 < max_space && space+7 > max_space && one_word == 0)
         {
             strcat(str, " ");
         }

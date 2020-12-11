@@ -986,9 +986,13 @@ char* final(SDL_Surface* image_surface, SDL_Surface* true_surface, SDL_Surface* 
     screen_surface = display_image(image_surface);
 
     greyscale(true_surface);
+    binarisation(true_surface);
     greyscale(image_surface);
+    update_surface(screen_surface, image_surface);
+    wait_for_keypressed();
     filtre_gaussien(image_surface);
     contour_vertical(image_surface);
+    binarisation(image_surface);
 
 /*
     int resize = LetterSize(image_surface)/15;
@@ -1022,16 +1026,18 @@ char* final(SDL_Surface* image_surface, SDL_Surface* true_surface, SDL_Surface* 
     fermeture_verticale(image_surface, h/2);
     too_short_weight(image_surface, w*4);
 
-    too_short_height(image_surface, h/2);
+    too_short_height(image_surface, h/4);
     enveloppe_convexe(image_surface, true_surface, blocks, 0.65);
 
     update_surface(screen_surface, image_surface);
     wait_for_keypressed();
 
-    
-
     int number_lines = blocks->nb_block;
     int begin = blocks->left[0];
+    int back_space_up = blocks->up[0]; 
+    int back_space_down = blocks->down[0];
+    int begin_space = back_space_up;
+
     for(int i = 0; i < number_lines; i++)
     {
         if(begin > blocks->left[i])
@@ -1039,6 +1045,17 @@ char* final(SDL_Surface* image_surface, SDL_Surface* true_surface, SDL_Surface* 
             begin = blocks->left[i];
         }
     }
+
+    for(int i = 1; i < number_lines; i++)
+    {
+        back_space_up = blocks->up[i];
+        if(begin_space > back_space_up - back_space_down)
+        {
+            begin_space = back_space_up - back_space_down;
+        }
+        back_space_down = blocks->down[i];
+    }
+
     strcat(s, "\n");
     for(int i = 0; i < number_lines; i++)
     {
@@ -1047,6 +1064,28 @@ char* final(SDL_Surface* image_surface, SDL_Surface* true_surface, SDL_Surface* 
         str2 = print_line(blocks->images[i], blocks->left[i], begin);
         strcat(s, str2);
         strcat(s, "\n");
+        if(number_lines != 1 && i != number_lines-1)
+        {
+            if(i != 0)
+            {
+                int gap = blocks->up[i+1] - blocks->down[i];
+                while (begin_space + 30 < gap)
+                {
+                    gap -= begin_space;
+                    strcat(s, "\n");
+                }
+            }
+            else
+            {
+                int gap = blocks->up[1] - blocks->down[0];
+                while (begin_space + 30 < gap)
+                {
+                    gap -= begin_space;
+                    strcat(s, "\n");
+                }
+            }
+        }
+        
     }
 
     free(image_surface);
@@ -1067,7 +1106,7 @@ int main()
     char* s = malloc((sizeof(char))* 4095);
     strcat(s, "");
     
-    char path[] = "images/algo.png";
+    char path[] = "images/supermarket.jpg";
 
     image_surface = load_image(path);
     True_surface = load_image(path);
@@ -1086,32 +1125,9 @@ int main()
 
     s = final(image_surface, True_surface, screen_surface);
 
-    char* caca = malloc((sizeof(char)) * 4095);
-    strcat(caca, "");
+    
 
-    int i = 0;
-    int j = 0;
-    while(s[i] != 'G')
-    {
-        i++;
-    }
-
-    for(; s[i] != '\0'; i++, j++)
-    {
-        caca[j] = s[i];
-    }
-
-    free(s);
-
-    /*
-    while (i < 7 && s[i] != '\n')
-    {
-        s[i] = '!';
-        i += 1;
-    }
-    */
-
-    printf("%s", caca);
+    printf("%s", s);
 
     return 0;
 }
