@@ -1,6 +1,5 @@
 #include "neural_network2.h"
 
-
 //Create & return the double* pixels values from filename
 double *matrixFromFile(char *filename)
 {
@@ -97,16 +96,17 @@ void SaveData(struct Neural_Network *net)
 
   fclose(file);
 }
-/*
+
+
 // Fonction qui va a partir d'un fichier charger toutes les composantes d'un réseau de neurone
 void LoadData(struct Neural_Network *net)
 {
   FILE* file = fopen("network.txt", "r");
 
-  double idc;
+  double idc = 0.0;
   if(file == NULL)
   {
-    printf("Erreur dans le chargement");
+    printf("Erreur dans le chargement\n");
   }
   else
   {
@@ -114,27 +114,29 @@ void LoadData(struct Neural_Network *net)
     {
       for(int j = 0; j < net->nbInput; j++)
       {
-        idc = fscanf(file, "%f\n", (net->WeightIH[i][j]));
+        //printf("hidden\n");
+        idc = fscanf(file, "%lf\n", (&net->WeightIH[i][j]));
       }
-      //printf("hidden\n");
-      idc = fscanf(file, "%f\n", (net->BiasH[i]));
+      
+      idc = fscanf(file, "%lf\n", (&net->BiasH[i]));
     }
     for(int k = 0; k < net->nbOutput; k++)
     {
       for(int l = 0; l < net->nbHidden; l++)
       {
-        idc = fscanf(file, "%f\n", (net->WeightHO[k][l]));
+        idc = fscanf(file, "%lf\n", (&net->WeightHO[k][l]));
       }
-      idc = fscanf(file, "%f\n", (net->BiasO[k]));
+      //printf("output\n");
+      idc = fscanf(file, "%lf\n", (&net->BiasO[k]));
     }
+    fclose(file);
   }
   idc++;
-  fclose(file);
+  
 }
-*/
+
 void free_array(struct Neural_Network *net)
 {
-  printf("test tes\n");
   free(net);
 
 }
@@ -372,9 +374,13 @@ void OCR()
 
   struct Neural_Network *net = InitalizeNetwork();
 
-  //LoadData(net);
-
   InitalizeValue(net);
+
+  //printf("test\n");
+
+  LoadData(net);
+
+  
   for (int epoch = 0; epoch <= NbEpoch; ++epoch)
   {
     if(epoch % 100 == 0)
@@ -393,11 +399,11 @@ void OCR()
     }
   }
 
-  printf("Fail here\n");
+  //printf("Fail here\n");
   SaveData(net);
-  printf("No here\n");
+  //printf("No here\n");
   free_array(net);
-  printf("No here\n");
+  //printf("No here\n");
 }
 
 

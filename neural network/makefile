@@ -19,4 +19,3 @@ main: $(OBJ)
 clean:
 		$(RM) $(OBJ) $(OBJ_TESTS) $(DEP) $(DEP_TESTS) neural_network2
 		$(RM) $(OBJ) $(OBJ_TESTS) $(DEP) $(DEP_TESTS) neural_network && clear
-		$(RM) *.txt
