@@ -158,24 +158,7 @@ struct Neural_Network* InitalizeNetwork()
   net->nbInput = 784;
   net->nbHidden = 64;
   net->nbOutput = 52;
-  /*
-  net.InputValue = malloc(sizeof(double) * net.nbOutput * net.nbInput);
-  net.Goal = malloc(sizeof(double) * net.nbOutput * net.nbOutput);
-  
-  net.WeightIH = malloc(sizeof(double) * net.nbInput * net.nbHidden);
-  net.WeightHO = malloc(sizeof(double) * net.nbHidden * net.nbOutput);
-  net.BiasH = malloc(sizeof(double) * net.nbHidden);
-  net.BiasO = malloc(sizeof(double) * net.nbOutput);
-  net.OutputH = malloc(sizeof(double) * net.nbHidden);
-  net.OutputO = malloc(sizeof(double) * net.nbOutput);
-  
-  net.dBiasH = malloc(sizeof(double) * net.nbHidden);
-  net.dBiasO = malloc(sizeof(double) * net.nbOutput);
-  net.dWeightIH = malloc(sizeof(double) * net.nbInput * net.nbHidden);
-  net.dWeightHO = malloc(sizeof(double) * net.nbHidden * net.nbOutput);
-  net.dOutputO = malloc(sizeof(double) * net.nbOutput); 
-  net.dHiddenHH = malloc(sizeof(double) * net.nbHidden);
-  */
+
   net->ErrorRate = 0.0;
   net->eta = 0.5;
   net->alpha = 0.9;
