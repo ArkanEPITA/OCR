@@ -341,14 +341,14 @@ void BackwardPass(struct Neural_Network *net, int p)
     ///Calculate Cost function for hidden neurons
     double sum;
   
-    for (int o = 0; o < net -> nbOutput; o++)
+    for(int h = 0; h < net->nbHidden; h++)
     {
       sum = 0.0;
-      for (int h = 0; h < net -> nbHidden; h++)
+      for(int o = 0; o < net->nbOutput; o++)
       {
-        sum += (net -> WeightHO[o][h]) * (net->dOutputO[o]);
+        sum += net->WeightHO[o][h] * net->dOutputO[o]; 
       }
-      net -> dHiddenH[o] = sum * dSigmoid(net -> OutputH[o]);
+      net->dHiddenH[h] = sum * dSigmoid(net->OutputH[h]);
     }
 
      //Weights between Input and Hidden layers
@@ -370,7 +370,7 @@ void OCR()
   srand(time(NULL));
 
   int NbPattern = 52;
-  int NbEpoch = 20000;
+  int NbEpoch = 1200;
 
   struct Neural_Network *net = InitalizeNetwork();
 
