@@ -1,7 +1,6 @@
 # include "gtku.h"
 # include <SDL/SDL_rotozoom.h>
-# include "../sdl/pixel_operations.h"
-#include "../neural_network/neural_network.h"
+# include "../neural_network/neural_network.c"
 
 #define TEMPS       30 // Le temps qu'il y a entre chaque augmentation de l'angle.
 
@@ -18,20 +17,7 @@ void loading_image(GtkButton* button, GtkImage* image)
 		if(strcmp(file,"") == 0)
 			return;
 		UNUSED(button);
-		SDL_Surface *img = IMG_Load((char *)file);
-		if(img->w > 576 && img->h > 460)
-		{
-
-			printf("Need Resize \n");
-			//SDL_Surface *new = imageResize(img,576,460);
-			SDL_Surface *new = Resize(img, 576, 460);
-
-			SDL_SaveBMP(new,"save_image/image_resize");
-		//SDL_FreeSurface(new);
-			gtk_image_set_from_file (GTK_IMAGE (image), "save_image/image_resize");
-		}
-		else
-			gtk_image_set_from_file (GTK_IMAGE (image), file);
+		gtk_image_set_from_file (GTK_IMAGE (image), file);
 	}
 	else
 	{
@@ -172,7 +158,7 @@ void openFile(GtkButton* button, GtkLabel* textlabel)
 	gtk_widget_destroy(dialog);
 }
 
-int traiNN()
+int trainNN()
 {
 	train();
 	return EXIT_SUCCESS;

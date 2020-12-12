@@ -1,7 +1,6 @@
-#include "neural_network.h"
-# include "../sdl/pixel_operations.c"
+#include "../sdl/pixel_operations.h"
 
-/*
+
 //Create & return the double* pixels values from filename
 double *matrixFromFile(char *filename)
 {
@@ -64,7 +63,7 @@ double** lettersMatrix()
   }
   return lettersMatrix;
 }
-*/
+
 // Fonction qui va créer un fichier en enregistrant dedans tout les poids et les biais, ils vont avoir le forme suivante : 
 // les poids suivit d'un espace pour les séparer et a la fin les biais
 void SaveData(struct Neural_Network *net)
@@ -388,7 +387,7 @@ void train()
   //printf("No here\n");
 }
 
-char run(double letter[][28])
+char run(double letter[784])
 {
   struct Neural_Network *net = InitalizeNetwork();
 
@@ -396,7 +395,7 @@ char run(double letter[][28])
   {
     for(int j = 0; j < 28; j++)
     {
-      net->InputValue[0][i * 28 + j] = letter[i][j];
+      net->InputValue[0][i * 28 + j] = letter[i * 28 + j];
     }
   }
 

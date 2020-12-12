@@ -96,7 +96,7 @@ And have fun !</property>
                         </packing>
                       </child>
                       <child>
-                        <object class="GtkButton" id="NN_train">
+                        <object class="GtkButton" id="trainNN">
                           <property name="label" translatable="yes">Launch Neural Network Training !</property>
                           <property name="visible">True</property>
                           <property name="can_focus">True</property>

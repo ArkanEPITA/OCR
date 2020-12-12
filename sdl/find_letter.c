@@ -2,7 +2,6 @@
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
 #include "pixel_operations.h"
-#include "../neural_network/neural_network.h"
 #include <math.h>
 #include <errno.h>
 

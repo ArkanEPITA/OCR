@@ -6,6 +6,7 @@
 # include <err.h>
 # include <time.h>
 # include <math.h>
+# include "../sdl/pixel_operations.h"
 
 struct Neural_Network
 {

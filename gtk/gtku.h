@@ -19,5 +19,7 @@ typedef struct
 
 void create_window(int argc, char* argv[]);	
 
+int traiNN();
+
 
 #endif

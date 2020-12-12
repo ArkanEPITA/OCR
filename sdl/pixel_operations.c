@@ -216,32 +216,6 @@ void print_matrix(double matrix[], size_t lines, size_t cols)
     }
 }
 
-//Create & return the double* pixels values from filename
-double* matrixFromFile(char* filename)
-{
-    double* matrix = malloc(sizeof(double) * 28 * 28);
-    FILE* file = fopen(filename, "r");
-
-    if(file == NULL)
-    {
-        printf("File is NULL \n");
-    }
-
-    for(int i = 0; i <= 28; i++)
-    {
-        for(int j = 0; j <= 28; j++)
-        {
-            int c = fgetc(file);
-            if(c == 49)
-            matrix[j+i*28] = 1;
-            if(c == 48)
-            matrix[j+i*28] = 0;
-        }
-    }
-    fclose(file);
-    return matrix;
-}
-
 
 /*
 //Create & return the double* wanted pixels values from filename
@@ -284,42 +258,6 @@ double** wantedMatrix()
 }
 */
 
-//Create & return all the letters matrixes (for all letters)
-double** lettersMatrix()
-{
-  //Variables
-  char uppercase_path[19] = "uppercase/0/00.txt\0";
-  char lowercase_path[19] = "lowercase/0/00.txt\0";
-  double** lettersMatrix = malloc(sizeof(double *) * 52);
-  char uppercase = 'A';
-  char lowercase = 'a';
-  char count = '4';
-
-  for(int i = 0; i < 52; i++)
-  {
-
-    if(i < 26)
-    {
-      uppercase_path[10] = uppercase;
-      uppercase_path[12] = uppercase;
-      uppercase_path[13] = count;
-      lettersMatrix[i] = matrixFromFile(uppercase_path);
-      uppercase++;
-
-    }
-    else if(i >= 26)
-    {
-      count = '3';
-      lowercase_path[10] = lowercase;
-      lowercase_path[12] = lowercase;
-      lowercase_path[13] = count;
-      lettersMatrix[i] = matrixFromFile(lowercase_path);
-      lowercase++;
-
-    }
-  }
-  return lettersMatrix;
-}
 
 //Create & return the letters matrix binarisation
 double* create_matrix_letter(SDL_Surface *image_surface)
