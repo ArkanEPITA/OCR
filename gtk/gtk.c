@@ -1,6 +1,6 @@
 # include "gtku.h"
 # include <SDL/SDL_rotozoom.h>
-# include "../neural_network/neural_network.c"
+# include "../sdl/pixel_operations.h"
 
 #define TEMPS       30 // Le temps qu'il y a entre chaque augmentation de l'angle.
 

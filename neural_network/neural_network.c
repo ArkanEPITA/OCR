@@ -60,7 +60,7 @@ double** lettersMatrix()
       count = '3';
       lowercase_path[10] = lowercase;
       lowercase_path[12] = lowercase;
-      lowercase_path[13] = count;
+      lowercase_path[12] = count;
       lettersMatrix[i] = matrixFromFile(lowercase_path);
       lowercase++;
 
@@ -443,9 +443,10 @@ char OCR(int training, double letter[28*28])
 }
 */
 
-
+/*
 int main()
 {
   train();
   return 1;
 }
+*/
