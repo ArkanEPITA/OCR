@@ -22,11 +22,19 @@ double *matrixFromFile(char *filename)
       for(int j = 0; j <= 28; j++)
       {
           int c = fgetc(file);
+          //printf("%C", c);
           if(c == 49)
-          matrix[j+i*28] = 1;
+          {
+            matrix[j+i*28] = 1;
+            printf("%.f", matrix[j+i*28]);
+          }
           if(c == 48)
-          matrix[j+i*28] = 0;
+          {
+            matrix[j+i*28] = 0;
+            printf("%.f", matrix[j+i*28]);
+          }
       }
+      printf("\n");
   }
   
   fclose(file);
@@ -60,7 +68,7 @@ double** lettersMatrix()
       count = '3';
       lowercase_path[10] = lowercase;
       lowercase_path[12] = lowercase;
-      lowercase_path[12] = count;
+      lowercase_path[13] = count;
       lettersMatrix[i] = matrixFromFile(lowercase_path);
       lowercase++;
 
@@ -181,11 +189,15 @@ void InitalizeValue(struct Neural_Network *net)
     for (int j = 0; j < net->nbInput; j++)
     {
       //printf("%d\n",j);
-        net-> InputValue[i][j] = Matrix[letter][j];
+      //printf("%.f", Matrix[i][j]);
+      if(j % 28 == 0)
+      {
+        //printf("\n");
+      }
+        net-> InputValue[i][j] = Matrix[i][j];
     }
     //printf("%d\n",i);
     //printf("%d\n",letter);
-    letter++;
   }
 
   for(int i = 0; i < net->nbOutput; i++)
