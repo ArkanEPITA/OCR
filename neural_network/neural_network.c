@@ -1,38 +1,43 @@
+//Colors for print
+#define KRED  "\x1B[31m"
+#define KGRN  "\x1B[32m"
+#define KWHT  "\x1B[37m"
+
 #include "../sdl/pixel_operations.h"
 
 
 //Create & return the double* pixels values from filename
 double *matrixFromFile(char *filename)
 {
-    double *matrix = malloc(sizeof(double) * 28 * 28);
-    FILE *file = fopen(filename, "r");
+  double *matrix = malloc(sizeof(double) * 28 * 28);
+  FILE *file = fopen(filename, "r");
 
-    if(file == NULL)
-    {
-        printf("File is NULL \n");
-    }
+  if(file == NULL)
+  {
+      printf("File is NULL \n");
+  }
 
-    for(int i = 0; i < 28; i++)
-    {
-        for(int j = 0; j <= 28; j++)
-        {
-            int c = fgetc(file);
-            if(c == 49)
-            matrix[j+i*28] = 1;
-            if(c == 48)
-            matrix[j+i*28] = 0;
-        }
-    }
-    
-    fclose(file);
-    return matrix;
+  for(int i = 0; i < 28; i++)
+  {
+      for(int j = 0; j <= 28; j++)
+      {
+          int c = fgetc(file);
+          if(c == 49)
+          matrix[j+i*28] = 1;
+          if(c == 48)
+          matrix[j+i*28] = 0;
+      }
+  }
+  
+  fclose(file);
+  return matrix;
 }
 
 double** lettersMatrix()
 {
   //Variables
-  char uppercase_path[22] = "../uppercase/0/00.txt\0";
-  char lowercase_path[22] = "../lowercase/0/00.txt\0";
+  char uppercase_path[19] = "uppercase/0/00.txt\0";
+  char lowercase_path[19] = "lowercase/0/00.txt\0";
   double** lettersMatrix = malloc(sizeof(double *) * 52);
   char uppercase = 'A';
   char lowercase = 'a';
@@ -43,9 +48,9 @@ double** lettersMatrix()
 
     if(i < 26)
     {
-      uppercase_path[13] = uppercase;
-      uppercase_path[15] = uppercase;
-      uppercase_path[16] = count;
+      uppercase_path[10] = uppercase;
+      uppercase_path[12] = uppercase;
+      uppercase_path[13] = count;
       lettersMatrix[i] = matrixFromFile(uppercase_path);
       uppercase++;
 
@@ -53,9 +58,9 @@ double** lettersMatrix()
     else if(i >= 26)
     {
       count = '3';
-      lowercase_path[13] = lowercase;
-      lowercase_path[15] = lowercase;
-      lowercase_path[16] = count;
+      lowercase_path[10] = lowercase;
+      lowercase_path[12] = lowercase;
+      lowercase_path[13] = count;
       lettersMatrix[i] = matrixFromFile(lowercase_path);
       lowercase++;
 
@@ -302,9 +307,11 @@ void ForwardPass(struct Neural_Network *net, int p, int epoch)
   }
 
   //printf("ok 5\n");
-  if(epoch % 100 == 0 && goal != net->act)
+  if(epoch % 100 == 0)
   {
-    printf("La réponse du réseau est : %c\n", net-> act);
+    printf("%s", KWHT);
+    printf("La réponse du réseau est : %s%c\n", KRED, net-> act);
+    printf("%s", KWHT);
     printf("La réponse attendu est :   %c\n\n", goal);
   }
 }
@@ -436,10 +443,9 @@ char OCR(int training, double letter[28*28])
 }
 */
 
-/*
+
 int main()
 {
-  OCR();
+  train();
   return 1;
 }
-*/
