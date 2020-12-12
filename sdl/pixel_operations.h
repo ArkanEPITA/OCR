@@ -8,7 +8,6 @@
 #include <math.h>
 #include <errno.h>
 #include <string.h>
-#include <time.h>
 
 typedef struct Word Word;
 
