@@ -1,5 +1,7 @@
 # include "gtku.h"
-#include <SDL/SDL_rotozoom.h>
+# include <SDL/SDL_rotozoom.h>
+# include "../sdl/pixel_operations.h"
+#include "../neural_network/neural_network.h"
 
 #define TEMPS       30 // Le temps qu'il y a entre chaque augmentation de l'angle.
 
@@ -172,8 +174,7 @@ void openFile(GtkButton* button, GtkLabel* textlabel)
 
 int traiNN()
 {
-	double** matrix_letter = NULL;
-	OCR(1, matrix_letter);
+	train();
 	return EXIT_SUCCESS;
 }
 

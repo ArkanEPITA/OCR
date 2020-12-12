@@ -48,10 +48,6 @@ struct Neural_Network
 
 double Random();
 
-double* matrixFromFile(char* filename);
-
-double** lettersMatrix();
-
 double sigmoid(double x);
 
 double dSigmoid(double z);   //derivative of the activating sigmoid function
@@ -69,8 +65,6 @@ void ForwardPass(struct Neural_Network *net, int p, int epoch);
 void BackwardPass(struct Neural_Network *net, int p);
 
 void train();
-
-char OCR();
 
 char run(double letter[][28]);
 

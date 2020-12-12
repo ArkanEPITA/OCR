@@ -7,7 +7,6 @@
 # include <SDL/SDL.h>
 # include <SDL/SDL_image.h>
 # include <gtk/gtk.h>
-# include "../sdl/pixel_operations.h"
 
 
 typedef struct

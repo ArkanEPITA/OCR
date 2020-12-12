@@ -91,4 +91,30 @@ char* final(SDL_Surface* image_surface, SDL_Surface* true_surface);
 
 char* print_line(SDL_Surface* image_surface, int alinea, int begin);
 
+
+double Random();
+
+double sigmoid(double x);
+
+double dSigmoid(double z);   //derivative of the activating sigmoid function
+
+void SaveData(struct Neural_Network *net);
+
+void LoadData(struct Neural_Network *net);
+
+void free_array(struct Neural_Network *net);
+
+void InitalizeValue(struct Neural_Network *net);
+
+void ForwardPass(struct Neural_Network *net, int p, int epoch);
+
+void BackwardPass(struct Neural_Network *net, int p);
+
+void train();
+
+char run(double letter[][28]);
+
+struct Neural_Network *InitalizeNetwork();
+
+
 #endif

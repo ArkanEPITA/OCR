@@ -2,9 +2,9 @@
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
 #include "pixel_operations.h"
+#include "../neural_network/neural_network.h"
 #include <math.h>
 #include <errno.h>
-#include "../neural_network/neural_network.c"
 
 
 //=============================
@@ -168,9 +168,9 @@ char* print_line(SDL_Surface* image_surface, int alinea, int begin)
 
     matrix_letter = create_matrix_letter(image3);
 
-    char letter;
+    char letter[1];
 
-    letter = OCR(0, matrix_letter);
+    letter[0] = run(matrix_letter);
 
     strcat(str, letter);
     //machin de leno
@@ -178,7 +178,7 @@ char* print_line(SDL_Surface* image_surface, int alinea, int begin)
     //concaténer str
     for (int i = 1; i < nb_letters; i++)
     {
-        char letter;
+        char letter[1];
         jmin = Word.word[i].minj_word;
         space = jmin - jmax;        
         imax = Word.word[i].maxi_word;
@@ -196,7 +196,7 @@ char* print_line(SDL_Surface* image_surface, int alinea, int begin)
 
         matrix_letter = create_matrix_letter(image3);
 
-        letter = OCR(0, matrix_letter);
+        letter[0] = run(matrix_letter);
 
         strcat(str, letter);
 

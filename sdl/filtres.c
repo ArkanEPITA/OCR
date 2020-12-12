@@ -4,7 +4,6 @@
 #include "pixel_operations.h"
 #include <math.h>
 #include <errno.h>
-#include "find_letter.c"
 #include <string.h>
 
 
