@@ -107,7 +107,7 @@ char* print_line(SDL_Surface* image_surface, int alinea, int begin)
     //Uint32 green = SDL_MapRGB(image_surface->format, 0, 255, 0);
     SDL_Surface* image2;
     SDL_Surface* image3;
-    double* matrix_letter = NULL;
+    double* matrix_letter = malloc(sizeof(double) * 28 * 28);
     char* str = malloc((sizeof(char)) * Word.weigth*4);
     strcat(str, "");
 
@@ -168,7 +168,9 @@ char* print_line(SDL_Surface* image_surface, int alinea, int begin)
 
     matrix_letter = create_matrix_letter(image3);
 
-    char letter[1] = OCR(0, matrix_letter);
+    char letter;
+
+    letter = OCR(0, matrix_letter);
 
     strcat(str, letter);
     //machin de leno
@@ -176,6 +178,7 @@ char* print_line(SDL_Surface* image_surface, int alinea, int begin)
     //concaténer str
     for (int i = 1; i < nb_letters; i++)
     {
+        char letter;
         jmin = Word.word[i].minj_word;
         space = jmin - jmax;        
         imax = Word.word[i].maxi_word;
@@ -193,7 +196,7 @@ char* print_line(SDL_Surface* image_surface, int alinea, int begin)
 
         matrix_letter = create_matrix_letter(image3);
 
-        char letter[1] = OCR(0, matrix_letter);
+        letter = OCR(0, matrix_letter);
 
         strcat(str, letter);
 
@@ -201,6 +204,7 @@ char* print_line(SDL_Surface* image_surface, int alinea, int begin)
 
         //concaténer str
     }
+    free(matrix_letter);
     return str;
 }
 
