@@ -409,17 +409,25 @@ char run(double letter[][28])
   return res;
 }
 
-char OCR(int train, double letter[28][28])
+char OCR(int training, double letter[28*28])
 {
-  char out = '';
-  
-  if(train == 1)
+  char out;
+  double input[28][28];
+
+  for(int i = 0; i < 28; i++)
+  {
+  	for(int j = 0; j < 28; j++)
+  	{
+  		input[i][j] = letter[i * 28 +j];
+  	}
+  }
+  if(training == 1)
   {
     train();
   }
   else
   {
-    out = run(letter);
+    out = run(input);
   }
 
   return out;
@@ -430,4 +438,5 @@ int main()
 {
   OCR();
   return 1;
-}*/
+}
+*/

@@ -68,7 +68,11 @@ void ForwardPass(struct Neural_Network *net, int p, int epoch);
 
 void BackwardPass(struct Neural_Network *net, int p);
 
-void OCR();
+void train();
+
+char OCR();
+
+char run(double letter[][28]);
 
 struct Neural_Network *InitalizeNetwork();
 
