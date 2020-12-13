@@ -1043,9 +1043,8 @@ char* final(SDL_Surface* image_surface, SDL_Surface* true_surface, char* s)
 
     for(int i = 0; i < number_lines-1; i++)
     {
-        printf("%d\n", i);
         string_line = print_line(blocks->images[i], blocks->left[i], begin, s, string_line);
-        printf("coco\n");
+
         if(i != number_lines-1)
         {
             s[string_line] = '\n';

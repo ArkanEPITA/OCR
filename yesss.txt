@@ -1,0 +1,18 @@
+Algorithmique
+HacHage Z PrSncSpe eX mdXHodes de bases
+X PrSncipe du hachage
+Op utSlise les mdXHodes he hachage lorsoue ltqn doit classer les Ildments htune cqllecXiqn
+appartepant A un unSyers trIs graphl pa taSlle de ce derpSer pous empgcHe de le reprdsenter
+ep rdservapX une place mdmoire par cld pqssiblej On uXilise alors une fopcXiop de hachage H
+oui assqcSe A cHaoue clI un entSer com prSs eptre O et m l X Aou X eX mxx oq m esX cHoisS en
+fqnctlon de la ta l l le prdyue de la cqllecXiop j
+Pour Xqute clI x de la collecXiqni HCxl Avaleur de Hachale primairel hqnpe ltindice he x dans le
+Xaqleau de hachagel Oela pous permet de le rechercherx ltalquter qu le supprlmerj pe chqlx
+he la TqpcXiqn de hacHage est TqndamepXalj cellexcS doit gXre p
+unifqrme Z ctesX A dlre oue tous les dldmepXs sopX rdpartls le plus unifqrmdment pqssible
+hans le Xahleaux TacSle et rapide A calculer p le buX dXapX he ne pas alaSblSr la mdXHode par up
+calcul lqng eX fasXihieuxx hdXermSpSsXe Z repvoyer toujqurs le mgme rdsulXatj
+sS la fqnctSop H est SpjecXivej il nty a aucun prohlIme p chaque IlIment aura sa place unique
+dans le Xaqleauj si ce ptesX pas le casj plusleurs dldmepX peuvepX ayoir la mdme valeur de
+hacHagej op parle alqrs de collSsSqnl pes mdXHodes he rIsoluXiops hes cqllisSqns Ahirectes et
+lnq lrecZest serqnt vues qa ns oes cqu rs speclxlq uesjl

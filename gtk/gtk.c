@@ -180,7 +180,7 @@ int launchOCR(GtkButton* button, GtkTextBuffer* buffer)
 	SDL_Surface* image = IMG_Load((char*)file);
 	SDL_Surface* true_image = IMG_Load((char*)file);
 
-	char* s = malloc((sizeof(char)) * 1000);
+	char* s = calloc(2548, (sizeof(char)));
 	
 	
 	sentence = final(image, true_image, s);
@@ -199,7 +199,7 @@ int launchOCR(GtkButton* button, GtkTextBuffer* buffer)
 
   	//sentence = net->str;
 	printf("Finish Treatment\n");
-	free(s);	
+		
 	SDL_Quit();
 	return EXIT_SUCCESS;
 }

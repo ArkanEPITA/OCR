@@ -179,7 +179,6 @@ int print_line(SDL_Surface* image_surface, int alinea, int begin, char* s, int s
     //concaténer str
     for (int i = 1; i < nb_letters; i++)
     {
-        printf("imin = %d, imax = %d, jmin = %d, jmax = %d\n", imin, imax, jmin, jmax);
         jmin = Word.word[i].minj_word;
         space = jmin - jmax;        
         imax = Word.word[i].maxi_word;
@@ -191,13 +190,12 @@ int print_line(SDL_Surface* image_surface, int alinea, int begin, char* s, int s
             s[string_line] = ' ';
             string_line++;
         }
-        printf("coin\n");
+        
         image2 = copy_image(image_surface, imin, imax, jmin, jmax);
-        printf("bae\n");
         
 
         image3 = Resize_letter(image2);
-        printf("bitch\n");
+        
         matrix_letter = create_matrix_letter(image3);
        
         s[string_line] = run(matrix_letter);

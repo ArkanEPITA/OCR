@@ -20,20 +20,33 @@ double *matrixFromFile(char *filename)
 
   for(int i = 0; i < 28; i++)
   {
-      for(int j = 0; j <= 29; j++)
+    for(int j = 0; j <= 28; j++)
+    {
+      int c = fgetc(file);
+
+      printf("%d", c);
+      if(c == 49)
       {
-          int c = fgetc(file);
-          //printf("%d", c);
-          if(c == 49)
-          {
-            matrix[j+i*28] = 1;
-          }
-          if(c == 48)
-          {
-            matrix[j+i*28] = 0;
-          }
+        matrix[j+i*28] = 1;
       }
+      if(c == 48)
+      {
+        matrix[j+i*28] = 0;
+      }
+    }
+    printf("\n");
+
   }
+  for(size_t i = 0; i < 28; i++)
+  {
+      for(size_t j = 0; j < 28; j++)
+      {
+          printf("%d", (int)matrix[j + i * 28]);
+      }
+      printf("\n");
+  }
+  printf("\n");
+
   fclose(file);
   return matrix;
 }
@@ -43,29 +56,34 @@ double** lettersMatrix()
   //Variables
   char uppercase_path[19] = "uppercase/0/00.txt\0";
   char lowercase_path[19] = "lowercase/0/00.txt\0";
-  double** lettersMatrix = malloc(sizeof(double *) * 52);
+  double** lettersMatrix = malloc(sizeof(double *) * 286);
   char uppercase = 'A';
   char lowercase = 'a';
-  char count = '4';
+  char count = '0';
 
   for(int i = 0; i < 52; i++)
   {
     if(i < 26)
     {
-      uppercase_path[10] = uppercase;
-      uppercase_path[12] = uppercase;
-      uppercase_path[13] = count;
-      lettersMatrix[i] = matrixFromFile(uppercase_path);
+      for(; count < '6'; count++)
+      {
+        uppercase_path[10] = uppercase;
+        uppercase_path[12] = uppercase;
+        uppercase_path[13] = count;
+        lettersMatrix[i] = matrixFromFile(uppercase_path);
+      }
       uppercase++;
 
     }
     else if(i >= 26)
     {
-      count = '3';
-      lowercase_path[10] = lowercase;
-      lowercase_path[12] = lowercase;
-      lowercase_path[13] = count;
-      lettersMatrix[i] = matrixFromFile(lowercase_path);
+      for(char count = '0'; count < '5'; count++)
+      {
+        lowercase_path[10] = lowercase;
+        lowercase_path[12] = lowercase;
+        lowercase_path[13] = count;
+        lettersMatrix[i] = matrixFromFile(lowercase_path);
+      }
       lowercase++;
 
     }
