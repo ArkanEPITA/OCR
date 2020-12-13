@@ -115,7 +115,7 @@ int main()
     };
 
     double results[4] = { 0, 1, 1, 0 };	//the different expected results compared to inputTraining
-    double epochs = 2000;
+    double epochs = 200000;
 
 
 

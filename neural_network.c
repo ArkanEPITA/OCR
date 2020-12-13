@@ -23,7 +23,7 @@ double *matrixFromFile(char *filename)
       for(int j = 0; j <= 29; j++)
       {
           int c = fgetc(file);
-          printf("%d", c);
+          //printf("%d", c);
           if(c == 49)
           {
             matrix[j+i*28] = 1;
@@ -33,17 +33,7 @@ double *matrixFromFile(char *filename)
             matrix[j+i*28] = 0;
           }
       }
-      printf("\n");
   }
-  for(size_t i = 0; i < 28; i++)
-  {
-      for(size_t j = 0; j < 28; j++)
-      {
-          printf("%d", (int)matrix[j + i * 28]);
-      }
-      printf("\n");
-  }
-  
   fclose(file);
   return matrix;
 }
@@ -322,12 +312,31 @@ void ForwardPass(struct Neural_Network *net, int p, int epoch)
 
   //printf("ok 5\n");
   if(epoch % 100 == 0)
-  {
-    printf("%s", KWHT);
-    printf("La réponse du réseau est : %s%c\n", KRED, net-> act);
-    printf("%s", KWHT);
-    printf("La réponse attendu est :   %c\n\n", goal);
-  }
+  	{
+  		if(goal == 'A')
+		{
+			printf("\n\n");
+			printf("###########################################\n");
+			printf("              Essai numéro : %d\n\n\n", epoch);
+		}
+		if(goal != net->act)
+		{
+			printf("La réponse du réseau est   : %c\n", net-> act);
+			printf("La réponse attendu est     : %c\n", goal);
+			printf("%s", KWHT);
+			printf("Le résultat de l'essai est :     %snot OK\n\n", KRED);
+			printf("%s", KWHT);
+		}
+		else
+		{
+			printf("La réponse du réseau est   : %c\n", net-> act);
+			printf("La réponse attendu est     : %c\n", goal);	
+			printf("%s", KWHT);
+			printf("Le résultat de l'essai est :      %sOK\n\n", KGRN);
+			printf("%s", KWHT);
+		}
+  	}
+  
 }
 //backpropagation
 void BackwardPass(struct Neural_Network *net, int p) 
