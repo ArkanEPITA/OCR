@@ -89,8 +89,8 @@ struct Neural_Network
     int nbOutput;
 
     //Arrays
-    double InputValue[52][784];
-    double Goal[52][52];
+    double InputValue[286][784];
+    double Goal[286][52];
     //Weight Arrays
     double WeightIH[64][784];
     double WeightHO[52][64];

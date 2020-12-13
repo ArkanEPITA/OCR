@@ -20,11 +20,11 @@ double *matrixFromFile(char *filename)
 
   for(int i = 0; i < 28; i++)
   {
-    for(int j = 0; j <= 28; j++)
+    for(int j = 0; j <= 29; j++)
     {
       int c = fgetc(file);
 
-      printf("%d", c);
+      //printf("%d", c);
       if(c == 49)
       {
         matrix[j+i*28] = 1;
@@ -34,7 +34,7 @@ double *matrixFromFile(char *filename)
         matrix[j+i*28] = 0;
       }
     }
-    printf("\n");
+    //printf("\n");
 
   }
   for(size_t i = 0; i < 28; i++)
@@ -46,7 +46,6 @@ double *matrixFromFile(char *filename)
       printf("\n");
   }
   printf("\n");
-
   fclose(file);
   return matrix;
 }
@@ -65,7 +64,7 @@ double** lettersMatrix()
   {
     if(i < 26)
     {
-      for(; count < '6'; count++)
+      for(count = '0'; count < '6'; count++)
       {
         uppercase_path[10] = uppercase;
         uppercase_path[12] = uppercase;
@@ -73,7 +72,6 @@ double** lettersMatrix()
         lettersMatrix[i] = matrixFromFile(uppercase_path);
       }
       uppercase++;
-
     }
     else if(i >= 26)
     {
@@ -85,7 +83,6 @@ double** lettersMatrix()
         lettersMatrix[i] = matrixFromFile(lowercase_path);
       }
       lowercase++;
-
     }
   }
   return lettersMatrix;
@@ -160,7 +157,6 @@ void LoadData(struct Neural_Network *net)
     fclose(file);
   }
   idc++;
-  
 }
 
 void free_array(struct Neural_Network *net)
@@ -181,6 +177,7 @@ struct Neural_Network* InitalizeNetwork()
 {
   struct Neural_Network *net = NULL;
   net = malloc(sizeof(struct Neural_Network));
+  printf("%ld\n", sizeof(struct Neural_Network));
   net->nbInput = 784;
   net->nbHidden = 64;
   net->nbOutput = 52;
@@ -198,29 +195,56 @@ void InitalizeValue(struct Neural_Network *net)
   // il faut initialiser les valeur d'input
   double **Matrix = lettersMatrix();
   int letter = 0;
-  for (int i = 0; i < net->nbOutput; i++)
+  for (int i = 0; i < 286; i++)
   {
+    
     for (int j = 0; j < net->nbInput; j++)
     {
       //printf("%d\n",j);
-        net-> InputValue[i][j] = Matrix[letter][j];
+      net-> InputValue[i][j] = Matrix[letter][j];
     }
     //printf("%d\n",i);
     //printf("%d\n",letter);
     letter++;
   }
+  printf("FIN PUTE");
 
-  for(int i = 0; i < net->nbOutput; i++)
+  int goal = 0;
+
+  for(int i = 0; i < 286; i++)
   {
     for(int j = 0; j < net->nbOutput; j++)
     {
-      if(i != j)
+      printf("THIBTHIB\n");
+      if(i <= 156)
       {
-        net->Goal[i][j] = 0;
+        if(j == goal)
+        {
+          net->Goal[i][j] = 1;
+        }
+        else
+        {
+          net->Goal[i][j] = 0;
+        }
+        if((i + 1) % 6 == 0)
+        {
+          goal += 1;
+        }
       }
       else
       {
-        net->Goal[i][j] = 1;
+        if(j == goal)
+        {
+          net->Goal[i][j] = 1;
+        }
+        else
+        {
+          net->Goal[i][j] = 0;
+        }
+        if((i + 1) % 5 == 0)
+        {
+          goal += 1;
+        }
       }
     }
   }
