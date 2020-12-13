@@ -9,11 +9,11 @@
 # include <gtk/gtk.h>
 
 
-typedef struct
+typedef struct 
 {
 	gpointer user_data;
 	GtkBuilder* builder;
-} Data;
+}Data;
 
 #define UNUSED(x) (void)(x)
 
