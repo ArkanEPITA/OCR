@@ -20,10 +20,14 @@ double *matrixFromFile(char *filename)
 
   for(int i = 0; i < 28; i++)
   {
-    for(int j = 0; j <= 29; j++)
+    for(int j = 0; j < 29; j++)
     {
       int c = fgetc(file);
-
+      while(c == 10 || c == 13)
+      {
+        j ++;
+        c = fgetc(file);
+      }
       //printf("%d", c);
       if(c == 49)
       {
@@ -37,6 +41,7 @@ double *matrixFromFile(char *filename)
     //printf("\n");
 
   }
+  /*
   for(size_t i = 0; i < 28; i++)
   {
       for(size_t j = 0; j < 28; j++)
@@ -45,7 +50,7 @@ double *matrixFromFile(char *filename)
       }
       printf("\n");
   }
-  printf("\n");
+  printf("\n");*/
   fclose(file);
   return matrix;
 }
@@ -59,10 +64,10 @@ double** lettersMatrix()
   char uppercase = 'A';
   char lowercase = 'a';
   char count = '0';
-
-  for(int i = 0; i < 52; i++)
+  int i = 0;
+  while(i < 286)
   {
-    if(i < 26)
+    if(i < 156)
     {
       for(count = '0'; count < '6'; count++)
       {
@@ -70,10 +75,11 @@ double** lettersMatrix()
         uppercase_path[12] = uppercase;
         uppercase_path[13] = count;
         lettersMatrix[i] = matrixFromFile(uppercase_path);
+        i++;
       }
       uppercase++;
     }
-    else if(i >= 26)
+    else
     {
       for(char count = '0'; count < '5'; count++)
       {
@@ -81,6 +87,7 @@ double** lettersMatrix()
         lowercase_path[12] = lowercase;
         lowercase_path[13] = count;
         lettersMatrix[i] = matrixFromFile(lowercase_path);
+        i++;
       }
       lowercase++;
     }
@@ -177,7 +184,7 @@ struct Neural_Network* InitalizeNetwork()
 {
   struct Neural_Network *net = NULL;
   net = malloc(sizeof(struct Neural_Network));
-  printf("%ld\n", sizeof(struct Neural_Network));
+  //printf("%ld\n", sizeof(struct Neural_Network));
   net->nbInput = 784;
   net->nbHidden = 64;
   net->nbOutput = 52;
@@ -194,20 +201,19 @@ void InitalizeValue(struct Neural_Network *net)
 
   // il faut initialiser les valeur d'input
   double **Matrix = lettersMatrix();
-  int letter = 0;
+  //printf("%ld\n", sizeof(net->InputValue)/sizeof(double));
   for (int i = 0; i < 286; i++)
   {
     
     for (int j = 0; j < net->nbInput; j++)
     {
-      //printf("%d\n",j);
-      net-> InputValue[i][j] = Matrix[letter][j];
+      //printf("%d\n",i);
+      net-> InputValue[i][j] = Matrix[i][j];
     }
     //printf("%d\n",i);
     //printf("%d\n",letter);
-    letter++;
   }
-  printf("FIN PUTE");
+  //printf("FIN PUTE");
 
   int goal = 0;
 
@@ -215,7 +221,7 @@ void InitalizeValue(struct Neural_Network *net)
   {
     for(int j = 0; j < net->nbOutput; j++)
     {
-      printf("THIBTHIB\n");
+      //printf("THIBTHIB\n");
       if(i <= 156)
       {
         if(j == goal)
@@ -343,13 +349,13 @@ void ForwardPass(struct Neural_Network *net, int p, int epoch)
     //printf("%d\n", lmax);
   }
 
-  if(p < 26)
+  if(p < 156)
   {
-    goal = (char) (p + (int) 'A');
+    goal = (char) (p % 6 + (int) 'A');
   }
   else
   {
-    goal = (char) (p + (int) 'a' - 26);
+    goal = (char) (p % 5 + (int) 'a' - 26);
   }
 
   //printf("ok 5\n");
@@ -432,7 +438,7 @@ void train()
 {
   srand(time(NULL));
 
-  int NbPattern = 52;
+  int NbPattern = 286;
   int NbEpoch = 1000;
 
   struct Neural_Network *net = InitalizeNetwork();
