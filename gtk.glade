@@ -13,8 +13,8 @@ And have fun !</property>
     <property name="name">main_window</property>
     <property name="can_focus">False</property>
     <property name="window_position">center</property>
-    <property name="default_width">480</property>
-    <property name="default_height">40</property>
+    <property name="default_width">1700</property>
+    <property name="default_height">1000</property>
     <property name="icon">logo.jpg</property>
     <signal name="destroy" handler="gtk_main_quit" swapped="no"/>
     <child>

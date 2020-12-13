@@ -973,11 +973,9 @@ int LetterSize(SDL_Surface* image_surface)
 
 
 
-char* final(SDL_Surface* image_surface, SDL_Surface* true_surface)
+char* final(SDL_Surface* image_surface, SDL_Surface* true_surface, char* s)
 {
-    char* s = malloc((sizeof(char)) * 4095);
-    strcat(s, "");
-
+    int string_line = 0;
 
     int h = image_surface->h/100; // Barre de gauche
     int w = image_surface->w/100; // Barre du haut
@@ -1043,14 +1041,17 @@ char* final(SDL_Surface* image_surface, SDL_Surface* true_surface)
         back_space_down = blocks->down[i];
     }
 
-    strcat(s, "\n");
-    for(int i = 0; i < number_lines; i++)
+    for(int i = 0; i < number_lines-1; i++)
     {
-        char* str2 = malloc((sizeof(char)) * 4095);
-        strcat(str2, "");
-        str2 = print_line(blocks->images[i], blocks->left[i], begin);
-        strcat(s, str2);
-        strcat(s, "\n");
+        printf("%d\n", i);
+        string_line = print_line(blocks->images[i], blocks->left[i], begin, s, string_line);
+        printf("coco\n");
+        if(i != number_lines-1)
+        {
+            s[string_line] = '\n';
+            string_line++;
+        }
+
         if(number_lines != 1 && i != number_lines-1)
         {
             if(i != 0)
@@ -1059,7 +1060,8 @@ char* final(SDL_Surface* image_surface, SDL_Surface* true_surface)
                 while (begin_space + 30 < gap)
                 {
                     gap -= begin_space;
-                    strcat(s, "\n");
+                    s[string_line] = '\n';
+                    string_line++;
                 }
             }
             else
@@ -1068,7 +1070,8 @@ char* final(SDL_Surface* image_surface, SDL_Surface* true_surface)
                 while (begin_space + 30 < gap)
                 {
                     gap -= begin_space;
-                    strcat(s, "\n");
+                    s[string_line] = '\n';
+                    string_line++;
                 }
             }
         }

@@ -78,9 +78,9 @@ SDL_Surface* Resize_letter(SDL_Surface *image_surface);
 
 double* create_matrix_letter(SDL_Surface *image_surface);
 
-char* final(SDL_Surface* image_surface, SDL_Surface* true_surface);
+char* final(SDL_Surface* image_surface, SDL_Surface* true_surface, char* s);
 
-char* print_line(SDL_Surface* image_surface, int alinea, int begin);
+int print_line(SDL_Surface* image_surface, int alinea, int begin, char* s, int string_line);
 
 struct Neural_Network
 {

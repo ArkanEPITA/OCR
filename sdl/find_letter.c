@@ -51,10 +51,10 @@ Array_word find_letters(SDL_Surface* image_surface)
             SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
             if (r == 0)
             {
-                int vmax = j+1;
-                int vmin = j-1;
-                int hmax = i+1;
-                int hmin = i-1;
+                int vmax = j;
+                int vmin = j;
+                int hmax = i;
+                int hmin = i;
 
                 if (first_black == 0)
                 {
@@ -99,22 +99,23 @@ Array_word find_letters(SDL_Surface* image_surface)
 
 
 
-char* print_line(SDL_Surface* image_surface, int alinea, int begin)
+int print_line(SDL_Surface* image_surface, int alinea, int begin, char* s, int string_line)
 {
+   
+
     Array_word Word = find_letters(image_surface);
     int nb_letters = Word.length;
     //Uint32 green = SDL_MapRGB(image_surface->format, 0, 255, 0);
     SDL_Surface* image2;
     SDL_Surface* image3;
     double* matrix_letter = malloc(sizeof(double) * 28 * 28);
-    char* str = malloc((sizeof(char)) * Word.weigth*4);
-    strcat(str, "");
 
     int jmaxref = Word.word[0].maxj_word;
     int jminref = Word.word[0].minj_word;
     int max_space = 0;
     int one_word = 0;
     int max_space_avant = 0;
+
     for (int i = 1; i < nb_letters; i++)
     {
         jminref = Word.word[i].minj_word;
@@ -122,7 +123,7 @@ char* print_line(SDL_Surface* image_surface, int alinea, int begin)
         {
             max_space = jminref - jmaxref;
         }
-        if((max_space_avant < max_space-5 && max_space_avant > max_space +5) && i != 1)
+        if((max_space_avant < max_space-4 || max_space_avant > max_space +4) && i != 1)
         {
             one_word = 1;
         }
@@ -134,20 +135,22 @@ char* print_line(SDL_Surface* image_surface, int alinea, int begin)
     {
         if(one_word == 1)
         {
-            while (alinea > begin + jmaxref - jminref + 20)
+            while (alinea > begin + jmaxref - jminref + 25)
             {
-                //printf("la\n");
+                printf("la\n");
                 alinea = alinea - (jmaxref - jminref);
-                strcat(str, " ");
+                s[string_line] = ' ';
+                string_line++;
             }
         }
         else
         {
-            while (alinea > begin + max_space + 20)
+            while (alinea > begin + max_space + 25)
             {
-                //printf("ici\n");
+                printf("ici\n");
                 alinea = alinea - max_space;
-                strcat(str, " ");
+                s[string_line] = ' ';
+                string_line++;
             }
         }
     }
@@ -160,51 +163,53 @@ char* print_line(SDL_Surface* image_surface, int alinea, int begin)
     int jmin = Word.word[0].minj_word;
 
 
-    strcat(str, "G");
+    //strcat(str, "G");
     image2 = copy_image(image_surface, imin, imax, jmin, jmax);
 
     image3 = Resize_letter(image2);
 
     matrix_letter = create_matrix_letter(image3);
 
-    char letter[1];
-
-    letter[0] = run(matrix_letter);
-
-    strcat(str, letter);
+    
+    s[string_line] = run(matrix_letter);
+    string_line++;
+    
     //machin de leno
 
     //concaténer str
     for (int i = 1; i < nb_letters; i++)
     {
-        char letter[1];
+        printf("imin = %d, imax = %d, jmin = %d, jmax = %d\n", imin, imax, jmin, jmax);
         jmin = Word.word[i].minj_word;
         space = jmin - jmax;        
         imax = Word.word[i].maxi_word;
         jmax = Word.word[i].maxj_word;
         imin = Word.word[i].mini_word;
-
-        if(space-7 < max_space && space+7 > max_space && one_word == 0)
+        
+        if(space-7 < max_space && space+7 > max_space && one_word == 1)
         {
-            strcat(str, " ");
+            s[string_line] = ' ';
+            string_line++;
         }
-
+        printf("coin\n");
         image2 = copy_image(image_surface, imin, imax, jmin, jmax);
+        printf("bae\n");
+        
 
         image3 = Resize_letter(image2);
-
+        printf("bitch\n");
         matrix_letter = create_matrix_letter(image3);
-
-        letter[0] = run(matrix_letter);
-
-        strcat(str, letter);
-
+       
+        s[string_line] = run(matrix_letter);
+        string_line++;
         //machin de leno
 
         //concaténer str
+        free(image2);
+        free(image3);   
     }
     free(matrix_letter);
-    return str;
+    return string_line;
 }
 
 /*

@@ -1,6 +1,7 @@
 # include "gtku.h"
 # include <SDL/SDL_rotozoom.h>
 # include "../sdl/pixel_operations.h"
+#include <string.h>
 
 #define TEMPS       30 // Le temps qu'il y a entre chaque augmentation de l'angle.
 
@@ -108,7 +109,6 @@ int rotation_angles()
     
     SDL_Quit(); //exits by closing the screen
 	// Création d'une copie du pixbuf modifié
-	rotation = Resize(rotation, 576, 460);
 	SDL_SaveBMP(rotation, "save_image/out.bmp");
 	file = "save_image/out.bmp";
 	goal += 1;
@@ -180,9 +180,10 @@ int launchOCR(GtkButton* button, GtkTextBuffer* buffer)
 	SDL_Surface* image = IMG_Load((char*)file);
 	SDL_Surface* true_image = IMG_Load((char*)file);
 
+	char* s = malloc((sizeof(char)) * 1000);
 	
-
-	sentence = final(image, true_image);
+	
+	sentence = final(image, true_image, s);
 	
 	//SDL_Surface* image_cut = lineCut(img);
 	printf("Line Cuts\n");
@@ -193,12 +194,12 @@ int launchOCR(GtkButton* button, GtkTextBuffer* buffer)
 
 	//isolateLine(image_cut,net);
 	printf("Isolate Line Done \n");
-
+	printf("%s\n", sentence);
   	gtk_text_buffer_set_text(buffer, sentence, strlen(sentence));
 
   	//sentence = net->str;
 	printf("Finish Treatment\n");
-
+	free(s);	
 	SDL_Quit();
 	return EXIT_SUCCESS;
 }
