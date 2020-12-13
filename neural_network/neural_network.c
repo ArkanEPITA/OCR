@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 //Colors for print
 #define KRED  "\x1B[31m"
 #define KGRN  "\x1B[32m"
@@ -460,3 +461,5 @@ int main()
   return 1;
 }
 */
+=======
+>>>>>>> 54e2af9f6c56df166bef44b116d000b306a02382
