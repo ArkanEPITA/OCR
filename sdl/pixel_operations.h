@@ -133,7 +133,7 @@ void LoadData(struct Neural_Network *net);
 
 void free_array(struct Neural_Network *net);
 
-void InitalizeValue(struct Neural_Network *net);
+void InitalizeValue(struct Neural_Network *net, int nb, char count);
 
 void ForwardPass(struct Neural_Network *net, int p, int epoch);
 
@@ -144,7 +144,6 @@ void train();
 char run(double letter[784]);
 
 struct Neural_Network *InitalizeNetwork();
-
 
 
 #endif

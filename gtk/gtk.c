@@ -110,7 +110,6 @@ int rotation_angles()
   SDL_Quit(); 
 	// Création d'une copie du pixbuf modifié
 	SDL_SaveBMP(rotation, "save_image/out.bmp");
-	file = "save_image/out.bmp";
 	goal += 1;
 	
     return EXIT_SUCCESS;
@@ -139,7 +138,7 @@ void save_text(GtkButton* button, GtkTextBuffer* buffer)
 
 void openFile(GtkButton* button, GtkLabel* textlabel)
 {
-    GtkWidget* label = (GtkWidget*)textlabel;
+  GtkWidget* label = (GtkWidget*)textlabel;
 	GtkWidget* toplevel = gtk_widget_get_toplevel(GTK_WIDGET(button));
 	GtkWidget* dialog = gtk_file_chooser_dialog_new(("Open image"), GTK_WINDOW(toplevel), GTK_FILE_CHOOSER_ACTION_OPEN, "Open", GTK_RESPONSE_ACCEPT, "Cancel", GTK_RESPONSE_CANCEL, NULL);
 

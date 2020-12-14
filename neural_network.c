@@ -20,72 +20,51 @@ double *matrixFromFile(char *filename)
 
   for(int i = 0; i < 28; i++)
   {
-    for(int j = 0; j <= 28; j++)
-    {
-      int c = fgetc(file);
-
-      printf("%d", c);
-      if(c == 49)
+      for(int j = 0; j <= 29; j++)
       {
-        matrix[j+i*28] = 1;
+          int c = fgetc(file);
+          if(c == 49)
+          {
+            matrix[j+i*28] = 1;
+          }
+          if(c == 48)
+          {
+            matrix[j+i*28] = 0;
+          }
       }
-      if(c == 48)
-      {
-        matrix[j+i*28] = 0;
-      }
-    }
-    printf("\n");
-
   }
-  for(size_t i = 0; i < 28; i++)
-  {
-      for(size_t j = 0; j < 28; j++)
-      {
-          printf("%d", (int)matrix[j + i * 28]);
-      }
-      printf("\n");
-  }
-  printf("\n");
-
+  
   fclose(file);
   return matrix;
 }
 
-double** lettersMatrix()
+double** lettersMatrix(char count)
 {
   //Variables
   char uppercase_path[19] = "uppercase/0/00.txt\0";
   char lowercase_path[19] = "lowercase/0/00.txt\0";
-  double** lettersMatrix = malloc(sizeof(double *) * 286);
+  double** lettersMatrix = malloc(sizeof(double *) * 52);
   char uppercase = 'A';
   char lowercase = 'a';
-  char count = '0';
 
   for(int i = 0; i < 52; i++)
   {
     if(i < 26)
     {
-      for(; count < '6'; count++)
-      {
-        uppercase_path[10] = uppercase;
-        uppercase_path[12] = uppercase;
-        uppercase_path[13] = count;
-        lettersMatrix[i] = matrixFromFile(uppercase_path);
-      }
+      uppercase_path[10] = uppercase;
+      uppercase_path[12] = uppercase;
+      uppercase_path[13] = count;
+      lettersMatrix[i] = matrixFromFile(uppercase_path);
       uppercase++;
 
     }
     else if(i >= 26)
     {
-      for(char count = '0'; count < '5'; count++)
-      {
-        lowercase_path[10] = lowercase;
-        lowercase_path[12] = lowercase;
-        lowercase_path[13] = count;
-        lettersMatrix[i] = matrixFromFile(lowercase_path);
-      }
+      lowercase_path[10] = lowercase;
+      lowercase_path[12] = lowercase;
+      lowercase_path[13] = count;
+      lettersMatrix[i] = matrixFromFile(lowercase_path);
       lowercase++;
-
     }
   }
   return lettersMatrix;
@@ -192,11 +171,37 @@ struct Neural_Network* InitalizeNetwork()
   return net;
 }
 
-void InitalizeValue(struct Neural_Network *net)
+void initWB(struct Neural_Network *net)
+{
+  for (int h = 0; h < net->nbHidden; h++)
+  {
+    for (int i = 0; i < net->nbInput; i++)
+    {
+      net->WeightIH[h][i] = Random() / 1000;
+      net->dWeightIH[h][i] = 0.0;
+    }
+    net->BiasH[h] = Random() / 1000;
+    net->dBiasH[h] = 0.0;
+  }
+  
+  
+  for(int o = 0; o < net->nbOutput; o++)
+  {
+    for(int h  = 0; h < net->nbHidden; h++)
+    {
+      net->WeightHO[o][h] = Random() / 1000;
+      net->dWeightHO[o][h] = 0.0;
+    }
+    net->BiasO[o] = Random() / 1000;
+    net->dBiasO[o] = 0.0;
+  }
+}
+
+void InitalizeValue(struct Neural_Network *net, int nb, char count)
 {
 
   // il faut initialiser les valeur d'input
-  double **Matrix = lettersMatrix();
+  double **Matrix = lettersMatrix(count);
   int letter = 0;
   for (int i = 0; i < net->nbOutput; i++)
   {
@@ -224,29 +229,11 @@ void InitalizeValue(struct Neural_Network *net)
       }
     }
   }
-
-  for (int h = 0; h < net->nbHidden; h++)
+  if(nb == 0)
   {
-    for (int i = 0; i < net->nbInput; i++)
-    {
-      net->WeightIH[h][i] = Random() / 1000;
-      net->dWeightIH[h][i] = 0.0;
-    }
-    net->BiasH[h] = Random() / 1000;
-    net->dBiasH[h] = 0.0;
+    initWB(net);
   }
   
-  
-  for(int o = 0; o < net->nbOutput; o++)
-  {
-    for(int h  = 0; h < net->nbHidden; h++)
-    {
-      net->WeightHO[o][h] = Random() / 1000;
-      net->dWeightHO[o][h] = 0.0;
-    }
-    net->BiasO[o] = Random() / 1000;
-    net->dBiasO[o] = 0.0;
-  }
 }
 
 
@@ -332,29 +319,28 @@ void ForwardPass(struct Neural_Network *net, int p, int epoch)
   if(epoch % 100 == 0)
   	{
   		if(goal == 'A')
-		{
-			printf("\n\n");
-			printf("###########################################\n");
-			printf("              Essai numéro : %d\n\n\n", epoch);
-		}
-		if(goal != net->act)
-		{
-			printf("La réponse du réseau est   : %c\n", net-> act);
-			printf("La réponse attendu est     : %c\n", goal);
-			printf("%s", KWHT);
-			printf("Le résultat de l'essai est :     %snot OK\n\n", KRED);
-			printf("%s", KWHT);
-		}
-		else
-		{
-			printf("La réponse du réseau est   : %c\n", net-> act);
-			printf("La réponse attendu est     : %c\n", goal);	
-			printf("%s", KWHT);
-			printf("Le résultat de l'essai est :      %sOK\n\n", KGRN);
-			printf("%s", KWHT);
-		}
+      {
+        printf("\n\n");
+        printf("###########################################\n");
+        printf("              Essai numéro : %d\n\n\n", epoch);
+      }
+      if(goal != net->act)
+      {
+        printf("La réponse du réseau est   : %c\n", net-> act);
+        printf("La réponse attendu est     : %c\n", goal);
+        printf("%s", KWHT);
+        printf("Le résultat de l'essai est :     %snot OK\n\n", KRED);
+        printf("%s", KWHT);
+      }
+      else
+      {
+        printf("La réponse du réseau est   : %c\n", net-> act);
+        printf("La réponse attendu est     : %c\n", goal);	
+        printf("%s", KWHT);
+        printf("Le résultat de l'essai est :      %sOK\n\n", KGRN);
+        printf("%s", KWHT);
+      }
   	}
-  
 }
 //backpropagation
 void BackwardPass(struct Neural_Network *net, int p) 
@@ -370,7 +356,7 @@ void BackwardPass(struct Neural_Network *net, int p)
     {
       for (int h = 0; h < net -> nbHidden; h++)
       {
-        net -> WeightHO[o][h] += (net->eta) * (net-> dOutputO[o]) * (net-> OutputH[h]) + (net->alpha) * (net-> dWeightHO[h][o]);
+        net -> WeightHO[o][h] += (net->eta) * (net-> dOutputO[o]) * (net-> OutputH[h]) + (net->alpha) * (net-> dWeightHO[o][h]);
         net -> dWeightHO[o][h] = (net->eta) * (net->dOutputO[o]) * (net-> OutputH[h]);
       }
       //Update BiasO
@@ -409,24 +395,28 @@ void train()
   srand(time(NULL));
 
   int NbPattern = 52;
-  int NbEpoch = 1000;
-
+  int NbEpoch = 1500;
+  int nb = 0;
   struct Neural_Network *net = InitalizeNetwork();
-
-  InitalizeValue(net);
-  
-  for (int epoch = 0; epoch <= NbEpoch; ++epoch)
+  for(char count = '0'; count < '4'; count++)
   {
-
-    for (int p = 0; p < NbPattern; ++p)
+    InitalizeValue(net, nb, count);
+  
+    for (int epoch = 0; epoch <= NbEpoch; ++epoch)
     {
-      //printf("1\n");
-      ForwardPass(net, p, epoch);
-      //printf("2\n");
-      BackwardPass(net, p);
-      //printf("3\n");
+
+      for (int p = 0; p < NbPattern; ++p)
+      {
+        //printf("1\n");
+        ForwardPass(net, p, epoch);
+        //printf("2\n");
+        BackwardPass(net, p);
+        //printf("3\n");
+      }
     }
+    nb++;
   }
+  
 
   //printf("Fail here\n");
   SaveData(net);
@@ -439,23 +429,25 @@ void train()
 char run(double letter[784])
 {
   struct Neural_Network *net = InitalizeNetwork();
-
+  //printf("passe 1\n");
   for(int i = 0; i < 28; i++)
   {
+    //printf("passe i = %d\n", i);
     for(int j = 0; j < 28; j++)
     {
+      //printf("passe j = %d \n", j);
       net->InputValue[0][i * 28 + j] = letter[i * 28 + j];
     }
   }
 
   LoadData(net);
-
+  //printf("passe 2\n");
   ForwardPass(net,0 , 5);
-
+  //printf("passe 3\n");
   char res = net->act;
 
   free_array(net);
-
+  //printf("passe 4\n");
   return res;
 }
 
