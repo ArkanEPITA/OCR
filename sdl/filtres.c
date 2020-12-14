@@ -1037,8 +1037,7 @@ char* final(SDL_Surface* image_surface, SDL_Surface* true_surface, char* s)
         back_space_down = blocks->down[i];
     }
 
-    //for(int i = 0; i < number_lines-1; i++)
-    for(int i = 13; i < 14; i++)
+    for(int i = 0; i < number_lines-1; i++)
     {
         string_line = print_line(blocks->images[i], blocks->left[i], begin, s, string_line);
 
@@ -1053,7 +1052,7 @@ char* final(SDL_Surface* image_surface, SDL_Surface* true_surface, char* s)
             if(i != 0)
             {
                 int gap = blocks->up[i+1] - blocks->down[i];
-                while (begin_space + 30 < gap)
+                while (begin_space + 20 < gap || gap < begin_space - 20)
                 {
                     gap -= begin_space;
                     s[string_line] = '\n';
@@ -1063,7 +1062,7 @@ char* final(SDL_Surface* image_surface, SDL_Surface* true_surface, char* s)
             else
             {
                 int gap = blocks->up[1] - blocks->down[0];
-                while (begin_space + 30 < gap)
+                while (begin_space + 20 < gap || gap < begin_space - 20)
                 {
                     gap -= begin_space;
                     s[string_line] = '\n';

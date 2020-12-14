@@ -395,7 +395,7 @@ void train()
   srand(time(NULL));
 
   int NbPattern = 52;
-  int NbEpoch = 3500;
+  int NbEpoch = 1500;
   int nb = 0;
   struct Neural_Network *net = InitalizeNetwork();
   

@@ -1,17 +1,11 @@
-//==========================//
-//====Utilisation du XOR====//
-//==========================//
+//=============================//
+//====Utilisation du projet====//
+//=============================//
 
-Pour l'utilisation du réseau de neurones résolvant le problème du xor, vous devrez: 
-	- Vous diriger vers le dossier xor/
+Pour l'utilisation du projet, vous devrez: 
+	- Vous diriger vers le dossier OCR/
 	- Lancer la commande "make"
-	- Lancer la commande "./xor"
+	- Lancer la commande "./main"
+	
 
-//===============================//
-//====Utilisation des filtres====//
-//===============================//
 
-Pour la segmentation, et l'utilisation des filtres, vous devrez :
-	- Vous diriger vers le dossier sdl
-	- Lancer la commande "make"
-	- Lancer la commande "./filtres"

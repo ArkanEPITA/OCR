@@ -133,11 +133,10 @@ int print_line(SDL_Surface* image_surface, int alinea, int begin, char* s, int s
 
     if(nb_letters != 0)
     {
-        if(one_word == 1)
+        if(one_word == 0)
         {
-            while (alinea > begin + jmaxref - jminref + 25)
+            while (alinea > begin + jmaxref - jminref + 20)
             {
-                printf("la\n");
                 alinea = alinea - (jmaxref - jminref);
                 s[string_line] = ' ';
                 string_line++;
@@ -145,9 +144,8 @@ int print_line(SDL_Surface* image_surface, int alinea, int begin, char* s, int s
         }
         else
         {
-            while (alinea > begin + max_space + 25)
+            while (alinea > begin + max_space + 20)
             {
-                printf("ici\n");
                 alinea = alinea - max_space;
                 s[string_line] = ' ';
                 string_line++;
@@ -163,13 +161,14 @@ int print_line(SDL_Surface* image_surface, int alinea, int begin, char* s, int s
     int jmin = Word.word[0].minj_word;
 
 
-    //strcat(str, "G");
+    //strcat(str "G");
     image2 = copy_image(image_surface, imin, imax, jmin, jmax);
 
     image3 = Resize_letter(image2);
 
     matrix_letter = create_matrix_letter(image3);
 
+    
     for(size_t i = 0; i < 28; i++)
     {
         for(size_t j = 0; j < 28; j++)
@@ -179,6 +178,7 @@ int print_line(SDL_Surface* image_surface, int alinea, int begin, char* s, int s
         printf("\n");
     }
     printf("\n");
+    
 
     
     s[string_line] = run(matrix_letter);
@@ -195,7 +195,7 @@ int print_line(SDL_Surface* image_surface, int alinea, int begin, char* s, int s
         jmax = Word.word[i].maxj_word;
         imin = Word.word[i].mini_word;
         
-        if(space-7 < max_space && space+7 > max_space && one_word == 1)
+        if(space-5 < max_space && space+5 > max_space && one_word == 1)
         {
             s[string_line] = ' ';
             string_line++;
@@ -207,6 +207,7 @@ int print_line(SDL_Surface* image_surface, int alinea, int begin, char* s, int s
         image3 = Resize_letter(image2);
         
         matrix_letter = create_matrix_letter(image3);
+        
         for(size_t i = 0; i < 28; i++)
         {
             for(size_t j = 0; j < 28; j++)
@@ -216,6 +217,7 @@ int print_line(SDL_Surface* image_surface, int alinea, int begin, char* s, int s
             printf("\n");
         }
         printf("\n");
+        
        
         s[string_line] = run(matrix_letter);
         string_line++;
