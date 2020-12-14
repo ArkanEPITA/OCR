@@ -170,6 +170,16 @@ int print_line(SDL_Surface* image_surface, int alinea, int begin, char* s, int s
 
     matrix_letter = create_matrix_letter(image3);
 
+    for(size_t i = 0; i < 28; i++)
+    {
+        for(size_t j = 0; j < 28; j++)
+        {
+            printf("%d", (int)matrix_letter[j + i * 28]);
+        }
+        printf("\n");
+    }
+    printf("\n");
+
     
     s[string_line] = run(matrix_letter);
     string_line++;
@@ -197,6 +207,15 @@ int print_line(SDL_Surface* image_surface, int alinea, int begin, char* s, int s
         image3 = Resize_letter(image2);
         
         matrix_letter = create_matrix_letter(image3);
+        for(size_t i = 0; i < 28; i++)
+        {
+            for(size_t j = 0; j < 28; j++)
+            {
+                printf("%d", (int)matrix_letter[j + i * 28]);
+            }
+            printf("\n");
+        }
+        printf("\n");
        
         s[string_line] = run(matrix_letter);
         string_line++;

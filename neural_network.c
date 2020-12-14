@@ -395,15 +395,15 @@ void train()
   srand(time(NULL));
 
   int NbPattern = 52;
-  int NbEpoch = 1500;
+  int NbEpoch = 3500;
   int nb = 0;
   struct Neural_Network *net = InitalizeNetwork();
-  for(char count = '0'; count < '4'; count++)
-  {
-    InitalizeValue(net, nb, count);
   
-    for (int epoch = 0; epoch <= NbEpoch; ++epoch)
+  for (int epoch = 0; epoch <= NbEpoch; ++epoch)
+  {
+    for(char count = '0'; count < '3'; count++)
     {
+      InitalizeValue(net, nb, count);
 
       for (int p = 0; p < NbPattern; ++p)
       {
@@ -413,9 +413,10 @@ void train()
         BackwardPass(net, p);
         //printf("3\n");
       }
+      nb++;
     }
-    nb++;
   }
+  
   
 
   //printf("Fail here\n");
