@@ -753,6 +753,7 @@ void RectangleCoordinates(SDL_Surface* image_surface, SDL_Surface* true_surface,
         list[i] = NULL;
     }
     */
+   int j = jmin;
 
     //printf("second fonction\n");
     int rect_left = -1;
@@ -769,6 +770,11 @@ void RectangleCoordinates(SDL_Surface* image_surface, SDL_Surface* true_surface,
             //printf("l = %d, r = %d, u = %d, d = %d\n", rect_left, rect_right, rect_up, rect_down);
             if(RectangularityFactor(image_surface, rect_left, rect_right, rect_up, rect_down, rectangularity_factor) == 1)
             {
+                
+                if(j < image_surface->h - 5)
+                {
+                    rect_down += 5;
+                }
                 SDL_Surface* square = copy_image(true_surface, rect_up, rect_down, rect_left, rect_right);
                 blocks->images[blocks->nb_block] = square;
                 blocks->left[blocks->nb_block] = rect_left;
@@ -796,7 +802,8 @@ void RectangleCoordinates(SDL_Surface* image_surface, SDL_Surface* true_surface,
         }
 
         full_black = 1;
-        for(int j = jmin; j <= jmax; j++)
+        j = jmin;
+        while(j <= jmax)
         {
             Uint32 pixel = get_pixel(image_surface, i, j);
             Uint8 r, g, b;
@@ -819,16 +826,19 @@ void RectangleCoordinates(SDL_Surface* image_surface, SDL_Surface* true_surface,
                     {
                         rect_right = i;
                     }
+                    
                     if(j > rect_down)
                     {
                         rect_down = j;
                     }
+                    
                     else if(j < rect_up)
                     {
                         rect_up = j;
                     }
                 }
             }
+            j++;
         }
         i++;
     }
@@ -920,20 +930,6 @@ void enveloppe_convexe(SDL_Surface* image_surface, SDL_Surface* true_surface, Bl
 }
 
 
-/*
-
-void printLine(SDL_Surface* image_surface, int i)
-{
-    int j = 0;
-    for(; j < image_surface->w-1; j++)
-    {
-        Uint32 white_pixel = SDL_MapRGB(image_surface->format, 0, 0, 255);
-        put_pixel(image_surface, j, i, white_pixel);
-    }
-}
-
-*/
-
 
 int LetterSize(SDL_Surface* image_surface)
 {
@@ -1015,7 +1011,7 @@ char* final(SDL_Surface* image_surface, SDL_Surface* true_surface, char* s)
     too_short_weight(image_surface, w*4);
 
     too_short_height(image_surface, h/4);
-    enveloppe_convexe(image_surface, true_surface, blocks, 0.65);
+    enveloppe_convexe(image_surface, true_surface, blocks, 0.35);           // A MODIFIER !!!!!!!!!!!!!!!!!!!!!!!!!
 
     int number_lines = blocks->nb_block;
     int begin = blocks->left[0];
@@ -1083,8 +1079,8 @@ char* final(SDL_Surface* image_surface, SDL_Surface* true_surface, char* s)
     return s;
 }
 
-/*
 
+/*
 int main()
 {
     SDL_Surface* image_surface;
@@ -1094,7 +1090,7 @@ int main()
     char* s = malloc((sizeof(char))* 4095);
     strcat(s, "");
     
-    char path[] = "images/supermarket.jpg";
+    char path[] = "images/algo.jpg";
 
     image_surface = load_image(path);
     True_surface = load_image(path);
