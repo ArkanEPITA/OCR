@@ -78,9 +78,9 @@ SDL_Surface* Resize_letter(SDL_Surface *image_surface);
 
 double* create_matrix_letter(SDL_Surface *image_surface);
 
-char* final(SDL_Surface* image_surface, SDL_Surface* true_surface, char* s);
+char* final(SDL_Surface* image_surface, SDL_Surface* true_surface);
 
-int print_line(SDL_Surface* image_surface, int alinea, int begin, char* s, int string_line);
+char* print_line(SDL_Surface* image_surface, int alinea, int begin);
 
 struct Neural_Network
 {
@@ -89,30 +89,30 @@ struct Neural_Network
     int nbOutput;
 
     //Arrays
-    double InputValue[286][784];
-    double Goal[286][52];
+    double InputValue[52][784];
+    double Goal[52][52];
     //Weight Arrays
-    double WeightIH[120][784];
-    double WeightHO[52][120];
+    double WeightIH[64][784];
+    double WeightHO[52][64];
     //Bias Array
-    double BiasH[120];
+    double BiasH[64];
     //Bias output
     double BiasO[52];
     //Output Hidden
-    double OutputH[120];
+    double OutputH[64];
     //Output of output
     double OutputO[52];
     //Array of delta bias for hidden
-    double dBiasH[120];
+    double dBiasH[64];
     //delta bias for output
     double dBiasO[52];
     //delta weight
-    double dWeightIH[120][784];
-    double dWeightHO[52][120];
+    double dWeightIH[64][784];
+    double dWeightHO[52][64];
     //delta of output
     double dOutputO[52];
     //delta of hidden
-    double dHiddenH[120];
+    double dHiddenH[64];
 
     char act;
     
@@ -133,7 +133,7 @@ void LoadData(struct Neural_Network *net);
 
 void free_array(struct Neural_Network *net);
 
-void InitalizeValue(struct Neural_Network *net);
+void InitalizeValue(struct Neural_Network *net, int nb, char count);
 
 void ForwardPass(struct Neural_Network *net, int p, int epoch);
 

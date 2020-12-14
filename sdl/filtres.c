@@ -973,9 +973,11 @@ int LetterSize(SDL_Surface* image_surface)
 
 
 
-char* final(SDL_Surface* image_surface, SDL_Surface* true_surface, char* s)
+char* final(SDL_Surface* image_surface, SDL_Surface* true_surface)
 {
-    int string_line = 0;
+    char* s = malloc((sizeof(char)) * 4095);
+    strcat(s, "");
+
 
     int h = image_surface->h/100; // Barre de gauche
     int w = image_surface->w/100; // Barre du haut
@@ -1041,16 +1043,14 @@ char* final(SDL_Surface* image_surface, SDL_Surface* true_surface, char* s)
         back_space_down = blocks->down[i];
     }
 
-    for(int i = 0; i < number_lines-1; i++)
+    strcat(s, "\n");
+    for(int i = 0; i < number_lines; i++)
     {
-        string_line = print_line(blocks->images[i], blocks->left[i], begin, s, string_line);
-
-        if(i != number_lines-1)
-        {
-            s[string_line] = '\n';
-            string_line++;
-        }
-
+        char* str2 = malloc((sizeof(char)) * 4095);
+        strcat(str2, "");
+        str2 = print_line(blocks->images[i], blocks->left[i], begin);
+        strcat(s, str2);
+        strcat(s, "\n");
         if(number_lines != 1 && i != number_lines-1)
         {
             if(i != 0)
@@ -1059,8 +1059,7 @@ char* final(SDL_Surface* image_surface, SDL_Surface* true_surface, char* s)
                 while (begin_space + 30 < gap)
                 {
                     gap -= begin_space;
-                    s[string_line] = '\n';
-                    string_line++;
+                    strcat(s, "\n");
                 }
             }
             else
@@ -1069,8 +1068,7 @@ char* final(SDL_Surface* image_surface, SDL_Surface* true_surface, char* s)
                 while (begin_space + 30 < gap)
                 {
                     gap -= begin_space;
-                    s[string_line] = '\n';
-                    string_line++;
+                    strcat(s, "\n");
                 }
             }
         }

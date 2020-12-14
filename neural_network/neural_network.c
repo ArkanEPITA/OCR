@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 //Colors for print
 #define KRED  "\x1B[31m"
 #define KGRN  "\x1B[32m"
@@ -20,17 +19,19 @@ double *matrixFromFile(char *filename)
 
   for(int i = 0; i < 28; i++)
   {
-      for(int j = 0; j <= 29; j++)
+      for(int j = 0; j <= 28; j++)
       {
           int c = fgetc(file);
           //printf("%C", c);
           if(c == 49)
           {
             matrix[j+i*28] = 1;
+            printf("%.f", matrix[j+i*28]);
           }
           if(c == 48)
           {
             matrix[j+i*28] = 0;
+            printf("%.f", matrix[j+i*28]);
           }
       }
       printf("\n");
@@ -48,7 +49,7 @@ double** lettersMatrix()
   double** lettersMatrix = malloc(sizeof(double *) * 52);
   char uppercase = 'A';
   char lowercase = 'a';
-  char count = '5';
+  char count = '4';
 
   for(int i = 0; i < 52; i++)
   {
@@ -64,7 +65,7 @@ double** lettersMatrix()
     }
     else if(i >= 26)
     {
-      count = '4';
+      count = '3';
       lowercase_path[10] = lowercase;
       lowercase_path[12] = lowercase;
       lowercase_path[13] = count;
@@ -454,8 +455,10 @@ char OCR(int training, double letter[28*28])
 }
 */
 
+/*
 int main()
 {
   train();
   return 1;
 }
+*/

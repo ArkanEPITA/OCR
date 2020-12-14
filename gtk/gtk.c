@@ -1,9 +1,8 @@
 # include "gtku.h"
 # include <SDL/SDL_rotozoom.h>
 # include "../sdl/pixel_operations.h"
-#include <string.h>
 
-#define TEMPS       30 // The time between each increase in the angle.
+#define TEMPS       30 // Le temps qu'il y a entre chaque augmentation de l'angle.
 
 
 gchar* file = "";
@@ -38,15 +37,15 @@ SDL_Surface* show_image(SDL_Surface *image_surface, double angle)
     double hsize;
     SDL_Surface *screen;
   
-    // convert angle from degrees to radians 
+    // convert angle from degrees to radians //
     angle_radial = -angle * M_PI / 180.0;
  
-    // memorize the sine and cosine values ​​of the angle 
+    // memorize the sine and cosine values ​​of the angle //
     cosinus = cos(angle_radial);
     sinus = sin(angle_radial);
  
-    // destination image size calculation 
-    // (smallest integer value of image width and high) 
+    // destination image size calculation //
+    // (smallest integer value of image width and high) //
     wsize = ceil(image_surface->w * fabs(cosinus) + image_surface->h * fabs(sinus));
     hsize = ceil(image_surface->w * fabs(sinus) + image_surface->h * fabs(cosinus));
 
@@ -84,7 +83,7 @@ int rotation_angles()
     int not_finish = 1;
     SDL_Init(SDL_INIT_VIDEO);
     //image = loading("rotation.png");
-	  image = IMG_Load((char*)file);
+	image = IMG_Load((char*)file);
     screen = show_image(image, angle);
 
     //makes the background of the image white
@@ -106,9 +105,10 @@ int rotation_angles()
 				break;
 		}
 	}
-  //exits by closing the screen 
-  SDL_Quit(); 
+    
+    SDL_Quit(); //exits by closing the screen
 	// Création d'une copie du pixbuf modifié
+	rotation = Resize(rotation, 576, 460);
 	SDL_SaveBMP(rotation, "save_image/out.bmp");
 	file = "save_image/out.bmp";
 	goal += 1;
@@ -180,10 +180,9 @@ int launchOCR(GtkButton* button, GtkTextBuffer* buffer)
 	SDL_Surface* image = IMG_Load((char*)file);
 	SDL_Surface* true_image = IMG_Load((char*)file);
 
-	char* s = calloc(2548, (sizeof(char)));
 	
-	
-	sentence = final(image, true_image, s);
+
+	sentence = final(image, true_image);
 	
 	//SDL_Surface* image_cut = lineCut(img);
 	printf("Line Cuts\n");
@@ -194,12 +193,12 @@ int launchOCR(GtkButton* button, GtkTextBuffer* buffer)
 
 	//isolateLine(image_cut,net);
 	printf("Isolate Line Done \n");
-	printf("%s\n", sentence);
+
   	gtk_text_buffer_set_text(buffer, sentence, strlen(sentence));
 
   	//sentence = net->str;
 	printf("Finish Treatment\n");
-		
+
 	SDL_Quit();
 	return EXIT_SUCCESS;
 }
@@ -209,25 +208,25 @@ int launchOCR(GtkButton* button, GtkTextBuffer* buffer)
 
 void create_window(int argc, char* argv[])
 {
-  //Init variables
-  GtkWidget* main_window;
-  Data data;
+  	//Init variables
+  	GtkWidget* main_window;
+  	Data data;
 
-  //Init GTK
-  gtk_init(&argc, &argv);
+  	//Init GTK
+  	gtk_init(&argc, &argv);
 
-  //Build from .glade
-  data.builder = gtk_builder_new();
-  gtk_builder_add_from_file(data.builder, "gtk.glade", NULL);
+  	//Build from .glade
+  	data.builder = gtk_builder_new();
+  	gtk_builder_add_from_file(data.builder, "gtk.glade", NULL);
 
 	//Get main_window
 	main_window =  GTK_WIDGET(gtk_builder_get_object(data.builder,"main_window"));
-  parent_window = main_window;
+  	parent_window = main_window;
 
 	//Connect signals
 	gtk_builder_connect_signals(data.builder, &data);
 
-  gtk_window_set_title(GTK_WINDOW(main_window), "prOCRastination");
-  gtk_widget_show_all(main_window);
-  gtk_main();
+  	gtk_window_set_title(GTK_WINDOW(main_window), "prOCRastination");
+  	gtk_widget_show_all(main_window);
+  	gtk_main();
 }
