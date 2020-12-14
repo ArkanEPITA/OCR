@@ -146,4 +146,5 @@ char run(double letter[784]);
 struct Neural_Network *InitalizeNetwork();
 
 
+
 #endif

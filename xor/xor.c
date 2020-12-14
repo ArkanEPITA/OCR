@@ -19,8 +19,12 @@ double dSigmoid(double z)   //derivative of the activating sigmoid function
 double init()   //function to initialize the weights randomly
 {
     double rnd;
-    rnd = ((double)rand()) / ((double)RAND_MAX / 2) - 1;
-    return rnd /2;
+    double a = 1.0;
+    for(int i = 0; i < 2; i++)	//allows to obtain a value with a greater variation for i = 1 than for 1 = 0
+    {
+        rnd = ((double)rand()/(double)(RAND_MAX)) * a;	//allows you to retrieve a random value between 0 and 1
+    }
+    return rnd;
 }
 
 
@@ -111,7 +115,7 @@ int main()
     };
 
     double results[4] = { 0, 1, 1, 0 };	//the different expected results compared to inputTraining
-    double epochs = 20000;
+    double epochs = 2000;
 
 
 

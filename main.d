@@ -597,5 +597,4 @@ main.o: main.c main.h /usr/include/gtk-3.0/gtk/gtk.h \
  /usr/include/gtk-3.0/gtk/deprecated/gtkvscrollbar.h \
  /usr/include/gtk-3.0/gtk/deprecated/gtkvseparator.h \
  /usr/include/gtk-3.0/gtk/gtk-autocleanups.h gtk/gtku.h \
- gtk/../sdl/pixel_operations.h \
- gtk/../sdl/../neural_network/neural_network.h sdl/pixel_operations.h
+ sdl/pixel_operations.h

@@ -37,7 +37,7 @@ Array_word find_letters(SDL_Surface* image_surface)
     }
 
     Word *Word = NULL;
-    Word = malloc(sizeof(Word) * weigth+1);
+    Word = malloc(sizeof(Word) * weigth*4);
    
     int letter = 0;
     int first_black = 0;
@@ -133,7 +133,7 @@ int print_line(SDL_Surface* image_surface, int alinea, int begin, char* s, int s
 
     if(nb_letters != 0)
     {
-        if(one_word == 0)
+        if(one_word == 1)
         {
             while (alinea > begin + jmaxref - jminref + 25)
             {
