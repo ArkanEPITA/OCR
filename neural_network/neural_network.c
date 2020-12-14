@@ -454,12 +454,8 @@ char OCR(int training, double letter[28*28])
 }
 */
 
-/*
 int main()
 {
   train();
   return 1;
 }
-*/
-=======
->>>>>>> 54e2af9f6c56df166bef44b116d000b306a02382
