@@ -211,25 +211,24 @@ void InitalizeValue(struct Neural_Network *net, int nb, char count)
     letter++;
   }
 
-  for(int i = 0; i < net->nbOutput; i++)
-  {
-    for(int j = 0; j < net->nbOutput; j++)
-    {
-      if(i != j)
-      {
-        net->Goal[i][j] = 0;
-      }
-      else
-      {
-        net->Goal[i][j] = 1;
-      }
-    }
-  }
   if(nb == 0)
   {
+    for(int i = 0; i < net->nbOutput; i++)
+    {
+        for(int j = 0; j < net->nbOutput; j++)
+        {
+            if(i != j)
+            {
+                net->Goal[i][j] = 0;
+            }
+            else
+            {
+                net->Goal[i][j] = 1;
+            }
+        }
+    }
     initWB(net);
   }
-  
 }
 
 
@@ -319,7 +318,7 @@ void ForwardPass(struct Neural_Network *net, int p, int epoch)
         printf("La réponse du réseau est   : %c\n", net-> act);
         printf("La réponse attendu est     : %c\n", goal);
         printf("%s", KWHT);
-        printf("Le résultat de l'essai est :     %snot OK\n\n", KRED);
+        printf("Le résultat de l'essai est :      %sKO\n\n", KRED);
         printf("%s", KWHT);
       }
       else
