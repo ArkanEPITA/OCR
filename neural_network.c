@@ -9,16 +9,17 @@
 
 //Create & return the double* pixels values from filename
 double *matrixFromFile(char *filename)
-{ 
+{
   double *matrix = malloc(sizeof(double) * 29 * 29);
   
-  FILE *file = fopen(filename, "r");
+  FILE *file = fopen(filename, "r"); // Open the file with letter
 
   if(file == NULL)
   {
       printf("File is NULL \n");
   }
 
+  // Recup every value of the file
   for(int i = 0; i < 28; i++)
   {
       for(int j = 0; j <= 29; j++)
@@ -41,13 +42,13 @@ double *matrixFromFile(char *filename)
 
 double** lettersMatrix(char count)
 {
-  //Variables
   char uppercase_path[19] = "uppercase/0/00.txt\0";
   char lowercase_path[19] = "lowercase/0/00.txt\0";
   double** lettersMatrix = malloc(sizeof(double *) * 52);
   char uppercase = 'A';
   char lowercase = 'a';
 
+  // Travel all files to construct a data bank
   for(int i = 0; i < 52; i++)
   {
     if(i < 26)
@@ -71,8 +72,8 @@ double** lettersMatrix(char count)
   return lettersMatrix;
 }
 
-// Fonction qui va créer un fichier en enregistrant dedans tout les poids et les biais, ils vont avoir le forme suivante : 
-// les poids suivit d'un espace pour les séparer et a la fin les biais
+// Function which will create a file by recording in it all the weights and the biases, they will have the following form :
+// the weights followed by a space to separate them and at the end the bias
 void SaveData(struct Neural_Network *net)
 {
   FILE* file = fopen("network.txt", "w+");
@@ -106,7 +107,7 @@ void SaveData(struct Neural_Network *net)
 }
 
 
-// Fonction qui va a partir d'un fichier charger toutes les composantes d'un réseau de neurone
+// Function which, from a file, will load all the components of a neural network
 void LoadData(struct Neural_Network *net)
 {
   FILE* file = fopen("network.txt", "r");
@@ -147,7 +148,7 @@ void free_array(struct Neural_Network *net)
 
 }
 
-// Fonction random permettant de générer un chifre au hasard
+// Random function allowing to generate a random number
 double Random()
 {
     double rnd;
@@ -155,6 +156,7 @@ double Random()
     return rnd / 1000;
 }
 
+// Fonction to initialize the network
 struct Neural_Network* InitalizeNetwork()
 {
   struct Neural_Network *net = NULL;
@@ -170,6 +172,7 @@ struct Neural_Network* InitalizeNetwork()
   return net;
 }
 
+// Fonction that init weight and bias only the first time that we run the training
 void initWB(struct Neural_Network *net)
 {
   for (int h = 0; h < net->nbHidden; h++)
@@ -196,10 +199,11 @@ void initWB(struct Neural_Network *net)
   }
 }
 
+// Function that will initialize value for each front
 void InitalizeValue(struct Neural_Network *net, int nb, char count)
 {
 
-  // il faut initialiser les valeur d'input
+  //initialization of input values
   double **Matrix = lettersMatrix(count);
   int letter = 0;
   for (int i = 0; i < net->nbOutput; i++)
@@ -211,6 +215,7 @@ void InitalizeValue(struct Neural_Network *net, int nb, char count)
     letter++;
   }
 
+  //initialize Goal value, weight and bias only the first time that will be called
   if(nb == 0)
   {
     for(int i = 0; i < net->nbOutput; i++)
@@ -232,14 +237,14 @@ void InitalizeValue(struct Neural_Network *net, int nb, char count)
 }
 
 
-// Fonction sigmoid servant de fonction d'activation
+// Sigmoid fonction (activation fonction)
 double sigmoid(double x)
 {
   double res = (1.0 / (1.0 + exp(-x)));
   return res;
 }
 
-// Fonction dérivé de la sigmoid pour propager vers l'arrière notre erreur
+//Derivative of sigmoid for the backpropagation
 double dSigmoid(double z)   //derivative of the activating sigmoid function
 {
     double res = z * (1 - z);
@@ -247,7 +252,7 @@ double dSigmoid(double z)   //derivative of the activating sigmoid function
 }
 
 
-
+//Fonction that will compute all network value
 void ForwardPass(struct Neural_Network *net, int p, int epoch)
 {
   double sum;
@@ -380,6 +385,7 @@ void BackwardPass(struct Neural_Network *net, int p)
     }
 }
 
+// Training fonction
 void train()
 {
   srand(time(NULL));
@@ -408,6 +414,7 @@ void train()
   printf("End\n");
 }
 
+// fonction that will use the neural network and return the letter
 char run(double letter[784])
 {
   struct Neural_Network *net = InitalizeNetwork();
