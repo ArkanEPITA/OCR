@@ -153,7 +153,7 @@ double Random()
 {
     double rnd;
     rnd = ((double)rand()) / ((double)RAND_MAX / 2) - 1;
-    return rnd;
+    return rnd / 1000;
 }
 
 struct Neural_Network* InitalizeNetwork()
@@ -177,10 +177,10 @@ void initWB(struct Neural_Network *net)
   {
     for (int i = 0; i < net->nbInput; i++)
     {
-      net->WeightIH[h][i] = Random() / 1000;
+      net->WeightIH[h][i] = Random();
       net->dWeightIH[h][i] = 0.0;
     }
-    net->BiasH[h] = Random() / 1000;
+    net->BiasH[h] = Random();
     net->dBiasH[h] = 0.0;
   }
   
@@ -189,10 +189,10 @@ void initWB(struct Neural_Network *net)
   {
     for(int h  = 0; h < net->nbHidden; h++)
     {
-      net->WeightHO[o][h] = Random() / 1000;
+      net->WeightHO[o][h] = Random();
       net->dWeightHO[o][h] = 0.0;
     }
-    net->BiasO[o] = Random() / 1000;
+    net->BiasO[o] = Random();
     net->dBiasO[o] = 0.0;
   }
 }
