@@ -8,4 +8,32 @@ Pour l'utilisation du projet, vous devrez:
 	- Lancer la commande "./main"
 	
 
+Une fois la fenêtre de l'OCR ouverte, voici les étapes à suivre :
 
+	- Ouvrir une image grâce au bouton "Open File"
+	- Choisir une image à tester. Une banque d'image est déja fournie dans sdl/images/
+	- Charger l'image en appuyant sur "Load Image"
+		- Il est possible de charger une autre image SI ses dimensions sont plus grandes en hauteur ET en largeur
+		- Dans ce cas, après avoir recharger l'image, appuer sur "Load Image"
+		- Sinon, éteignez l'OCR et relancez le
+	- Il est possible de redimensionner l'image :
+		- Appuyer sur "Launch rotation image"
+		- Entrer un certain degré de rotation : l'image tournera dans le sens inverse des aiguilles d'une montre
+		- Appuyer sur "Load image" pour la reload
+	- Appuyer sur "Launch OCR" pour lancer la reconnaissance !
+	
+	- Si vous voulez sauvegarder le texte, un bouton "Save text" vous est proposé.
+	
+	
+//=============================//
+//====Précautions à prendre====//
+//=============================//
+
+Certaines précautions sont à prendre pour la bonne utilisation de notre OCR :
+
+	- Prendre des images de qualité au moins acceptable
+	- Prendre des images dont le texte n'est pas trop resseré en terme de retour à la ligne
+	- RAPPEL : Si vous reloadez une image, faites attention à ce que ses dimensions soient plus grande que la précédente
+
+
+Bons tests à vous !
