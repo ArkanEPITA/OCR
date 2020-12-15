@@ -1037,7 +1037,7 @@ char* final(SDL_Surface* image_surface, SDL_Surface* true_surface, char* s)
         back_space_down = blocks->down[i];
     }
 
-    for(int i = 0; i < number_lines-1; i++)
+    for(int i = 3; i < 4; i++)
     {
         string_line = print_line(blocks->images[i], blocks->left[i], begin, s, string_line);
 
