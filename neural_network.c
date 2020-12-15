@@ -70,8 +70,8 @@ double** lettersMatrix(char count)
   return lettersMatrix;
 }
 
-// Fonction qui va créer un fichier en enregistrant dedans tout les poids et les biais, ils vont avoir le forme suivante : 
-// les poids suivit d'un espace pour les séparer et a la fin les biais
+// Function which will create a file by recording in it all the weights and biases, they will have the following form:
+// the weights followed by a space to separate them and at the end the bias
 void SaveData(struct Neural_Network *net)
 {
   FILE* file = fopen("network.txt", "w+");
@@ -105,7 +105,7 @@ void SaveData(struct Neural_Network *net)
 }
 
 
-// Fonction qui va a partir d'un fichier charger toutes les composantes d'un réseau de neurone
+// Function which, from a file, will load all the components of a neuron network
 void LoadData(struct Neural_Network *net)
 {
   FILE* file = fopen("network.txt", "r");
@@ -121,7 +121,6 @@ void LoadData(struct Neural_Network *net)
     {
       for(int j = 0; j < net->nbInput; j++)
       {
-        //printf("hidden\n");
         idc = fscanf(file, "%lf\n", (&net->WeightIH[i][j]));
       }
       
@@ -133,7 +132,6 @@ void LoadData(struct Neural_Network *net)
       {
         idc = fscanf(file, "%lf\n", (&net->WeightHO[k][l]));
       }
-      //printf("output\n");
       idc = fscanf(file, "%lf\n", (&net->BiasO[k]));
     }
     fclose(file);
@@ -148,7 +146,7 @@ void free_array(struct Neural_Network *net)
 
 }
 
-// Fonction random permettant de générer un chifre au hasard
+// Random function allowing you to generate a random number
 double Random()
 {
     double rnd;
@@ -200,19 +198,14 @@ void initWB(struct Neural_Network *net)
 void InitalizeValue(struct Neural_Network *net, int nb, char count)
 {
 
-  // il faut initialiser les valeur d'input
+// we must reset the values of input
   double **Matrix = lettersMatrix(count);
-  int letter = 0;
   for (int i = 0; i < net->nbOutput; i++)
   {
     for (int j = 0; j < net->nbInput; j++)
     {
-      //printf("%d\n",j);
-        net-> InputValue[i][j] = Matrix[letter][j];
+        net-> InputValue[i][j] = Matrix[i][j];
     }
-    //printf("%d\n",i);
-    //printf("%d\n",letter);
-    letter++;
   }
 
   for(int i = 0; i < net->nbOutput; i++)
@@ -237,17 +230,15 @@ void InitalizeValue(struct Neural_Network *net, int nb, char count)
 }
 
 
-// Fonction sigmoid servant de fonction d'activation
+// Sigmoid function serving as activation function
 double sigmoid(double x)
 {
   double res = (1.0 / (1.0 + exp(-x)));
-  //printf("%lf\n", x);
-  //printf("%lf\n", res);
   return res;
 }
 
-// Fonction dérivé de la sigmoid pour propager vers l'arrière notre erreur
-double dSigmoid(double z)   //derivative of the activating sigmoid function
+// Function derived from the sigmoid to propagate our error backwards
+double dSigmoid(double z)
 {
     double res = z * (1 - z);
     return res;
@@ -294,16 +285,13 @@ void ForwardPass(struct Neural_Network *net, int p, int epoch)
   }
 
   char goal;
-  //rintf("%d\n", lmax);
   if(lmax < 26)
   {
-    //printf("%d\n", lmax);
     net->act = (char) lmax + (int) 'A';
   }
   else
   {
     net->act = (char) lmax + (int) 'a' - 26;
-    //printf("%d\n", lmax);
   }
 
   if(p < 26)
@@ -315,7 +303,6 @@ void ForwardPass(struct Neural_Network *net, int p, int epoch)
     goal = (char) (p + (int) 'a' - 26);
   }
 
-  //printf("ok 5\n");
   if(epoch % 100 == 0)
   	{
   		if(goal == 'A')
@@ -407,81 +394,33 @@ void train()
 
       for (int p = 0; p < NbPattern; ++p)
       {
-        //printf("1\n");
         ForwardPass(net, p, epoch);
-        //printf("2\n");
         BackwardPass(net, p);
-        //printf("3\n");
       }
       nb++;
     }
   }
   
-  
-
-  //printf("Fail here\n");
   SaveData(net);
-  //printf("No here\n");
   free_array(net);
-  //printf("No here\n");
   printf("End\n");
 }
 
 char run(double letter[784])
 {
   struct Neural_Network *net = InitalizeNetwork();
-  //printf("passe 1\n");
   for(int i = 0; i < 28; i++)
   {
-    //printf("passe i = %d\n", i);
     for(int j = 0; j < 28; j++)
     {
-      //printf("passe j = %d \n", j);
       net->InputValue[0][i * 28 + j] = letter[i * 28 + j];
     }
   }
 
   LoadData(net);
-  //printf("passe 2\n");
   ForwardPass(net,0 , 5);
-  //printf("passe 3\n");
   char res = net->act;
 
   free_array(net);
-  //printf("passe 4\n");
   return res;
 }
-
-/*
-char OCR(int training, double letter[28*28])
-{
-  char out;
-  double input[28][28];
-
-  for(int i = 0; i < 28; i++)
-  {
-  	for(int j = 0; j < 28; j++)
-  	{
-  		input[i][j] = letter[i * 28 +j];
-  	}
-  }
-  if(training == 1)
-  {
-    train();
-  }
-  else
-  {
-    out = run(input);
-  }
-
-  return out;
-}
-*/
-
-/*
-int main()
-{
-  train();
-  return 1;
-}
-*/
