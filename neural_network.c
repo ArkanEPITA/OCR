@@ -10,7 +10,8 @@
 //Create & return the double* pixels values from filename
 double *matrixFromFile(char *filename)
 { 
-  double *matrix = malloc(sizeof(double) * 28 * 28);
+  double *matrix = malloc(sizeof(double) * 29 * 29);
+  
   FILE *file = fopen(filename, "r");
 
   if(file == NULL)
@@ -70,8 +71,8 @@ double** lettersMatrix(char count)
   return lettersMatrix;
 }
 
-// Function which will create a file by recording in it all the weights and biases, they will have the following form:
-// the weights followed by a space to separate them and at the end the bias
+// Fonction qui va créer un fichier en enregistrant dedans tout les poids et les biais, ils vont avoir le forme suivante : 
+// les poids suivit d'un espace pour les séparer et a la fin les biais
 void SaveData(struct Neural_Network *net)
 {
   FILE* file = fopen("network.txt", "w+");
@@ -105,7 +106,7 @@ void SaveData(struct Neural_Network *net)
 }
 
 
-// Function which, from a file, will load all the components of a neuron network
+// Fonction qui va a partir d'un fichier charger toutes les composantes d'un réseau de neurone
 void LoadData(struct Neural_Network *net)
 {
   FILE* file = fopen("network.txt", "r");
@@ -146,12 +147,12 @@ void free_array(struct Neural_Network *net)
 
 }
 
-// Random function allowing you to generate a random number
+// Fonction random permettant de générer un chifre au hasard
 double Random()
 {
     double rnd;
     rnd = ((double)rand()) / ((double)RAND_MAX / 2) - 1;
-    return rnd / 1000;
+    return rnd;
 }
 
 struct Neural_Network* InitalizeNetwork()
@@ -175,10 +176,10 @@ void initWB(struct Neural_Network *net)
   {
     for (int i = 0; i < net->nbInput; i++)
     {
-      net->WeightIH[h][i] = Random();
+      net->WeightIH[h][i] = Random() / 1000;
       net->dWeightIH[h][i] = 0.0;
     }
-    net->BiasH[h] = Random();
+    net->BiasH[h] = Random() / 1000;
     net->dBiasH[h] = 0.0;
   }
   
@@ -187,10 +188,10 @@ void initWB(struct Neural_Network *net)
   {
     for(int h  = 0; h < net->nbHidden; h++)
     {
-      net->WeightHO[o][h] = Random();
+      net->WeightHO[o][h] = Random() / 1000;
       net->dWeightHO[o][h] = 0.0;
     }
-    net->BiasO[o] = Random();
+    net->BiasO[o] = Random() / 1000;
     net->dBiasO[o] = 0.0;
   }
 }
@@ -198,14 +199,16 @@ void initWB(struct Neural_Network *net)
 void InitalizeValue(struct Neural_Network *net, int nb, char count)
 {
 
-// we must reset the values of input
+  // il faut initialiser les valeur d'input
   double **Matrix = lettersMatrix(count);
+  int letter = 0;
   for (int i = 0; i < net->nbOutput; i++)
   {
     for (int j = 0; j < net->nbInput; j++)
     {
-        net-> InputValue[i][j] = Matrix[i][j];
+      net-> InputValue[i][j] = Matrix[letter][j];
     }
+    letter++;
   }
 
   for(int i = 0; i < net->nbOutput; i++)
@@ -230,15 +233,15 @@ void InitalizeValue(struct Neural_Network *net, int nb, char count)
 }
 
 
-// Sigmoid function serving as activation function
+// Fonction sigmoid servant de fonction d'activation
 double sigmoid(double x)
 {
   double res = (1.0 / (1.0 + exp(-x)));
   return res;
 }
 
-// Function derived from the sigmoid to propagate our error backwards
-double dSigmoid(double z)
+// Fonction dérivé de la sigmoid pour propager vers l'arrière notre erreur
+double dSigmoid(double z)   //derivative of the activating sigmoid function
 {
     double res = z * (1 - z);
     return res;
@@ -303,7 +306,7 @@ void ForwardPass(struct Neural_Network *net, int p, int epoch)
     goal = (char) (p + (int) 'a' - 26);
   }
 
-  if(epoch % 100 == 0)
+  if(epoch % 10 == 0)
   	{
   		if(goal == 'A')
       {
@@ -329,6 +332,7 @@ void ForwardPass(struct Neural_Network *net, int p, int epoch)
       }
   	}
 }
+
 //backpropagation
 void BackwardPass(struct Neural_Network *net, int p) 
 {
@@ -400,7 +404,6 @@ void train()
       nb++;
     }
   }
-  
   SaveData(net);
   free_array(net);
   printf("End\n");
@@ -419,6 +422,7 @@ char run(double letter[784])
 
   LoadData(net);
   ForwardPass(net,0 , 5);
+
   char res = net->act;
 
   free_array(net);

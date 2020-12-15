@@ -48,15 +48,6 @@ void filtre_gaussien(SDL_Surface* image_surface)
         {2, 4, 2},
         {1, 2, 1}};
 
-
-    //double sigma = 0.8;
-    //double k = 2.0 * sigma * sigma;
-    
-    //int p;
-
-
-
-
     //normalization of the mask
     double S = 16.0;
     for(int i = 0; i < 3; i++)
@@ -66,8 +57,6 @@ void filtre_gaussien(SDL_Surface* image_surface)
             mask[i][j] /= S;
         }
     }
-
-
 
     //application of the mask
     int set_r = 0;
@@ -99,9 +88,6 @@ void filtre_gaussien(SDL_Surface* image_surface)
             Uint8 r, g, b;
             Uint32 pixel3 = get_pixel(image_surface, i, j);
 		    SDL_GetRGB(pixel3, image_surface->format, &r, &g, &b);
-
-            //int abs_calcul = abs(calcul);
-            //printf("%d\n", abs_calcul);
 
             int abs_set_r = abs(set_r);
             int abs_set_g = abs(set_g);
@@ -152,10 +138,7 @@ void dilatation(SDL_Surface* image_surface)
                 set_r = fmax(set_r, - r + mask[k+1] * r1);
                 set_g = fmax(set_g, - g + mask[k+1] * g1);
                 set_b = fmax(set_b, - b + mask[k+1] * b1);
-            }
-
-            //printf("%d, %d, %d\n", (set_r + r), (set_g + g), (set_b + b));
-            
+            }            
 
             int res_r = set_r + r;
             int res_g = set_g + g;
@@ -231,8 +214,6 @@ void erosion(SDL_Surface* image_surface)
                 set_g = fmin(set_g, g - mask[k+1] * g1);
                 set_b = fmin(set_b, b - mask[k+1] * b1);
             }
-
-            //printf("%d, %d, %d\n", (set_r + r), (set_g + g), (set_b + b));
             
             int res_r = set_r + r;
             int res_g = set_g + g;
@@ -270,10 +251,6 @@ void erosion(SDL_Surface* image_surface)
             //Apply filter
             Uint32 pixel2 = SDL_MapRGB(image_surface->format, res_r, res_g, res_b);
             put_pixel(image_surface, i, j, pixel2);
-
-            //set_r = 255;
-            //set_g = 255;
-            //set_b = 255;
         }
     }
 }
@@ -310,11 +287,7 @@ void gradient_vertical(SDL_Surface* image_surface)
                 Uint32 pixel_dilatation = get_pixel(image_surface, i+k+1, j+1);
                 Uint8 r1, g1, b1;
                 SDL_GetRGB(pixel_dilatation, image_surface->format, &r1, &g1, &b1);
-/*
-                Uint32 pixel_erosion = get_pixel(image_surface, i+k, j+l);
-                Uint8 r2, g2, b2;
-		        SDL_GetRGB(pixel_erosion, image_surface->format, &r2, &g2, &b2);
-*/
+
                 set_r_ero = fmin(set_r_ero, r - mask[k+1] * r1);
                 set_g_ero = fmin(set_g_ero, g - mask[k+1] * g1);
                 set_b_ero = fmin(set_b_ero, b - mask[k+1] * b1);
@@ -323,13 +296,6 @@ void gradient_vertical(SDL_Surface* image_surface)
                 set_g_dil = fmax(set_g_dil, - g + mask[k+1] * g1);
                 set_b_dil = fmax(set_b_dil, - b + mask[k+1] * b1);
             }
-/*
-            printf("ERO");
-            printf("\nr : %d, g : %d, b : %d\n\n", set_r_ero, set_g_ero, set_b_ero);
-
-            printf("DIL");
-            printf("\nr : %d, g : %d, b : %d\n\n", set_r_dil, set_g_dil, set_b_dil);
-*/
 
             int res_r = set_r_dil - set_r_ero;
             int res_g = set_g_dil - set_g_ero;
@@ -366,7 +332,6 @@ void gradient_vertical(SDL_Surface* image_surface)
             //apply filter
             Uint32 pixel2 = SDL_MapRGB(image_surface->format, res_r, res_g, res_b);
             put_pixel(image_surface, i, j, pixel2);
-
 
             set_r_dil = 0;
             set_g_dil = 0;
@@ -556,12 +521,6 @@ void fermeture_horizontale(SDL_Surface* image_surface, int end)
 }
 
 
-
-
-
-
-
-
 void too_short_weight(SDL_Surface* image_surface, int max)
 {
     int pos;
@@ -619,9 +578,6 @@ void too_short_weight(SDL_Surface* image_surface, int max)
 }
 
 
-
-
-
 void too_short_height(SDL_Surface* image_surface, int max)
 {
     int pos;
@@ -677,11 +633,6 @@ void too_short_height(SDL_Surface* image_surface, int max)
     }
 }
 
-
-
-
-
-
 int RectangularityFactor(SDL_Surface* image_surface, int rect_left, int rect_right, int rect_up, int rect_down, int rectangularity_factor)
 {
     int great = 0;
@@ -691,7 +642,6 @@ int RectangularityFactor(SDL_Surface* image_surface, int rect_left, int rect_rig
     {
         for (int j = rect_up; j <= rect_down+1; j++)
         {
-            //printf("(i = %d, j = %d)\n", i, j);
             nb_pixel += 1;
             Uint32 pixel = get_pixel(image_surface, i, j);
             Uint8 r, g, b;
@@ -702,10 +652,9 @@ int RectangularityFactor(SDL_Surface* image_surface, int rect_left, int rect_rig
             }
         }
     }
-    //printf("rect_up = %d, rect_down = %d, rect_left = %d, rect_right = %d\n", rect_up, rect_down, rect_left, rect_right);
-    //printf("nb_white_pixel = %d, nb_pixel = %d\n", nb_white_pixel, nb_pixel);
+
     double isRectagularityFactor = (double)nb_white_pixel/(double)nb_pixel;
-    //printf("ratio = %f\n", isRectagularityFactor);
+
     if(isRectagularityFactor < rectangularity_factor || nb_white_pixel < 100)
     {
         for (int i = rect_left; i <= rect_right; i++)
@@ -744,18 +693,7 @@ int RectangularityFactor(SDL_Surface* image_surface, int rect_left, int rect_rig
 
 void RectangleCoordinates(SDL_Surface* image_surface, SDL_Surface* true_surface, Block *blocks, int jmin, int jmax, int i, int rectangularity_factor)
 {
-
-    /*
-    int nb_carres = 0;
-    SDL_Surface ** list = malloc(sizeof(SDL_Surface) * image_surface->h);
-    for(int i = 0; i < image_surface->h; i++)
-    {
-        list[i] = NULL;
-    }
-    */
-   int j = jmin;
-
-    //printf("second fonction\n");
+    int j = jmin;
     int rect_left = -1;
     int rect_right = -1;
     int rect_up = -1;
@@ -767,7 +705,6 @@ void RectangleCoordinates(SDL_Surface* image_surface, SDL_Surface* true_surface,
     {
         if ((full_black == 1 || i == image_surface->w-1) && rectangle_begin == 1)
         {
-            //printf("l = %d, r = %d, u = %d, d = %d\n", rect_left, rect_right, rect_up, rect_down);
             if(RectangularityFactor(image_surface, rect_left, rect_right, rect_up, rect_down, rectangularity_factor) == 1)
             {
                 
@@ -781,19 +718,8 @@ void RectangleCoordinates(SDL_Surface* image_surface, SDL_Surface* true_surface,
                 blocks->up[blocks->nb_block] = rect_up;
                 blocks->down[blocks->nb_block] = rect_down;
                 blocks->nb_block += 1;
-
-/*
-                image_surface = square;
-                printf("NEW SURFACE !!!\n");
-                SDL_Surface* screen_surface = display_image(image_surface);
-                update_surface(screen_surface, image_surface);
-                wait_for_keypressed();
-
-
-                list[nb_carres] = square;
-*/
-                //printf("nbcarres 2nd = %d\n", nb_carres);
             }
+
             rect_left = -1;
             rect_right = -1;
             rect_up = -1;
@@ -803,6 +729,7 @@ void RectangleCoordinates(SDL_Surface* image_surface, SDL_Surface* true_surface,
 
         full_black = 1;
         j = jmin;
+
         while(j <= jmax)
         {
             Uint32 pixel = get_pixel(image_surface, i, j);
@@ -818,7 +745,6 @@ void RectangleCoordinates(SDL_Surface* image_surface, SDL_Surface* true_surface,
                     rectangle_begin = 1;
                     rect_left = i;
                     rect_up = j;
-                    //printf("initial left, up = %d, %d\n", i, j);
                 }
                 else
                 {
@@ -842,14 +768,6 @@ void RectangleCoordinates(SDL_Surface* image_surface, SDL_Surface* true_surface,
         }
         i++;
     }
-    /*
-    if (full_black == 1 && rectangle_begin == 1)
-    {
-        nb_carres += RectangularityFactor(image_surface, rect_left, rect_right, rect_up, rect_down);
-    }
-
-    return list;
-    */
 }
 
 
@@ -861,16 +779,6 @@ void enveloppe_convexe(SDL_Surface* image_surface, SDL_Surface* true_surface, Bl
 {
     int jmin = -1;
     int j = 0;
-    /*
-    SDL_Surface ** list = malloc(sizeof(SDL_Surface) * image_surface->h);
-    SDL_Surface ** list2 = malloc(sizeof(SDL_Surface) * image_surface->h);
-    for(int i = 0; i < image_surface->h; i++)
-    {
-        list[i] = NULL;
-        list2[i] = NULL;
-    }
-    int nb_carres = 0;
-    */
 
     while(j <= image_surface->h)
     {
@@ -897,36 +805,12 @@ void enveloppe_convexe(SDL_Surface* image_surface, SDL_Surface* true_surface, Bl
         {
             if(jmin != -1)
             {
-                
                 RectangleCoordinates(image_surface, true_surface, blocks, jmin, j+1, 0, rectangularity_factor);
-                /*
-                for(int k = 0; list2[k] != NULL; k++)
-                {
-                    printf("\nnbcarres + k = %d\n\n", nb_carres + k);
-                    list[nb_carres] = list2[k];
-                    nb_carres++;
-                }
-
-                free(list2);
-                */
-
                 jmin = -1;
             }
         }
         j++;
     }
-    /*
-    printf("nbcarres = %d\n", nb_carres);
-    SDL_Surface ** final_list = malloc(sizeof(SDL_Surface) * nb_carres);
-    for (int i = 0; i < nb_carres; i++)
-    {
-        final_list[i] = list[i];
-    }
-
-    free(list);
-
-    return final_list;
-    */
 }
 
 
@@ -983,15 +867,6 @@ char* final(SDL_Surface* image_surface, SDL_Surface* true_surface, char* s)
     contour_vertical(image_surface);
     binarisation(image_surface);
 
-/*
-    int resize = LetterSize(image_surface)/15;
-
-    printf("resize = %d\n", resize);
-
-    image_surface = Resize(image_surface, image_surface->w/(2*resize), image_surface->h/(2*resize));
-*/
-
-
     Block *blocks = NULL;
     blocks = malloc(sizeof(Block) * 1);
     blocks->images = malloc(sizeof(SDL_Surface) * image_surface->h);
@@ -1011,7 +886,7 @@ char* final(SDL_Surface* image_surface, SDL_Surface* true_surface, char* s)
     too_short_weight(image_surface, w*4);
 
     too_short_height(image_surface, h/4);
-    enveloppe_convexe(image_surface, true_surface, blocks, 0.35);           // A MODIFIER !!!!!!!!!!!!!!!!!!!!!!!!!
+    enveloppe_convexe(image_surface, true_surface, blocks, 0.65);
 
     int number_lines = blocks->nb_block;
     int begin = blocks->left[0];
@@ -1037,10 +912,10 @@ char* final(SDL_Surface* image_surface, SDL_Surface* true_surface, char* s)
         back_space_down = blocks->down[i];
     }
 
-    for(int i = 3; i < 4; i++)
+    for(int i = 0; i < number_lines-1; i++)
     {
         string_line = print_line(blocks->images[i], blocks->left[i], begin, s, string_line);
-
+        
         if(i != number_lines-1)
         {
             s[string_line] = '\n';
@@ -1078,41 +953,3 @@ char* final(SDL_Surface* image_surface, SDL_Surface* true_surface, char* s)
 
     return s;
 }
-
-
-/*
-int main()
-{
-    SDL_Surface* image_surface;
-    SDL_Surface* screen_surface;
-    SDL_Surface* True_surface;
-
-    char* s = malloc((sizeof(char))* 4095);
-    strcat(s, "");
-    
-    char path[] = "images/algo.jpg";
-
-    image_surface = load_image(path);
-    True_surface = load_image(path);
-
-    //image_surface = Resize(image_surface, 700, 600);
-    //True_surface = Resize(True_surface, 700, 600);
-
-
-    screen_surface = display_image(image_surface);
-
-    wait_for_keypressed();
-
-    //=====================================
-    //              FILTRES
-    //=====================================
-
-    s = final(image_surface, True_surface, screen_surface);
-
-    
-
-    printf("%s", s);
-
-    return 0;
-}
-*/

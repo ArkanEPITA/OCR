@@ -83,7 +83,6 @@ int rotation_angles()
  
     int not_finish = 1;
     SDL_Init(SDL_INIT_VIDEO);
-    //image = loading("rotation.png");
 	  image = IMG_Load((char*)file);
     screen = show_image(image, angle);
 
@@ -177,27 +176,23 @@ int launchOCR(GtkButton* button, GtkTextBuffer* buffer)
 	SDL_Init(SDL_INIT_VIDEO);
 
 	printf("%s\n ",file);
+  printf("\n");
 	SDL_Surface* image = IMG_Load((char*)file);
 	SDL_Surface* true_image = IMG_Load((char*)file);
 
 	char* s = calloc(2548, (sizeof(char)));
-	
-	
 	sentence = final(image, true_image, s);
-	
-	//SDL_Surface* image_cut = lineCut(img);
 	printf("Line Cuts\n");
-	
+  printf("\n");
 	printf("Character cuts\n");
-  	//struct Neural_Network* network = ExtractData();
+  printf("\n");
 	printf("Extract Data Done \n");
-
-	//isolateLine(image_cut,net);
+  printf("\n");
 	printf("Isolate Line Done \n");
+  printf("\n");
 	printf("%s\n", sentence);
-  	gtk_text_buffer_set_text(buffer, sentence, strlen(sentence));
-
-  	//sentence = net->str;
+  printf("\n");
+  gtk_text_buffer_set_text(buffer, sentence, strlen(sentence));
 	printf("Finish Treatment\n");
 		
 	SDL_Quit();

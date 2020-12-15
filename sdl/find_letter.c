@@ -101,11 +101,9 @@ Array_word find_letters(SDL_Surface* image_surface)
 
 int print_line(SDL_Surface* image_surface, int alinea, int begin, char* s, int string_line)
 {
-   
-
     Array_word Word = find_letters(image_surface);
     int nb_letters = Word.length;
-    //Uint32 green = SDL_MapRGB(image_surface->format, 0, 255, 0);
+    
     SDL_Surface* image2;
     SDL_Surface* image3;
     double* matrix_letter = malloc(sizeof(double) * 28 * 28);
@@ -161,32 +159,16 @@ int print_line(SDL_Surface* image_surface, int alinea, int begin, char* s, int s
     int jmin = Word.word[0].minj_word;
 
 
-    //strcat(str "G");
+    
     image2 = copy_image(image_surface, imin, imax, jmin, jmax);
 
     image3 = Resize_letter(image2);
 
     matrix_letter = create_matrix_letter(image3);
-
-    
-    for(size_t i = 0; i < 28; i++)
-    {
-        for(size_t j = 0; j < 28; j++)
-        {
-            printf("%d", (int)matrix_letter[j + i * 28]);
-        }
-        printf("\n");
-    }
-    printf("\n");
-    
-
     
     s[string_line] = run(matrix_letter);
     string_line++;
-    
-    //machin de leno
 
-    //concaténer str
     for (int i = 1; i < nb_letters; i++)
     {
         jmin = Word.word[i].minj_word;
@@ -202,65 +184,17 @@ int print_line(SDL_Surface* image_surface, int alinea, int begin, char* s, int s
         }
         
         image2 = copy_image(image_surface, imin, imax, jmin, jmax);
-        
 
         image3 = Resize_letter(image2);
         
         matrix_letter = create_matrix_letter(image3);
-        
-        for(size_t i = 0; i < 28; i++)
-        {
-            for(size_t j = 0; j < 28; j++)
-            {
-                printf("%d", (int)matrix_letter[j + i * 28]);
-            }
-            printf("\n");
-        }
-        printf("\n");
-        
        
         s[string_line] = run(matrix_letter);
         string_line++;
-        //machin de leno
-
-        //concaténer str
+        
         free(image2);
         free(image3);   
     }
     free(matrix_letter);
     return string_line;
 }
-
-/*
-
-int main()
-{
-    SDL_Surface* image_surface;
-    SDL_Surface* screen_surface;
-
-    init_sdl();
-
-    image_surface = load_image("images/test_line.PNG");
-    
-    screen_surface = display_image(image_surface);
-
-    wait_for_keypressed();
-
-    //=====================================
-    //              FILTRES
-    //=====================================
-
-    find_letters(image_surface);
-    image_surface = print_line(image_surface);
-
-    update_surface(screen_surface, image_surface);
-    wait_for_keypressed();
-
-    SDL_FreeSurface(image_surface);
-    SDL_FreeSurface(screen_surface);
-
-    return 0;
-}
-
-*/
-
